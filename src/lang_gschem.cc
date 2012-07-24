@@ -25,6 +25,7 @@
 #include "d_subckt.h"
 #include "e_model.h"
 #include "u_lang.h"
+#include <fts.h>
 /*--------------------------------------------------------------------------*/
 namespace {
 /*--------------------------------------------------------------------------*/
@@ -129,13 +130,124 @@ DEV_DOT* LANG_GSCHEM::parse_command(CS& cmd, DEV_DOT* x)
   return NULL;
 }
 /*--------------------------------------------------------------------------*/
-/* C x y selectable angle mirror basename
- * {
- *  <params>
- * }
- * parse_module will parse only the first line and set_label to basename
- * It will also parse ports (TODO)
+/* "paramset" <my_name> <base_name> ";"
+ *    <paramset_item_declaration>*
+ *    <paramset_statement>*
+ *  "endparamset"
  */
+//BUG// no paramset_item_declaration, falls back to spice mode
+//BUG// must be on single line
+
+MODEL_CARD* LANG_GSCHEM::parse_paramset(CS& cmd, MODEL_CARD* x)
+{
+  assert(x);
+  cmd.reset();
+  cmd >> "paramset ";
+  parse_label(cmd, x);
+  parse_type(cmd, x);
+  cmd >> ';';
+  parse_args_paramset(cmd, x);
+  cmd >> "endparamset ";
+  cmd.check(bWARNING, "what's param this?");
+  return x;
+}
+/*--------------------------------------------------------------------------*/
+static void parse_pin(CS& cmd, COMPONENT* x, int index)
+{
+    assert(x);
+    std::string type=OPT::language->find_type_in_string(cmd),dump;
+    assert(type=="pin");
+    cmd>>"P";
+    std::string xpin,ypin;
+    std::string pinattributes[7];
+    for(int i=0;i<7;i++){
+        cmd>>" ">>pinattributes[i];
+    }
+    if (pinattributes[6]=="1"){
+        xpin=pinattributes[2];
+        ypin=pinattributes[3];
+    }else if (pinattributes[6]=="0"){
+        xpin=pinattributes[0];
+        ypin=pinattributes[1];
+    }
+    std::string    _portvalue="_";
+    cmd.get_line("");
+    cmd>>"{";
+    for(;;){
+        cmd.get_line("");
+        if(cmd>>"}"){
+            break;
+        }else{
+            if (cmd>>"T"){
+                cmd>>dump;
+            }
+            else{
+                std::string _pname=cmd.ctos("=","",""),_pvalue;
+                cmd>>"=">>_pvalue;
+                if(_pname=="pinlabel"){
+                    _portvalue=_pvalue+_portvalue;
+                }else if (_pname=="pintype"){
+                    _portvalue=_portvalue+_pvalue;
+                }
+            }
+
+        }
+    }
+    x->set_port_by_index(index,_portvalue);
+}
+/*--------------------------------------------------------------------------*/
+static std::string find_file_given_name(std::string basename)
+{
+    char *p[]={"../geda-sym/symbols",NULL};
+    FTS* dir=fts_open(p,FTS_NOCHDIR, NULL);
+    if(!dir){
+        std::cout<<"Not opened\n";
+    }
+    assert(dir);
+    FTSENT* node;
+    std::string dirname="";
+    while(node=fts_read(dir)){
+        if(node->fts_info & FTS_F && basename==node->fts_name){
+            std::cout<<node->fts_name<<std::endl;
+            std::cout<<"Got it"<<" "<<node->fts_path<<std::endl;
+            dirname=node->fts_path;
+        }
+    }
+    if(dirname==""){
+        std::cout<<"No symbol file for"+basename<<std::endl;
+    }
+    return dirname;
+}
+/*--------------------------------------------------------------------------*/
+static void parse_symbol_file(COMPONENT* x, std::string basename)
+{
+    std::string filename=find_file_given_name(basename),dump;
+    CS sym_cmd(CS::_INC_FILE, filename);
+    //Now parse the sym_cmd which will get lines
+    int index=0;
+    while(true){
+        try{
+            sym_cmd.get_line("");
+        }catch (Exception_End_Of_Input&){
+            std::cout<<"Breaking";
+            break;
+        }
+        std::cout<<"Got the line";
+        std::cout<<sym_cmd.fullstring();
+        if(sym_cmd.fullstring()!=""){
+            std::cout<<sym_cmd.fullstring()<<"Came here"<<std::endl;
+        }
+        std::string linetype=OPT::language->find_type_in_string(sym_cmd);
+        if (linetype=="pin"){
+            parse_pin(sym_cmd,x,index++);
+            std::cout<<"Pin number "+to_string(index)<<std::endl;
+        }else{
+            sym_cmd>>dump;
+        }
+    }
+}
+/*--------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*/
 MODEL_SUBCKT* LANG_GSCHEM::parse_module(CS& cmd, MODEL_SUBCKT* x)
 {
   std::cout<<"Got into parse_module\n";
@@ -150,6 +262,7 @@ MODEL_SUBCKT* LANG_GSCHEM::parse_module(CS& cmd, MODEL_SUBCKT* x)
   cmd>>component_x>>" ">>component_y>>" ">>dump>>" ">>angle>>" ">>mirror>>" ">>basename;
   //open the basename to get the ports and their placements
   //parse_ports(newcmd,x);
+      parse_symbol_file(x,basename);
   x->set_label(basename);
   if (isgraphical==true) {
     return NULL;
@@ -161,26 +274,12 @@ MODEL_SUBCKT* LANG_GSCHEM::parse_module(CS& cmd, MODEL_SUBCKT* x)
   return x;
 }
 /*--------------------------------------------------------------------------*/
-/*--------------------------------------------------------------------------*/
-static int port_name_with_placement(CARD* x, std::string xc, std::string yc)
-{
-    for(CARD_LIST::const_iterator ci=x->scope()->begin();ci!= x->scope()->end();++ci) {
-        //std::cout<<(*ci)->dev_type()<<" "<<(*ci)->param_value(4)<<std::endl;
-        for (int ii=0; ii<(*ci)->net_nodes(); ++ii){
-            if ([xc,yc]==(*ci)->get_port_placement_by_index(ii)){
-                return (*ci)->port_value(ii);
-            }
-        }
-        return "node"+to_string(_nodeindex++);
-    }
-}
-/*--------------------------------------------------------------------------*/
 // A net is in form N x0 y0 x1 y1 c
 // Need to get x0 y0 ; x1 y1 ;
 // Need to go through all the nets. Anyway?
 // Need to save them in other forms? How to go through all cards?
 // Need to specify a name for a card?
-static void parse_net(CS& cmd,CARD* x)
+static void parse_net(CS& cmd,COMPONENT* x)
 {
     assert(x);
     assert(lang_gschem.find_type_in_string(cmd)=="net");
@@ -191,6 +290,10 @@ static void parse_net(CS& cmd,CARD* x)
     std::string paramvalue[5];
     int i=0;
     bool gotthenet=true;
+    std::string _node1="node"+to_string(rand());
+    std::string _node2="node"+to_string(rand());
+    x->set_port_by_index(0,_node1);
+    x->set_port_by_index(1,_node2);
     while (i<5) {
         if (cmd.is_alnum()){
             cmd>>" ">>paramvalue[i];
@@ -209,20 +312,12 @@ static void parse_net(CS& cmd,CARD* x)
     if (gotthenet){
         //lang_gschem.nets.push_back(x);
         //To check if any of the previous nodes have same placement.
-        x->set_port_by_name("p",port_name_with_placement(param_value(4),param_value(3)) )//_nodeindex++));
-        x->set_port_placement_by_name("p",x->param_value(4),x->param_value(3));
-        x->set_port_by_name("n",port_name_with_placement(param_value(2),param_value(1)) )//_nodeindex++));
-        x->set_port_placement_by_name("n",x->param_value(2),x->param_value(1));
     }
+    x->set_label("net"+to_string(rand()%10000)); //BUG : names may coincide!. Doesn't matter? Or try some initialisation method. (latch like digital)
 }
 /*--------------------------------------------------------------------------*/
-/* C x y selectable angle mirror basename{
- *  <params>
- * }
- * parse_component will set the params for the component
- * and the ports with their position?
- */
-static void parse_component(CS& cmd,CARD* x){
+/*--------------------------------------------------------------------------*/
+static void parse_component(CS& cmd,COMPONENT* x){
     std::cout<<"Got into parse_componet-1\n";
     assert(x);
     std::string component_x, component_y, mirror, angle, dump,basename;
@@ -236,6 +331,9 @@ static void parse_component(CS& cmd,CARD* x){
     std::cout<<component_x<<" "<<component_y<<" "<<dump<<" "<<angle<<" "<<mirror<<" "<<basename;
     //To get port names and values from symbol?
     //Then set params below
+    //Search for the file name
+    parse_symbol_file(x,basename);
+
     std::cout<<"Got into parse_componet1\n";
     x->set_param_by_name("x",component_x);
     x->set_param_by_name("y",component_y);
@@ -267,11 +365,16 @@ static void parse_component(CS& cmd,CARD* x){
                 std::cout<<_paramname<<" "<<_paramvalue<<std::endl;
                 if(_paramname=="device"){
                     x->set_dev_type(_paramvalue);
+                }else if (_paramname=="refdes" && _paramvalue!="?"){
+                    x->set_label(_paramvalue);
                 }else{
                     x->set_param_by_name(_paramname,_paramvalue);
                 }
             }
         }
+    }
+    if(x->short_label()!=""){
+        x->set_label(type+to_string(rand()));
     }
     std::cout<<"Going out of parse_component"<<std::endl;
 }
@@ -313,6 +416,7 @@ std::string LANG_GSCHEM::find_type_in_string(CS& cmd)
 {
     unsigned here = cmd.cursor(); //store cursor position to reset back later
     std::string type;   //stores type : should check device attribute..
+    //graphical=["v","L","G","B","V","A","H","T"]
     if (cmd >> "v" || cmd >> "L" || cmd >> "G" || cmd >> "B" || cmd >>"V" ||
         cmd >> "A" || cmd >> "H" || cmd >> "T"){ type="dev_comment";}
     else if (cmd >> "N"){ type="net";}
@@ -324,41 +428,19 @@ std::string LANG_GSCHEM::find_type_in_string(CS& cmd)
                     //has been started with at beginning
     return type;    // returns the type of the string
 }
-
 /*----------------------------------------------------------------------*/
-/*parse_top_item : To know:
- *What does CS& refer to
- *  CS stands for command string which is defined in ap.h and various functions
- *  on it are defined in ap*.cc
- *what does get_line method on CS& do ?
- *  get_line will ‘getlines’ from the file ptr, else if no file, get from
- *  keyboard (stdin) using getcmd (which will get a command, also log, echo etc)
- *what is the class CARD_LIST* ?
- *
- *what does new__instance of cmd mean?
- *	It is defined in u_lang.cc. It does the following :
- *	/11/find_type_in_string : specific to each language which gives the type of the  *cmd
-		Eg: verilog : comment ,resistor etc
- * Then find_proto for the given type.
- * Clone the instance : new_instance=proto->clone_instance()
- * set the owner of the instance : new_instance->set_owner(owner)
- * Then we parse the command using new_instance : x=parse_item(cmd,new_instance)
- *		for und. parse_item : // See Stroustrup 15.4.5
- *	 	if MODEL_SUBCKT, return parse_module()
- *		elsif COMPONENT, return parse_instance()
- * 		elsif MODEL_CARD, return parse_paramset()
- *		elsif DEV_COMMENT, return parse_comment()
- *		elsif DEV_DOT, return parse_command()
- *		else return NULL
- *	Now Scope->push_back(x) which will add this to the list “Scope._cl”.
+/* parse_top_item :
+ * The top default thing that is parsed. Here new__instances are
+ * created and (TODO)post processing of nets is done
  */
 void LANG_GSCHEM::parse_top_item(CS& cmd, CARD_LIST* Scope)
 {
   cmd.get_line("gnucap-gschem>");
   new__instance(cmd, NULL, Scope);
-  //for(CARD_LIST::const_iterator ci=Scope->begin();ci!= Scope->end();++ci) {
-  //  std::cout<<(*ci)->dev_type()<<" "<<(*ci)->param_value(4)<<std::endl;
-  //}
+  //Can iterate over all the CARD_LIST
+  /*for(CARD_LIST::const_iterator ci=Scope->begin();ci!= Scope->end();++ci) {
+    std::cout<<(*ci)->dev_type()<<" "<<(*ci)->param_value(4)<<std::endl;
+  }*/
 }
 /*----------------------------------------------------------------------*/
 
