@@ -90,14 +90,6 @@ static void parse_type(CS& cmd, CARD* x)
   x->set_dev_type(new_type);
 }
 /*--------------------------------------------------------------------------*/
-static void parse_label(CS& cmd, CARD* x)
-{
-  assert(x);
-  std::string my_name;
-  cmd >> my_name;
-  x->set_label(my_name);
-}
-/*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 DEV_COMMENT* LANG_GSCHEM::parse_comment(CS& cmd, DEV_COMMENT* x)
 {
@@ -114,42 +106,15 @@ DEV_DOT* LANG_GSCHEM::parse_command(CS& cmd, DEV_DOT* x)
   CARD_LIST* scope = (x->owner()) ? x->owner()->subckt() : &CARD_LIST::card_list;
 
   cmd.reset();
-  /*
-  if (cmd>>"C"){
-    unsigned here=cmd.cursor();
-    std::string comp_params;
-    cmd>>comp_params;
-    cmd.reset(here);
-    std::string s="component "+cmd.tail();
-    CS aug_cmd(CS::_STRING, s);
-    CMD::cmdproc(aug_cmd,scope);
-  }*/
-
   CMD::cmdproc(cmd, scope);
   delete x;
   return NULL;
 }
 /*--------------------------------------------------------------------------*/
-/* "paramset" <my_name> <base_name> ";"
- *    <paramset_item_declaration>*
- *    <paramset_statement>*
- *  "endparamset"
- */
-//BUG// no paramset_item_declaration, falls back to spice mode
-//BUG// must be on single line
-
 MODEL_CARD* LANG_GSCHEM::parse_paramset(CS& cmd, MODEL_CARD* x)
 {
   assert(x);
-  cmd.reset();
-  cmd >> "paramset ";
-  parse_label(cmd, x);
-  parse_type(cmd, x);
-  cmd >> ';';
-  parse_args_paramset(cmd, x);
-  cmd >> "endparamset ";
-  cmd.check(bWARNING, "what's param this?");
-  return x;
+  return NULL;
 }
 /*--------------------------------------------------------------------------*/
 static void parse_pin(CS& cmd, COMPONENT* x, int index)
