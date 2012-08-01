@@ -60,7 +60,7 @@ public:
     MODEL_SUBCKT* parse_module(CS&, MODEL_SUBCKT*);
     COMPONENT*	  parse_instance(CS&, COMPONENT*);
     std::string	  find_type_in_string(CS&);
-    std::vector<CARD*> nets;
+    MODEL_SUBCKT* parse_componmod(CS&, MODEL_SUBCKT*);
 
 private:
     void print_paramset(OMSTREAM&, const MODEL_CARD*);
@@ -204,18 +204,26 @@ static void parse_symbol_file(COMPONENT* x, std::string basename)
         }
         std::string linetype=OPT::language->find_type_in_string(sym_cmd);
         if (linetype=="pin"){
-            parse_pin(sym_cmd,x,index++);
+            coord.push_back(parse_pin(sym_cmd,x,index++));
             std::cout<<"Pin number "+to_string(index)<<std::endl;
         }else{
             sym_cmd>>dump;
         }
     }
+    return coord;
 }
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 MODEL_SUBCKT* LANG_GSCHEM::parse_module(CS& cmd, MODEL_SUBCKT* x)
 {
   std::cout<<"Got into parse_module\n";
+  //To parse heirarchical schematics
+  return NULL;
+}
+
+MODEL_SUBCKT* LANG_GSCHEM::parse_componmod(CS& cmd, MODEL_SUBCKT* x)
+{
+  std::cout<<"Going into parse_componmod ";
   assert(x);
   cmd.reset();
   std::string type = find_type_in_string(cmd);
@@ -228,15 +236,21 @@ MODEL_SUBCKT* LANG_GSCHEM::parse_module(CS& cmd, MODEL_SUBCKT* x)
   //open the basename to get the ports and their placements
   //parse_ports(newcmd,x);
       parse_symbol_file(x,basename);
-  x->set_label(basename);
+  x->set_label("!_"+basename);
+
   if (isgraphical==true) {
     return NULL;
   }
   else{
     cmd.reset(here);
   }
-  std::cout<<"Going out of parse_module\n";
+  std::cout<<"Going out of parse_componmod\n";
+  /*type = "graphical";
+  x->set_dev_type(type);
+  std::cout<<x->dev_type()<<" is the dev type\n";
+  */
   return x;
+
 }
 /*--------------------------------------------------------------------------*/
 // A net is in form N x0 y0 x1 y1 c
@@ -346,7 +360,7 @@ static void parse_component(CS& cmd,COMPONENT* x){
             }
         }
     }
-    if(x->short_label()!=""){
+    if(x->short_label()==""){
         x->set_label(type+to_string(rand()));
     }
     std::cout<<"Going out of parse_component"<<std::endl;
@@ -416,9 +430,145 @@ void LANG_GSCHEM::parse_top_item(CS& cmd, CARD_LIST* Scope)
   }*/
 }
 /*----------------------------------------------------------------------*/
+/*----------------------------------------------------------------------*/
+void LANG_GSCHEM::print_args(OMSTREAM& o, const MODEL_CARD* x)
+{
+  assert(x);
+  if (x->use_obsolete_callback_print()) {
+    x->print_args_obsolete_callback(o, this);  //BUG//callback//
+  }else{
+    for (int ii = x->param_count() - 1;  ii >= 0;  --ii) {
+      if (x->param_is_printable(ii)) {
+	std::string arg = " ." + x->param_name(ii) + "=" + x->param_value(ii) + ";";
+	o << arg;
+      }else{
+      }
+    }
+  }
+}
+/*--------------------------------------------------------------------------*/
+void LANG_GSCHEM::print_args(OMSTREAM& o, const COMPONENT* x)
+{
+  assert(x);
+  o << " #(";
+  if (x->use_obsolete_callback_print()) {
+    arg_count = 0;
+    x->print_args_obsolete_callback(o, this);  //BUG//callback//
+    arg_count = INACTIVE;
+  }else{
+    std::string sep = ".";
+    for (int ii = x->param_count() - 1;  ii >= 0;  --ii) {
+      if (x->param_is_printable(ii)) {
+	o << sep << x->param_name(ii) << "(" << x->param_value(ii) << ")";
+	sep = ",.";
+      }else{
+      }
+    }
+  }
+  o << ") ";
+}
+/*--------------------------------------------------------------------------*/
+static void print_type(OMSTREAM& o, const COMPONENT* x)
+{
+  assert(x);
+  o << x->dev_type();
+}
+/*--------------------------------------------------------------------------*/
+static void print_label(OMSTREAM& o, const COMPONENT* x)
+{
+  assert(x);
+  o << x->short_label();
+}
+/*--------------------------------------------------------------------------*/
+static void print_ports_long(OMSTREAM& o, const COMPONENT* x)
+{
+  // print in long form ...    .name(value)
+  assert(x);
 
-//Printing stuff : TO ADD
+  o << " (";
+  std::string sep = ".";
+  for (int ii = 0;  x->port_exists(ii);  ++ii) {
+    o << sep << x->port_name(ii) << '(' << x->port_value(ii) << ')';
+    sep = ",.";
+  }
+  for (int ii = 0;  x->current_port_exists(ii);  ++ii) {
+    o << sep << x->current_port_name(ii) << '(' << x->current_port_value(ii) << ')';
+    sep = ",.";
+  }
+  o << ")";
+}
+/*--------------------------------------------------------------------------*/
+static void print_ports_short(OMSTREAM& o, const COMPONENT* x)
+{
+  // print in short form ...   value only
+  assert(x);
 
+  o << " (";
+  std::string sep = "";
+  for (int ii = 0;  x->port_exists(ii);  ++ii) {
+    o << sep << x->port_value(ii);
+    sep = ",";
+  }
+  for (int ii = 0;  x->current_port_exists(ii);  ++ii) {
+    o << sep << x->current_port_value(ii);
+    sep = ",";
+  }
+  o << ")";
+}
+/*--------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*/
+void LANG_GSCHEM::print_paramset(OMSTREAM& o, const MODEL_CARD* x)
+{
+  assert(x);
+  _mode = mPARAMSET;
+  o << "paramset " << x->short_label() << ' ' << x->dev_type() << ";\\\n";
+  print_args(o, x);
+  o << "\\\n"
+    "endparmset\n\n";
+  _mode = mDEFAULT;
+}
+/*--------------------------------------------------------------------------*/
+void LANG_GSCHEM::print_module(OMSTREAM& o, const MODEL_SUBCKT* x)
+{
+  assert(x);
+  //o<<x->short_label();
+  //o<<"\n";
+  assert(x->subckt());
+  if(x->short_label().find("!_")!=std::string::npos){
+    return;
+  }
+  o << "module " <<  x->short_label();
+  print_ports_short(o, x);
+  o << ";\n";
+
+  for (CARD_LIST::const_iterator
+	 ci = x->subckt()->begin(); ci != x->subckt()->end(); ++ci) {
+    print_item(o, *ci);
+  }
+
+  o << "endmodule // " << x->short_label() << "\n\n";
+}
+/*--------------------------------------------------------------------------*/
+void LANG_GSCHEM::print_instance(OMSTREAM& o, const COMPONENT* x)
+{
+  print_type(o, x);
+  print_args(o, x);
+  print_label(o, x);
+  print_ports_long(o, x);
+  o << ";\n";
+}
+/*--------------------------------------------------------------------------*/
+void LANG_GSCHEM::print_comment(OMSTREAM& o, const DEV_COMMENT* x)
+{
+  assert(x);
+  o << x->comment() << '\n';
+}
+/*--------------------------------------------------------------------------*/
+void LANG_GSCHEM::print_command(OMSTREAM& o, const DEV_DOT* x)
+{
+  assert(x);
+  o << x->s() << '\n';
+}
 /*----------------------------------------------------------------------*/
 /*----------------------------------------------------------------------*/
 class CMD_GSCHEM : public CMD {
@@ -440,7 +590,7 @@ class CMD_C : public CMD {
       assert(!new_compon->owner());
       assert(new_compon->subckt());
       assert(new_compon->subckt()->is_empty());
-      lang_gschem.parse_module(cmd, new_compon);
+      lang_gschem.parse_componmod(cmd, new_compon);
       if(new_compon){
         Scope->push_back(new_compon);
         std::string s=new_compon->short_label()+" "+cmd.tail();
