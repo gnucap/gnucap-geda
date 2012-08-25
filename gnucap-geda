@@ -1,0 +1,60 @@
+#!/bin/bash
+
+# small gnucap command wrapper
+# Author: Felix Salfelder 2012
+# License: GPLv3
+
+# implementation note:
+# passing "list > output" would be much more canonical, but neither "list >
+# file" nor a quiet switch (to disable sign-on) is implemented using bash
+# builtin exec and /dev/fd/3 for now.
+
+helptext="convert geda schematics to verilog/spice\n\
+synopsis: $1 [-s|-v|-g] [-o outfile] file.sch"
+
+[ -z $1 ] && echo -e $helptext
+
+target=verilog
+dot=
+output="&1"
+
+while [ ! -z $1 ]; do
+
+	case $1 in
+		*.sch)
+			exec 3>$output
+			echo -e "load lang_geda.so\n\
+gschem
+include $1
+$target
+$dot> /dev/fd/3
+$dot""list
+$dot""end" | gnucap >/dev/null
+			exec 3>&-
+			;;
+		-h|--help)
+			echo -e $helptext
+			;;
+		-s|--spice)
+			target=spice
+			dot=.
+			;;
+		-v|--verilog)
+			target=verilog
+			dot=
+			;;
+		-g|--geda|gschem)
+			target=gschem
+			dot=
+			;;
+		-o)
+			shift
+			output="$1"
+			;;
+		*)
+			echo unknown argument: $1
+			;;
+	esac
+	shift
+done
+
