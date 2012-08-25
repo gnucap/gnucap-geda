@@ -22,6 +22,9 @@
  */
 #include "e_compon.h"
 #include "e_node.h"
+#ifndef HAVE_UINT_T
+typedef uint_t int;
+#endif
 /*--------------------------------------------------------------------------*/
 namespace {
 /*--------------------------------------------------------------------------*/
@@ -50,16 +53,16 @@ class DEV_PLACE : public COMPONENT {
         char        id_letter()const {return 'P';}
         std::string value_name()const {return "";}
         std::string dev_type()const {untested(); return "place";}
-        int         max_nodes() const {return 1;}
-        int         min_nodes()const {return 1;}
-        int         matrix_nodes()const {return 1;}
-        int         net_nodes()const {return 1;}
+        uint_t      max_nodes() const {return 1;}
+        uint_t      min_nodes()const {return 1;}
+        uint_t      matrix_nodes()const {return 1;}
+        uint_t      net_nodes()const {return 1;}
         bool      has_iv_probe()const {return true;}
         bool        print_type_in_spice()const {return true;}
         bool        is_device() const {return false;}
         CARD*       clone()const    {return new DEV_PLACE(*this);}
         int         param_count()const {return 2;}
-        std::string port_name(int i)const{
+        std::string port_name(uint_t i)const{
             assert(i==0);
             return "port";
         }

@@ -22,6 +22,9 @@
  */
 #include "e_compon.h"
 #include "e_node.h"
+#ifndef HAVE_UINT_T
+typedef uint_t int;
+#endif
 /*--------------------------------------------------------------------------*/
 namespace {
 /*--------------------------------------------------------------------------*/
@@ -42,15 +45,15 @@ private:
   char      id_letter()const {return 'N';}
   std::string value_name()const   {return "color";}
   std::string dev_type()const {untested(); return "net";}
-  int       max_nodes()const {return 2;}
-  int       min_nodes()const {return 2;}
-  int       matrix_nodes()const {return 2;}
-  int       net_nodes()const {return 2;}
+  uint_t    max_nodes()const {return 2;}
+  uint_t    min_nodes()const {return 2;}
+  uint_t    matrix_nodes()const {return 2;}
+  uint_t    net_nodes()const {return 2;}
   bool      has_iv_probe()const {return true;}
   CARD*     clone()const     {return new DEV_NET(*this);}
   bool      print_type_in_spice()const {return false;}
   int       param_count()const  {return COMPONENT::param_count();}
-  std::string port_name(int i)const{
+  std::string port_name(uint_t i)const{
     assert(i>=0);
     assert(i<2);
     static std::string names[]={"p","n"};
