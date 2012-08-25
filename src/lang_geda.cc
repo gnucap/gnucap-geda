@@ -85,6 +85,8 @@ private:
 DISPATCHER<LANGUAGE>::INSTALL
     d(&language_dispatcher, lang_geda.name(), &lang_geda);
 /*----------------------------------------------------------------------*/
+static unsigned netnumber, nodenumber;
+/*----------------------------------------------------------------------*/
 /*----------------------------------------------------------------------*/
 //Finds type from find_type_in_string
 static void parse_type(CS& cmd, CARD* x)
@@ -120,6 +122,7 @@ static std::string* parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel)
         cmd>>dump;
     }
     std::string    _portvalue="_";
+    static unsigned number;
     try{
         cmd.get_line("");
     }catch(Exception_End_Of_Input&){
@@ -128,7 +131,7 @@ static std::string* parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel)
     std::string temp=(cmd.fullstring()).substr(0,1);
     if(temp!="{"){
         if(ismodel and x){
-            _portvalue="port"+_portvalue+to_string(rand()%10000);
+            _portvalue="port"+_portvalue+to_string(number++);
             x->set_port_by_index(index,_portvalue);
             return NULL;
         }else{
@@ -324,18 +327,18 @@ static void parse_net(CS& cmd, COMPONENT* x)
         //lang_geda.nets.push_back(x);
         //To check if any of the previous nodes have same placement.
         x->set_param_by_name("color",parsedvalue[4]);
-        x->set_label("net"+to_string(rand()%10000)); //BUG : names may coincide!. Doesn't matter? Or try some initialisation method. (latch like digital)
+        x->set_label("net"+to_string(netnumber++)); //BUG : names may coincide!. Doesn't matter? Or try some initialisation method. (latch like digital)
 
         std::string _portvalue=findplacewithsameposition(x,parsedvalue[0],parsedvalue[1]);
         if(_portvalue==""){
-            _portvalue="node"+to_string(rand()%10000);
+            _portvalue="node"+to_string(nodenumber++);
             create_place("place "+_portvalue+" "+parsedvalue[0]+" "+parsedvalue[1],x);
         }
         x->set_port_by_index(0,_portvalue);
 
         _portvalue=findplacewithsameposition(x,parsedvalue[2],parsedvalue[3]);
         if(_portvalue==""){
-            _portvalue="node"+to_string(rand()%10000);
+            _portvalue="node"+to_string(nodenumber++);
             create_place("place "+_portvalue+" "+parsedvalue[2]+" "+parsedvalue[3],x);
         }
         x->set_port_by_index(1,_portvalue);
@@ -447,7 +450,7 @@ static void parse_component(CS& cmd,COMPONENT* x){
         //new__instance(cmd,NULL,Scope); //cmd : can create. Scope? how to get Scope? Yes!
         std::string _portvalue=findplacewithsameposition(x,newx,newy);
         if (_portvalue==""){
-            _portvalue="node_"+to_string(rand()%10000);
+            _portvalue="node_"+to_string(nodenumber++);
             create_place("place "+_portvalue+" "+newx+" "+newy,x);
         }
         x->set_port_by_index(index,_portvalue);
@@ -494,8 +497,9 @@ static void parse_component(CS& cmd,COMPONENT* x){
             }
         }
     }
+	 static unsigned anothernumber;
     if(x->short_label()==""){
-        x->set_label(basename+to_string(rand()));
+        x->set_label(basename+to_string(anothernumber++));
     }
     lang_geda._componentmod=true;
     trace0("got out of parse_component");
@@ -941,7 +945,6 @@ public:
       lang_geda._no_of_lines=0;
       lang_geda._componentmod=true;
       lang_geda._gotaline=false;
-      srand(time(NULL));
       command("options lang=gschem", Scope);
     }
 } p8;
