@@ -22,7 +22,7 @@ while [ ! -z $1 ]; do
 
 	case $1 in
 		*.sch)
-			exec 3>$output
+			eval "exec 3>$output"
 			echo -e "load lang_geda.so\n\
 gschem
 include $1
