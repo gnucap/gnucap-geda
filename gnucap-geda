@@ -16,21 +16,34 @@ synopsis: $1 [-s|-v|-g] [-o outfile] file.sch"
 
 target=verilog
 dot=
+printcmd=no
 output="&1"
 
 while [ ! -z $1 ]; do
 
 	case $1 in
 		*.sch)
-			eval "exec 3>$output"
-			echo -e "load lang_geda.so\n\
+			if [ $printcmd = "yes" ]; then
+				echo -e "load lang_geda.so\n\
+gschem
+include $1
+$target
+$dot""list
+$dot""end"
+			else
+				eval "exec 3>$output"
+				echo -e "load lang_geda.so\n\
 gschem
 include $1
 $target
 $dot> /dev/fd/3
 $dot""list
 $dot""end" | gnucap >/dev/null
-			exec 3>&-
+				exec 3>&-
+			fi
+			;;
+		-c|--command)
+			printcmd=yes
 			;;
 		-h|--help)
 			echo -e $helptext
