@@ -18,7 +18,8 @@ AC_PROG_LIBTOOL
 # Checks for libraries.
 
 # Checks for header files.
-CPPFLAGS+=$(gnucap-conf --cppflags)
+GC_CPPFLAGS+=$(gnucap-conf --cppflags)
+AC_SUBST([GC_CPPFLAGS])
 
 # Checks for typedefs, structures, and compiler characteristics.
 
@@ -55,8 +56,9 @@ AC_OUTPUT
 AC_MSG_RESULT([
 ** Configuration summary for $PACKAGE $VERSION:
 
-   geda:       $geda
-   prefix:     $prefix
-   CPPFLAGS:   $CPPFLAGS
-   plugindir:  $gnucap_libdir
+   geda:         $geda
+   prefix:       $prefix
+   GC_CPPFLAGS:  $GC_CPPFLAGS
+   GEDA_CFLAGS:  $GEDA_CFLAGS
+   plugindir:    $gnucap_libdir
 ])
