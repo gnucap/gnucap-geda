@@ -47,7 +47,8 @@ PKG_CHECK_MODULES(GEDA, [libgeda >= 20110115],
 old_CPPFLAGS=${CPPFLAGS}
 CPPFLAGS+=${GEDA_CFLAGS}
 AC_CHECK_HEADERS([libgeda/libgeda.h],
-                 [ AC_DEFINE([HAVE_GEDA], [1], [geda present]) ], , )
+                 [ AC_DEFINE([HAVE_GEDA], [1], [geda present]) ],
+					  AC_MSG_ERROR([libgeda.h not available]), )
 CPPFLAGS=${old_CPPFLAGS}
 
 AC_CONFIG_FILES([Makefile examples/Makefile src/Makefile])
