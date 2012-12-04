@@ -70,7 +70,9 @@ public:
     MODEL_CARD*	  parse_paramset(CS&, MODEL_CARD*);
     MODEL_SUBCKT* parse_module(CS&, MODEL_SUBCKT*);
     COMPONENT*	  parse_instance(CS&, COMPONENT*);
-    std::string	  find_type_in_string(CS&);
+    std::string	  find_type_in_string(CS&) const;
+    // gnucap backwards compatibility
+    std::string	  find_type_in_string(CS&x) {unreachable(); return const_cast<const LANG_GEDA*>(this)->find_type_in_string(x);}
     MODEL_SUBCKT* parse_componmod(CS&, MODEL_SUBCKT*);
 
 private:
@@ -631,7 +633,7 @@ COMPONENT* LANG_GEDA::parse_instance(CS& cmd, COMPONENT* x)
  * Will check for type graphical (type=dev_comment) else type will be
  * net or bus or pin or component\
  */
-std::string LANG_GEDA::find_type_in_string(CS& cmd)
+std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 {
     unsigned here = cmd.cursor(); //store cursor position to reset back later
     std::string type;   //stores type : should check device attribute..
