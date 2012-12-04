@@ -176,35 +176,6 @@ static std::string* parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel)
     }
 }
 /*--------------------------------------------------------------------------*/
-static std::string find_file_given_name(std::string basename)
-{
-#ifdef HAVE_GEDA
-    const char* geda = s_path_sys_data();
-#else
-    const char* geda = GEDA_DATA;
-#endif
-    char gedasym[5+strlen(geda)];
-    sprintf(gedasym, "%s/sym", geda);
-    char *p[] = {gedasym,NULL};
-    FTS* dir=fts_open(p,FTS_NOCHDIR, NULL);
-    if(!dir){
-        std::cout<<"Not opened\n";
-        return "";
-    }
-    assert(dir);
-    FTSENT* node;
-    std::string dirname="";
-    while(node=fts_read(dir)){
-        if(node->fts_info & FTS_F && basename==node->fts_name){
-            dirname=node->fts_path;
-        }
-    }
-    if(dirname==""){
-        std::cout<<"No symbol file for "+basename<<std::endl;
-    }
-    return dirname;
-}
-/*--------------------------------------------------------------------------*/
 static std::vector<std::string*> parse_symbol_file(COMPONENT* x, std::string basename)
 {
     const CLibSymbol* symbol = s_clib_get_symbol_by_name(basename.c_str());
