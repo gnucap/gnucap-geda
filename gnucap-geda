@@ -14,6 +14,7 @@ synopsis: $1 [-s|-v|-g] [-o outfile] file.sch"
 
 [ -z $1 ] && echo -e $helptext
 
+GUILE_WARN_DEPRECATED=no
 target=verilog
 dot=
 printcmd=no
@@ -59,6 +60,9 @@ $dot""end" | gnucap >/dev/null
 		-g|--geda|gschem)
 			target=gschem
 			dot=
+			;;
+		-d)
+			GUILE_WARN_DEPRECATED=detailed
 			;;
 		-o)
 			shift
