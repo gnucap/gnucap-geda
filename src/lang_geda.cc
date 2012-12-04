@@ -942,7 +942,7 @@ class CMD_C : public CMD {
     void do_it(CS& cmd, CARD_LIST* Scope)
     {
       MODEL_SUBCKT* new_compon = new MODEL_SUBCKT;
-      MODEL_SUBCKT* temp= new MODEL_SUBCKT;
+      MODEL_SUBCKT* temp;
       assert(new_compon);
       assert(!new_compon->owner());
       assert(new_compon->subckt());
