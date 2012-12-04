@@ -39,6 +39,16 @@ extern "C"{
 namespace {
 /*--------------------------------------------------------------------------*/
 class LANG_GEDA : public LANGUAGE {
+    TOPLEVEL* pr_current;
+public:
+    LANG_GEDA() : LANGUAGE(){
+      trace0("gedainit");
+        scm_init_guile(); // urghs why?
+        libgeda_init();
+        pr_current = s_toplevel_new ();
+        g_rc_parse(pr_current, "gschemrc", NULL);
+       // i_vars_set (pr_current); // why?
+      }
 
 public:
     //
@@ -72,7 +82,7 @@ public:
     COMPONENT*	  parse_instance(CS&, COMPONENT*);
     std::string	  find_type_in_string(CS&) const;
     // gnucap backwards compatibility
-    std::string	  find_type_in_string(CS&x) {unreachable(); return const_cast<const LANG_GEDA*>(this)->find_type_in_string(x);}
+    std::string	  find_type_in_string(CS&x) {return const_cast<const LANG_GEDA*>(this)->find_type_in_string(x);}
     MODEL_SUBCKT* parse_componmod(CS&, MODEL_SUBCKT*);
 
 private:
@@ -199,7 +209,14 @@ static std::string find_file_given_name(std::string basename)
 /*--------------------------------------------------------------------------*/
 static std::vector<std::string*> parse_symbol_file(COMPONENT* x, std::string basename)
 {
-    std::string filename=find_file_given_name(basename),dump;
+    const CLibSymbol* symbol = s_clib_get_symbol_by_name(basename.c_str());
+    if(!symbol){
+      throw(Exception_Cant_Find("parsing gedanetlist", basename ));
+    }
+    std::string filename(s_clib_symbol_get_filename(symbol));
+    std::string dump;
+
+    trace3("parse_symbol_file", basename, filename, hp(symbol));
     CS sym_cmd(CS::_INC_FILE, filename);
     //Now parse the sym_cmd which will get lines
     int index=0;
@@ -392,7 +409,7 @@ static void parse_net(CS& cmd, COMPONENT* x)
 }
 /*--------------------------------------------------------------------------*/
 static void parse_component(CS& cmd,COMPONENT* x){
-    trace0("got into parse_component");
+    trace1("got into parse_component", x->long_label());
     assert(x);
     std::string component_x, component_y, mirror, angle, dump,basename;
     std::string type=lang_geda.find_type_in_string(cmd);
@@ -562,7 +579,7 @@ MODEL_SUBCKT* LANG_GEDA::parse_module(CS& cmd, MODEL_SUBCKT* x)
 
 MODEL_SUBCKT* LANG_GEDA::parse_componmod(CS& cmd, MODEL_SUBCKT* x)
 {
-    trace0("got into parse_componmod");
+    trace1("got into parse_componmod", cmd.fullstring());
     assert(x);
     cmd.reset();
     std::string type = find_type_in_string(cmd);
@@ -668,13 +685,11 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
  */
 void LANG_GEDA::parse_top_item(CS& cmd, CARD_LIST* Scope)
 {
-    trace0("got into parse_top_item");
+    trace2("got into parse_top_item", cmd.fullstring(), _gotaline);
     if(!_gotaline){
         cmd.get_line("gnucap-geda>");
-        trace0("false _gotaline");
     }else{
         _gotaline=false;
-        trace0("true _gotaline");
     }
     new__instance(cmd, NULL, Scope);
 }
