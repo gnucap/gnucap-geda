@@ -678,7 +678,7 @@ void LANG_GEDA::parse_top_item(CS& cmd, CARD_LIST* Scope)
         _gotaline=false;
     }
 
-    // if instance doesnt exist, this might be interpreted as command...
+    //problem: if new__instance interprets as command, Scope is lost.
     new__instance(cmd, sch_Scope, Scope);
 }
 /*----------------------------------------------------------------------*/
@@ -957,6 +957,7 @@ public:
       string filename="";
       cmd >> filename;
       if(filename!=""){
+          trace1("reading file", hp(Scope));
           read_file(filename, Scope);
       }else{
           command("options lang=gschem", Scope);
@@ -971,6 +972,7 @@ void CMD_GSCHEM::read_file(string f, CARD_LIST* Scope)
 
     try{
     for(;;){
+        trace1("CMD_GSCHEM::read_file", hp(Scope));
         lang_geda.parse_top_item(cmd, Scope);
     }
 
@@ -984,7 +986,7 @@ DISPATCHER<CMD>::INSTALL
 class CMD_C : public CMD {
     void do_it(CS& cmd, CARD_LIST* Scope)
     {
-      untested();
+      trace1("CMD_C::do_it", hp(Scope));
       CARD* c = device_dispatcher["symbol"];
       if(!c) c = device_dispatcher["subckt"]; // fallback to dummy
       assert(c);
@@ -996,6 +998,7 @@ class CMD_C : public CMD {
       assert(!new_compon->owner());
       assert(new_compon->subckt());
       assert(new_compon->subckt()->is_empty());
+      // BUG: new_compon doesnt know its scope!
       if (lang_geda.parse_componmod(cmd, new_compon)) {
         // this is not graphical
         lang_geda._componentname=new_compon->short_label();
@@ -1004,11 +1007,14 @@ class CMD_C : public CMD {
           untested();
           delete clone;
         }else{
-          Scope->push_back(new_compon);
+            trace1("CMD_C pushback", hp(Scope));
+            Scope->push_back(new_compon);
         }
 
         lang_geda._componentmod=false;
-        lang_geda.new__instance(cmd, NULL/*?*/, Scope);
+//        cmd.reset();
+        trace1("not calling new__instance ", cmd.fullstring());
+        lang_geda._gotaline=true;
       } else {
         untested();
         delete clone;
