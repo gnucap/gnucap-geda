@@ -92,7 +92,7 @@ private:
     void print_comment(OMSTREAM&, const DEV_COMMENT*);
     void print_command(OMSTREAM& o, const DEV_DOT* c);
 
-    void create_place(std::string cmdstr,COMPONENT* x)const;
+    void create_place(string name, string x, string y, COMPONENT* c)const;
     void parse_component(CS& cmd,COMPONENT* x);
 
 }lang_geda;
@@ -238,10 +238,11 @@ static void parse_place(CS& cmd, COMPONENT* x)
     x->set_port_by_index(0,_portname);
 }
 /*--------------------------------------------------------------------------*/
-void LANG_GEDA::create_place(std::string cmdstr,COMPONENT* x)const
+void LANG_GEDA::create_place(string n, string x, string y, COMPONENT* c)const
 {
+    string cmdstr = "place "+n+" "+x+" "+y;
     CS place_cmd(CS::_STRING,cmdstr);
-    OPT::language->new__instance(place_cmd, sch_Scope, x->scope());
+    OPT::language->new__instance(place_cmd, sch_Scope, c->scope());
 }
 /*--------------------------------------------------------------------------*/
 static std::string findplacewithsameposition(COMPONENT* x,std::string xco,std::string yco)
@@ -325,14 +326,14 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
         std::string _portvalue=findplacewithsameposition(x,parsedvalue[0],parsedvalue[1]);
         if(_portvalue==""){
             _portvalue="node"+to_string(nodenumber++);
-            create_place("place "+_portvalue+" "+parsedvalue[0]+" "+parsedvalue[1],x);
+            create_place(_portvalue, parsedvalue[0], parsedvalue[1], x);
         }
         x->set_port_by_index(0,_portvalue);
 
         _portvalue=findplacewithsameposition(x,parsedvalue[2],parsedvalue[3]);
         if(_portvalue==""){
             _portvalue="node"+to_string(nodenumber++);
-            create_place("place "+_portvalue+" "+parsedvalue[2]+" "+parsedvalue[3],x);
+            create_place(_portvalue, parsedvalue[2], parsedvalue[3], x);
         }
         x->set_port_by_index(1,_portvalue);
 
@@ -446,7 +447,7 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x){
         std::string _portvalue=findplacewithsameposition(x,newx,newy);
         if (_portvalue==""){
             _portvalue="node_"+to_string(nodenumber++);
-            create_place("place "+_portvalue+" "+newx+" "+newy,x);
+            create_place(_portvalue, newx, newy, x);
         }
         x->set_port_by_index(index,_portvalue);
         ++index;
