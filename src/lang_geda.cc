@@ -80,10 +80,12 @@ public:
     MODEL_SUBCKT* parse_module(CS&, MODEL_SUBCKT*);
     COMPONENT*    parse_componmod(CS&, COMPONENT*);
     COMPONENT*	  parse_instance(CS&, COMPONENT*);
+    std::string*  parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel);
     std::string	  find_type_in_string(CS&) const;
     // gnucap backwards compatibility
     std::string	  find_type_in_string(CS&x) {return const_cast<const LANG_GEDA*>(this)->find_type_in_string(x);}
     void parse_net(CS& cmd, COMPONENT* x) const;
+    void parse_place(CS& cmd, COMPONENT* x);
 
 private:
     void print_paramset(OMSTREAM&, const MODEL_CARD*);
@@ -91,9 +93,11 @@ private:
     void print_instance(OMSTREAM&, const COMPONENT*);
     void print_comment(OMSTREAM&, const DEV_COMMENT*);
     void print_command(OMSTREAM& o, const DEV_DOT* c);
+    void print_component(OMSTREAM& o, const COMPONENT* x);
 
     void create_place(string name, string x, string y, COMPONENT* c)const;
     void parse_component(CS& cmd,COMPONENT* x);
+    std::vector<std::string*> parse_symbol_file(COMPONENT* x, std::string basename);
 
 }lang_geda;
 
@@ -112,11 +116,11 @@ static void parse_type(CS& cmd, CARD* x)
       x->set_dev_type(new_type);
 }
 /*--------------------------------------------------------------------------*/
-static std::string* parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel)
+std::string* LANG_GEDA::parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel)
 {
     //assert(x); can parse NULL also
     trace0("Got into parse_pin");
-    std::string type=OPT::language->find_type_in_string(cmd),dump;
+    std::string type = find_type_in_string(cmd),dump;
     assert(type=="pin");
     cmd>>"P";
     std::string* coord = new std::string[3];
@@ -181,7 +185,7 @@ static std::string* parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel)
     }
 }
 /*--------------------------------------------------------------------------*/
-static std::vector<std::string*> parse_symbol_file(COMPONENT* x, std::string basename)
+std::vector<std::string*> LANG_GEDA::parse_symbol_file(COMPONENT* x, std::string basename)
 {
     const CLibSymbol* symbol = s_clib_get_symbol_by_name(basename.c_str());
     if(!symbol){
@@ -201,7 +205,7 @@ static std::vector<std::string*> parse_symbol_file(COMPONENT* x, std::string bas
         }catch (Exception_End_Of_Input&){
             break;
         }
-        std::string linetype=OPT::language->find_type_in_string(sym_cmd);
+        std::string linetype = find_type_in_string(sym_cmd);
         bool ismodel=false;
         if (x){
             if(x->short_label()=="!_"+basename){
@@ -225,11 +229,11 @@ static std::vector<std::string*> parse_symbol_file(COMPONENT* x, std::string bas
 }
 /*--------------------------------------------------------------------------*/
 //place <nodename> x y
-static void parse_place(CS& cmd, COMPONENT* x)
+void LANG_GEDA::parse_place(CS& cmd, COMPONENT* x)
 {
-    trace0("Got into parse_place");
+    trace1("parse_place", x->long_label());
     assert(x);
-    assert(OPT::language->find_type_in_string(cmd)=="place");
+    assert(find_type_in_string(cmd)=="place");
     cmd>>"place";
     std::string _portname,_x,_y;
     cmd>>" ">>_portname>>" ">>_x>>" ">>_y;
@@ -242,7 +246,7 @@ void LANG_GEDA::create_place(string n, string x, string y, COMPONENT* c)const
 {
     string cmdstr = "place "+n+" "+x+" "+y;
     CS place_cmd(CS::_STRING,cmdstr);
-    OPT::language->new__instance(place_cmd, sch_Scope, c->scope());
+    lang_geda.new__instance(place_cmd, sch_Scope, c->scope());
 }
 /*--------------------------------------------------------------------------*/
 static std::string findplacewithsameposition(COMPONENT* x,std::string xco,std::string yco)
@@ -344,7 +348,7 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
             //create new net from nodeonthisnet to one of edges of net.
             std::string netcmdstr="N "+parsedvalue[0]+" "+parsedvalue[1]+" "+nodeonthisnet[0]+" "+nodeonthisnet[1]+" 5";
             CS net_cmd(CS::_STRING,netcmdstr);
-            OPT::language->new__instance(net_cmd, sch_Scope, x->scope());
+            lang_geda.new__instance(net_cmd, sch_Scope, x->scope());
         }
         //To check if there are any attributes
         try {
@@ -565,14 +569,13 @@ MODEL_SUBCKT* LANG_GEDA::parse_module(CS& cmd, MODEL_SUBCKT* x)
 /*--------------------------------------------------------------------------*/
 COMPONENT* LANG_GEDA::parse_componmod(CS& cmd, COMPONENT* x)
 {
-    trace1("got into parse_componmod", cmd.fullstring());
+    trace1("LANG_GEDA::parse_componmod", cmd.fullstring());
     assert(x);
     cmd.reset();
     std::string type = find_type_in_string(cmd);
     trace0("found string type");
     assert(type=="C");
     std::string component_x, component_y, mirror, angle, dump,basename;
-    bool isgraphical=false;
     cmd>>"C";
     cmd>>component_x>>" ">>component_y>>" ">>dump>>" ">>angle>>" ">>mirror>>" ">>basename;
     trace0("got params");
@@ -583,7 +586,7 @@ COMPONENT* LANG_GEDA::parse_componmod(CS& cmd, COMPONENT* x)
     std::vector<std::string*> coord=parse_symbol_file(x,basename);
     trace0("parsed symbol file");
     if(coord.size()==0){
-        isgraphical=true;
+        //graphical
         return NULL;
     }
 
@@ -598,7 +601,7 @@ COMPONENT* LANG_GEDA::parse_componmod(CS& cmd, COMPONENT* x)
 /*--------------------------------------------------------------------------*/
 COMPONENT* LANG_GEDA::parse_instance(CS& cmd, COMPONENT* x)
 {
-    trace0("got into parse_instance");
+    trace1("parse_instance", cmd.fullstring());
     cmd.reset();
     parse_type(cmd, x); //parse type will parse the component type and set_dev_type
     if (x->dev_type()=="net") {
@@ -797,7 +800,7 @@ static void print_net(OMSTREAM& o, const COMPONENT* x)
  *  <params>
  * }
  */
-static void print_component(OMSTREAM& o, const COMPONENT* x)
+void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
 {
     assert(x);
     trace0("Got into print_component");
@@ -943,13 +946,38 @@ class CMD_GSCHEM : public CMD {
 public:
     void do_it(CS& cmd, CARD_LIST* Scope)
     {
+      
+      // BUG breaks direct "options lang=gschem", does it?
       lang_geda._mode=lang_geda.mATTRIBUTE;
       lang_geda._no_of_lines=0;
       lang_geda._componentmod=true;
       lang_geda._gotaline=false;
-      command("options lang=gschem", Scope);
+      //
+
+      string filename="";
+      cmd >> filename;
+      if(filename!=""){
+          read_file(filename, Scope);
+      }else{
+          command("options lang=gschem", Scope);
+      }
     }
+    void read_file(string, CARD_LIST* Scope);
 } p8;
+/*----------------------------------------------------------------------*/
+void CMD_GSCHEM::read_file(string f, CARD_LIST* Scope)
+{
+    CS cmd(CS::_INC_FILE, f);
+
+    try{
+    for(;;){
+        lang_geda.parse_top_item(cmd, Scope);
+    }
+
+    }catch (Exception_End_Of_Input& e){
+    }
+}
+/*----------------------------------------------------------------------*/
 DISPATCHER<CMD>::INSTALL
     d8(&command_dispatcher, "gschem", &p8);
 /*----------------------------------------------------------------------*/
@@ -968,7 +996,7 @@ class CMD_C : public CMD {
       assert(!new_compon->owner());
       assert(new_compon->subckt());
       assert(new_compon->subckt()->is_empty());
-      if ( COMPONENT* temp=lang_geda.parse_componmod(cmd, new_compon)) {
+      if (lang_geda.parse_componmod(cmd, new_compon)) {
         // this is not graphical
         lang_geda._componentname=new_compon->short_label();
         CARD_LIST::const_iterator i = Scope->find_(new_compon->short_label());
@@ -995,4 +1023,4 @@ DISPATCHER<CMD>::INSTALL
 }
 /*----------------------------------------------------------------------*/
 /*----------------------------------------------------------------------*/
-// vim:ts=8:sw=2:et
+// vim:ts=8:sw=4:et
