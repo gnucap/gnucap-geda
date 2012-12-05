@@ -38,8 +38,9 @@ namespace {
 /*--------------------------------------------------------------------------*/
 class LANG_GEDA : public LANGUAGE {
     TOPLEVEL* pr_current;
+    MODEL_SUBCKT* sch_Scope;
 public:
-    LANG_GEDA() : LANGUAGE(){
+    LANG_GEDA() : sch_Scope(NULL), LANGUAGE(){
       trace0("gedainit");
         scm_init_guile(); // urghs why?
         libgeda_init();
@@ -77,11 +78,12 @@ public:
     DEV_DOT*	  parse_command(CS&, DEV_DOT*);
     MODEL_CARD*	  parse_paramset(CS&, MODEL_CARD*);
     MODEL_SUBCKT* parse_module(CS&, MODEL_SUBCKT*);
+    COMPONENT*    parse_componmod(CS&, COMPONENT*);
     COMPONENT*	  parse_instance(CS&, COMPONENT*);
     std::string	  find_type_in_string(CS&) const;
     // gnucap backwards compatibility
     std::string	  find_type_in_string(CS&x) {return const_cast<const LANG_GEDA*>(this)->find_type_in_string(x);}
-    MODEL_SUBCKT* parse_componmod(CS&, MODEL_SUBCKT*);
+    void parse_net(CS& cmd, COMPONENT* x) const;
 
 private:
     void print_paramset(OMSTREAM&, const MODEL_CARD*);
@@ -89,6 +91,9 @@ private:
     void print_instance(OMSTREAM&, const COMPONENT*);
     void print_comment(OMSTREAM&, const DEV_COMMENT*);
     void print_command(OMSTREAM& o, const DEV_DOT* c);
+
+    void create_place(std::string cmdstr,COMPONENT* x)const;
+    void parse_component(CS& cmd,COMPONENT* x);
 
 }lang_geda;
 
@@ -233,10 +238,10 @@ static void parse_place(CS& cmd, COMPONENT* x)
     x->set_port_by_index(0,_portname);
 }
 /*--------------------------------------------------------------------------*/
-static void create_place(std::string cmdstr,COMPONENT* x)
+void LANG_GEDA::create_place(std::string cmdstr,COMPONENT* x)const
 {
     CS place_cmd(CS::_STRING,cmdstr);
-    OPT::language->new__instance(place_cmd,NULL,x->scope());
+    OPT::language->new__instance(place_cmd, sch_Scope, x->scope());
 }
 /*--------------------------------------------------------------------------*/
 static std::string findplacewithsameposition(COMPONENT* x,std::string xco,std::string yco)
@@ -290,7 +295,7 @@ static std::string* findnodeonthisnet(CARD *x, std::string x0, std::string y0, s
 // Need to go through all the nets. Anyway?
 // Need to save them in other forms? How to go through all cards?
 // Need to specify a name for a card?
-static void parse_net(CS& cmd, COMPONENT* x)
+void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 {
     trace0("got into parse_net");
     assert(x);
@@ -338,7 +343,7 @@ static void parse_net(CS& cmd, COMPONENT* x)
             //create new net from nodeonthisnet to one of edges of net.
             std::string netcmdstr="N "+parsedvalue[0]+" "+parsedvalue[1]+" "+nodeonthisnet[0]+" "+nodeonthisnet[1]+" 5";
             CS net_cmd(CS::_STRING,netcmdstr);
-            OPT::language->new__instance(net_cmd,NULL,x->scope());
+            OPT::language->new__instance(net_cmd, sch_Scope, x->scope());
         }
         //To check if there are any attributes
         try {
@@ -377,11 +382,12 @@ static void parse_net(CS& cmd, COMPONENT* x)
     }
 }
 /*--------------------------------------------------------------------------*/
-static void parse_component(CS& cmd,COMPONENT* x){
+void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x){
     trace1("got into parse_component", x->long_label());
     assert(x);
     std::string component_x, component_y, mirror, angle, dump,basename;
     std::string type=lang_geda.find_type_in_string(cmd);
+    std::string source("");
     cmd >> type;
     cmd>>component_x>>" ">>component_y>>" ">>dump>>" ">>angle>>" ">>mirror>>" ">>basename;
     //To get port names and values from symbol?
@@ -431,6 +437,7 @@ static void parse_component(CS& cmd,COMPONENT* x){
                 break;
             }
         }else{
+            unreachable();
         //not correct mirror!
         }
         //delete (*i);
@@ -479,6 +486,8 @@ static void parse_component(CS& cmd,COMPONENT* x){
                     x->set_dev_type(_paramvalue);
                 }else if (_paramname=="refdes" && _paramvalue!="?"){
                     x->set_label(_paramvalue);
+//                }else if (_paramname=="source"){
+//                    source = _paramvalue;
                 }else{
                     x->set_param_by_name(_paramname,_paramvalue);
                 }
@@ -489,6 +498,10 @@ static void parse_component(CS& cmd,COMPONENT* x){
     if(x->short_label()==""){
         x->set_label(basename+to_string(anothernumber++));
     }
+    if(source!=""){untested();
+        trace1("parse_component", source);
+    }
+
     lang_geda._componentmod=true;
     trace0("got out of parse_component");
 }
@@ -523,13 +536,16 @@ DEV_COMMENT* LANG_GEDA::parse_comment(CS& cmd, DEV_COMMENT* x)
 /*--------------------------------------------------------------------------*/
 DEV_DOT* LANG_GEDA::parse_command(CS& cmd, DEV_DOT* x)
 {
-    trace0("got into parse_command");
+    trace1("LANG_GEDA::parse_command", cmd.fullstring());
     assert(x);
     x->set(cmd.fullstring());
+    untested();
     CARD_LIST* scope = (x->owner()) ? x->owner()->subckt() : &CARD_LIST::card_list;
+    untested();
 
     cmd.reset();
     CMD::cmdproc(cmd, scope);
+    untested();
     delete x;
     return NULL;
 }
@@ -545,8 +561,8 @@ MODEL_SUBCKT* LANG_GEDA::parse_module(CS& cmd, MODEL_SUBCKT* x)
   //To parse heirarchical schematics
   return NULL;
 }
-
-MODEL_SUBCKT* LANG_GEDA::parse_componmod(CS& cmd, MODEL_SUBCKT* x)
+/*--------------------------------------------------------------------------*/
+COMPONENT* LANG_GEDA::parse_componmod(CS& cmd, COMPONENT* x)
 {
     trace1("got into parse_componmod", cmd.fullstring());
     assert(x);
@@ -567,13 +583,10 @@ MODEL_SUBCKT* LANG_GEDA::parse_componmod(CS& cmd, MODEL_SUBCKT* x)
     trace0("parsed symbol file");
     if(coord.size()==0){
         isgraphical=true;
-    }
-    if (isgraphical==true) {
         return NULL;
     }
-    else{
-        cmd.reset();
-    }
+
+    cmd.reset();
     trace0("got out");
     /*type = "graphical";
     x->set_dev_type(type);
@@ -654,13 +667,15 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
  */
 void LANG_GEDA::parse_top_item(CS& cmd, CARD_LIST* Scope)
 {
-    trace2("got into parse_top_item", cmd.fullstring(), _gotaline);
+    trace2("LANG_GEDA::parse_top_item", cmd.fullstring(), _gotaline);
     if(!_gotaline){
         cmd.get_line("gnucap-geda>");
     }else{
         _gotaline=false;
     }
-    new__instance(cmd, NULL, Scope);
+
+    // if instance doesnt exist, this might be interpreted as command...
+    new__instance(cmd, sch_Scope, Scope);
 }
 /*----------------------------------------------------------------------*/
 // Code for Printing schematic follows
@@ -937,23 +952,39 @@ public:
 DISPATCHER<CMD>::INSTALL
     d8(&command_dispatcher, "gschem", &p8);
 /*----------------------------------------------------------------------*/
-/*----------------------------------------------------------------------*/
 class CMD_C : public CMD {
     void do_it(CS& cmd, CARD_LIST* Scope)
     {
-      MODEL_SUBCKT* new_compon = new MODEL_SUBCKT;
-      MODEL_SUBCKT* temp;
+      untested();
+      CARD* c = device_dispatcher["symbol"];
+      if(!c) c = device_dispatcher["subckt"]; // fallback to dummy
+      assert(c);
+      CARD* clone = c->clone();
+      COMPONENT* new_compon = prechecked_cast<COMPONENT*>(clone);
+      untested();
+
       assert(new_compon);
       assert(!new_compon->owner());
       assert(new_compon->subckt());
       assert(new_compon->subckt()->is_empty());
-      temp=lang_geda.parse_componmod(cmd, new_compon);
-      if(temp){
-        Scope->push_back(new_compon);
+      if ( COMPONENT* temp=lang_geda.parse_componmod(cmd, new_compon)) {
+        // this is not graphical
         lang_geda._componentname=new_compon->short_label();
+        CARD_LIST::const_iterator i = Scope->find_(new_compon->short_label());
+        if (i != Scope->end()) {
+          untested();
+          delete clone;
+        }else{
+          Scope->push_back(new_compon);
+        }
+
         lang_geda._componentmod=false;
-        lang_geda.new__instance(cmd,NULL,Scope);
+        lang_geda.new__instance(cmd, NULL/*?*/, Scope);
+      } else {
+        untested();
+        delete clone;
       }
+
     }
 } p2;
 DISPATCHER<CMD>::INSTALL
