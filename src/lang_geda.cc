@@ -80,7 +80,7 @@ public:
     MODEL_SUBCKT* parse_module(CS&, MODEL_SUBCKT*);
     COMPONENT*    parse_componmod(CS&, COMPONENT*);
     COMPONENT*	  parse_instance(CS&, COMPONENT*);
-    std::string*  parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel);
+    std::string*  parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel)const;
     std::string	  find_type_in_string(CS&) const;
     // gnucap backwards compatibility
     std::string	  find_type_in_string(CS&x) {return const_cast<const LANG_GEDA*>(this)->find_type_in_string(x);}
@@ -97,7 +97,7 @@ private:
 
     void create_place(string name, string x, string y, COMPONENT* c)const;
     void parse_component(CS& cmd,COMPONENT* x);
-    std::vector<std::string*> parse_symbol_file(COMPONENT* x, std::string basename);
+    std::vector<std::string*> parse_symbol_file(CARD* x, std::string basename) const;
 
 }lang_geda;
 
@@ -116,7 +116,7 @@ static void parse_type(CS& cmd, CARD* x)
       x->set_dev_type(new_type);
 }
 /*--------------------------------------------------------------------------*/
-std::string* LANG_GEDA::parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel)
+std::string* LANG_GEDA::parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel)const
 {
     //assert(x); can parse NULL also
     trace0("Got into parse_pin");
@@ -185,8 +185,10 @@ std::string* LANG_GEDA::parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel
     }
 }
 /*--------------------------------------------------------------------------*/
-std::vector<std::string*> LANG_GEDA::parse_symbol_file(COMPONENT* x, std::string basename)
+std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
+            string basename)const
 {
+    COMPONENT* c = dynamic_cast<COMPONENT*>(x);
     const CLibSymbol* symbol = s_clib_get_symbol_by_name(basename.c_str());
     if(!symbol){
       throw(Exception_Cant_Find("parsing gedanetlist", basename ));
@@ -194,7 +196,13 @@ std::vector<std::string*> LANG_GEDA::parse_symbol_file(COMPONENT* x, std::string
     std::string filename(s_clib_symbol_get_filename(symbol));
     std::string dump;
 
-    trace3("parse_symbol_file", basename, filename, hp(symbol));
+    // name of the symbol category (collection name)
+    // const char* sourcename = s_clib_source_get_name (s_clib_symbol_get_source(symbol));
+    //
+    // the file contents as string (wtf?!)
+    // char* data = s_clib_symbol_get_data(symbol);
+
+    trace2("parse_symbol_file", basename, filename);
     CS sym_cmd(CS::_INC_FILE, filename);
     //Now parse the sym_cmd which will get lines
     int index=0;
@@ -212,8 +220,11 @@ std::vector<std::string*> LANG_GEDA::parse_symbol_file(COMPONENT* x, std::string
                 ismodel=true;
             }
         }
-        if (linetype=="pin"){
-            coord.push_back(parse_pin(sym_cmd,x,index++,ismodel));
+        if (linetype=="dev_comment"){
+            // nop
+        }else if (linetype=="pin"){
+            assert(c);
+            coord.push_back(parse_pin(sym_cmd,c,index++,ismodel));
         }else if(linetype=="graphical"){
             sym_cmd>>"graphical=";
             std::string value;
@@ -221,7 +232,29 @@ std::vector<std::string*> LANG_GEDA::parse_symbol_file(COMPONENT* x, std::string
             if(value=="1"){
                 return coord;
             }
+        }else if(linetype=="file"){
+            trace2("parse_symbol_file", sym_cmd.fullstring(), linetype);
+            sym_cmd>>"file=";
+            sym_cmd>>dump;
+            DEV_DOT* d = dynamic_cast<DEV_DOT*>(x);
+            if(d && dump != "?"){
+                d->set(d->s() + " " + dump);
+            }else{
+                untested();
+            }
+        }else if(linetype=="device"){
+            trace2("parse_symbol_file", sym_cmd.fullstring(), linetype);
+            sym_cmd>>"device=";
+            sym_cmd>>dump;
+            trace2("parse_symbol_file", linetype, dump);
+            DEV_DOT* d = dynamic_cast<DEV_DOT*>(x);
+            if(d){
+                d->set(dump);
+            }else{
+                incomplete();
+            }
         }else{
+            trace2("dump", sym_cmd.fullstring(), linetype);
             sym_cmd>>dump;
         }
     }
@@ -541,18 +574,58 @@ DEV_COMMENT* LANG_GEDA::parse_comment(CS& cmd, DEV_COMMENT* x)
 /*--------------------------------------------------------------------------*/
 DEV_DOT* LANG_GEDA::parse_command(CS& cmd, DEV_DOT* x)
 {
-    trace1("LANG_GEDA::parse_command", cmd.fullstring());
+    std::string component_x, component_y, mirror, angle, dump, basename;
+    cmd >> "C" >> component_x >> " " >> component_y >> " " >> dump
+        >> " " >> angle >> " " >> mirror >> " " >> basename;
+
     assert(x);
-    x->set(cmd.fullstring());
     untested();
     CARD_LIST* scope = (x->owner()) ? x->owner()->subckt() : &CARD_LIST::card_list;
     untested();
 
-    cmd.reset();
-    CMD::cmdproc(cmd, scope);
-    untested();
-    delete x;
-    return NULL;
+    if(basename.length() > 4 && basename.substr(basename.length()-4) == ".sym"){
+        parse_symbol_file( x, basename );
+    }else{
+        CMD::cmdproc(cmd, scope);
+        delete x;
+        return NULL;
+
+    }
+    trace2("LANG_GEDA::parse_command symbol done", x->s(), cmd.fullstring());
+
+    cmd.get_line(""); // bug? may fail and abort...
+
+    if (cmd.skip1("{")){
+        for(;;){
+            cmd.get_line("");
+            if(cmd >> "}"){
+                break;
+            }else if ( cmd >> "T" ){
+                cmd >> dump;
+            }else{
+                string pname = cmd.ctos("=","","");
+                string pvalue;
+                cmd >> "=" >> pvalue;
+                if(       pname=="pinlabel"){
+                }else if (pname=="pintype"){
+                }else if (pname=="file"){
+                    x->set(x->s() + " " + pvalue);
+                }
+            }
+        }
+    }else{
+        _gotaline=1;
+    }
+    trace1("LANG_GEDA::parse_command instance done", x->s());
+
+    if(0){ // now?
+        CMD::cmdproc(cmd, scope);
+        delete x;
+        return NULL;
+    } else {
+        untested();
+        return x;
+    }
 }
 /*--------------------------------------------------------------------------*/
 MODEL_CARD* LANG_GEDA::parse_paramset(CS& cmd, MODEL_CARD* x)
@@ -953,12 +1026,21 @@ public:
       lang_geda._componentmod=true;
       lang_geda._gotaline=false;
       //
+      
+      cmd.reset();
 
-      string filename="";
-      cmd >> filename;
-      if(filename!=""){
+      string arg="";
+      
+      cmd >> arg;
+      if(arg=="gschem"){
+          cmd >> arg;
+      } else {
+          arg="";
+      }
+
+      if(arg!=""){
           trace1("reading file", hp(Scope));
-          read_file(filename, Scope);
+          read_file(arg, Scope);
       }else{
           command("options lang=gschem", Scope);
       }
@@ -981,7 +1063,7 @@ void CMD_GSCHEM::read_file(string f, CARD_LIST* Scope)
 }
 /*----------------------------------------------------------------------*/
 DISPATCHER<CMD>::INSTALL
-    d8(&command_dispatcher, "gschem", &p8);
+    d8(&command_dispatcher, "gschem|v", &p8);
 /*----------------------------------------------------------------------*/
 class CMD_C : public CMD {
     void do_it(CS& cmd, CARD_LIST* Scope)
@@ -993,6 +1075,9 @@ class CMD_C : public CMD {
       CARD* clone = c->clone();
       COMPONENT* new_compon = prechecked_cast<COMPONENT*>(clone);
       untested();
+
+
+
 
       assert(new_compon);
       assert(!new_compon->owner());
