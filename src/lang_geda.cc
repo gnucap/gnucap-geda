@@ -55,7 +55,7 @@ public:
     mutable int _no_of_lines;
     mutable bool _componentmod;
     mutable std::string _componentname;
-    mutable bool _gotaline;
+    mutable bool _gotline;
     //
     std::string name()const {return "gschem";}
     bool case_insensitive()const {return false;}
@@ -185,6 +185,7 @@ std::string* LANG_GEDA::parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel
     }
 }
 /*--------------------------------------------------------------------------*/
+// FIXME: do symbol_type?
 std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
             string basename)const
 {
@@ -215,21 +216,24 @@ std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
         }
         std::string linetype = find_type_in_string(sym_cmd);
         bool ismodel=false;
-        if (x){
-            if(x->short_label()=="!_"+basename){
-                ismodel=true;
-            }
+        if (x && x->short_label()=="!_"+basename){
+            ismodel=true;
         }
         if (linetype=="dev_comment"){
             // nop
-        }else if (linetype=="pin"){
-            assert(c);
+        }else if (linetype=="pin" && (c || !x)){
+            trace2("parse_symbol_file parsing pin", basename, sym_cmd.fullstring());
             coord.push_back(parse_pin(sym_cmd,c,index++,ismodel));
+        }else if(linetype=="pin"){
+            // pin. this is a device, but we are in command mode
+            coord.push_back(new string("foo"));
+            return coord;
         }else if(linetype=="graphical"){
             sym_cmd>>"graphical=";
             std::string value;
             sym_cmd>>value;
             if(value=="1"){
+                trace0("graphical");
                 return coord;
             }
         }else if(linetype=="file"){
@@ -254,10 +258,11 @@ std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
                 incomplete();
             }
         }else{
-            trace2("dump", sym_cmd.fullstring(), linetype);
             sym_cmd>>dump;
+            trace3("pa dump", sym_cmd.fullstring(), linetype, dump);
         }
     }
+    trace0("done symbol");
     return coord;
 }
 /*--------------------------------------------------------------------------*/
@@ -393,7 +398,7 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
         std::string _paramvalue,_paramname,dump;
         if(temp!="{"){
             cmd.reset();
-            lang_geda._gotaline=true;
+            lang_geda._gotline = true;
             //OPT::language->new__instance(cmd,NULL,x->scope());
             return;
         }
@@ -502,7 +507,7 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x){
         trace0("no {");
         cmd.reset();
         lang_geda._componentmod=true;
-        lang_geda._gotaline=true;
+        lang_geda._gotline = true;
         //OPT::language->new__instance(cmd,NULL,x->scope());
         return;
     }
@@ -574,24 +579,52 @@ DEV_COMMENT* LANG_GEDA::parse_comment(CS& cmd, DEV_COMMENT* x)
 /*--------------------------------------------------------------------------*/
 DEV_DOT* LANG_GEDA::parse_command(CS& cmd, DEV_DOT* x)
 {
+    trace1("LANG_GEDA::parse_command", cmd.fullstring());
     std::string component_x, component_y, mirror, angle, dump, basename;
     cmd >> "C" >> component_x >> " " >> component_y >> " " >> dump
         >> " " >> angle >> " " >> mirror >> " " >> basename;
 
     assert(x);
-    untested();
     CARD_LIST* scope = (x->owner()) ? x->owner()->subckt() : &CARD_LIST::card_list;
-    untested();
 
+    bool graphical = 0;
     if(basename.length() > 4 && basename.substr(basename.length()-4) == ".sym"){
-        parse_symbol_file( x, basename );
+        untested();
+        std::vector<std::string*> coord = parse_symbol_file( x, basename );
+        graphical = !coord.size();
     }else{
+        cmd.reset();
         CMD::cmdproc(cmd, scope);
         delete x;
         return NULL;
 
     }
-    trace2("LANG_GEDA::parse_command symbol done", x->s(), cmd.fullstring());
+    trace3("LANG_GEDA::parse_command", cmd.fullstring(), basename, graphical);
+
+    // bug: parse_symbol_file needs to tell us, if it is a command
+    if( x->s() == "include"
+            || x->s() == "end"
+            || x->s() == "C"
+            || x->s() == "list" ){
+
+    }else{
+        trace3("LANG_GEDA::parse_command not a command", x->s(), basename, graphical);
+        cmd.reset();
+        // for now, this is not a command
+        untested();
+        // cmd.get_line(""); // bug? may fail and abort...
+
+        if (!graphical){
+            trace2("LANG_GEDA::parse_command its a dev", x->s(), basename);
+            // need command first to create devtype
+            CMD::cmdproc(cmd, scope);
+            _gotline = 1;
+        }
+        delete x;
+        return NULL;
+
+    }
+
 
     cmd.get_line(""); // bug? may fail and abort...
 
@@ -614,7 +647,7 @@ DEV_DOT* LANG_GEDA::parse_command(CS& cmd, DEV_DOT* x)
             }
         }
     }else{
-        _gotaline=1;
+       //  _gotline = 1;
     }
     trace1("LANG_GEDA::parse_command instance done", x->s());
 
@@ -744,14 +777,15 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
  */
 void LANG_GEDA::parse_top_item(CS& cmd, CARD_LIST* Scope)
 {
-    trace2("LANG_GEDA::parse_top_item", cmd.fullstring(), _gotaline);
-    if(!_gotaline){
+    trace2("LANG_GEDA::parse_top_item", _gotline, cmd.fullstring());
+    if(!_gotline){
         cmd.get_line("gnucap-geda>");
     }else{
-        _gotaline=false;
+        _gotline = false;
     }
 
     //problem: if new__instance interprets as command, Scope is lost.
+    trace1("LANG_GEDA::parse_top_item", cmd.fullstring());
     new__instance(cmd, sch_Scope, Scope);
 }
 /*----------------------------------------------------------------------*/
@@ -1024,7 +1058,7 @@ public:
       lang_geda._mode=lang_geda.mATTRIBUTE;
       lang_geda._no_of_lines=0;
       lang_geda._componentmod=true;
-      lang_geda._gotaline=false;
+      lang_geda._gotline=false;
       //
       
       cmd.reset();
@@ -1099,7 +1133,7 @@ class CMD_C : public CMD {
         lang_geda._componentmod=false;
 //        cmd.reset();
         trace1("not calling new__instance ", cmd.fullstring());
-        lang_geda._gotaline=true;
+        lang_geda._gotline=true;
       } else {
         untested();
         delete clone;
