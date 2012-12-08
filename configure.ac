@@ -51,7 +51,8 @@ AC_CHECK_HEADERS([libgeda/libgeda.h],
 					  AC_MSG_ERROR([libgeda.h not available]), )
 CPPFLAGS=${old_CPPFLAGS}
 
-AC_CONFIG_FILES([Makefile examples/Makefile src/Makefile])
+AC_CONFIG_FILES([Makefile examples/Makefile src/Makefile
+                 gnucap-geda])
 AC_OUTPUT
 
 AC_MSG_RESULT([
