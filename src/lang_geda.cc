@@ -1088,6 +1088,11 @@ void CMD_GSCHEM::read_file(string f, CARD_LIST* Scope)
 {
     CS cmd(CS::_INC_FILE, f);
 
+/// gnucap-uf bug: getline uses OPT::language
+    LANGUAGE* oldlang = OPT::language;
+    OPT::language = &lang_geda;
+///
+
     try{
     for(;;){
         trace1("CMD_GSCHEM::read_file", hp(Scope));
@@ -1096,6 +1101,9 @@ void CMD_GSCHEM::read_file(string f, CARD_LIST* Scope)
 
     }catch (Exception_End_Of_Input& e){
     }
+/// gnucap-uf bug
+    OPT::language = oldlang;
+///
 }
 /*----------------------------------------------------------------------*/
 DISPATCHER<CMD>::INSTALL
