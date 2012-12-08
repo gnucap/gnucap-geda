@@ -23,7 +23,7 @@
 #include "e_compon.h"
 #include "e_node.h"
 #ifndef HAVE_UINT_T
-typedef uint_t int;
+typedef int uint_t;
 #endif
 /*--------------------------------------------------------------------------*/
 namespace {
