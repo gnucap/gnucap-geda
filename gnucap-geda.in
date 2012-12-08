@@ -20,6 +20,7 @@ dot=
 printcmd=no
 output="&1"
 module=lang_geda.so
+gnucap=@gnucap@
 
 while [ ! -z $1 ]; do
 
@@ -38,7 +39,7 @@ include $1
 $target
 $dot> /dev/fd/3
 $dot""list
-$dot""end" | gnucap -a $module >/dev/null
+$dot""end" | $gnucap -a $module >/dev/null
 				exec 3>&-
 			fi
 			;;
