@@ -302,7 +302,6 @@ void LANG_GEDA::parse_place(CS& cmd, COMPONENT* x)
         x->set_param_by_name("y",_y);
         x->set_port_by_index(0,_portname);
     } else if(cmd.umatch("N") || cmd.umatch("}")){
-        untested();
         assert(_placeq.size());
         portinfo p = _placeq.front();
         x->set_param_by_name("x",to_string(p.x));
@@ -315,7 +314,7 @@ void LANG_GEDA::parse_place(CS& cmd, COMPONENT* x)
         }
     } else {
         trace1("parse_place, huh?", cmd.fullstring());
-        incomplete();
+        unreachable();
     }
 }
 /*--------------------------------------------------------------------------*/
@@ -339,7 +338,8 @@ void LANG_GEDA::create_place(string n, string x, string y, COMPONENT* c)const
 /*--------------------------------------------------------------------------*/
 COMPONENT* LANG_GEDA::findplace(COMPONENT* x, std::string xco, std::string yco)const
 {
-    for (CARD_LIST::const_iterator ci = x->scope()->begin(); ci != x->scope()->end(); ++ci) {
+    CARD_LIST* scope = x->owner()?x->owner()->scope():x->scope();
+    for (CARD_LIST::const_iterator ci = scope->begin(); ci != scope->end(); ++ci) {
         if((*ci)->dev_type()=="place"){
             if(xco==(*ci)->param_value(1) && yco==(*ci)->param_value(0)){
                 return static_cast<COMPONENT*>(*ci); // ->port_value(0);
@@ -351,7 +351,8 @@ COMPONENT* LANG_GEDA::findplace(COMPONENT* x, std::string xco, std::string yco)c
 /*--------------------------------------------------------------------------*/
 pair<int,int>* LANG_GEDA::findnode(CARD *x, int x0, int y0, int x1, int y1)const
 {
-    for(CARD_LIST::const_iterator ci = x->scope()->begin(); ci != x->scope()->end(); ++ci) {
+    CARD_LIST* scope = x->owner()?x->owner()->scope():x->scope();
+    for(CARD_LIST::const_iterator ci = scope->begin(); ci != scope->end(); ++ci) {
         if((*ci)->dev_type()=="place"){
             int _x = atoi((*ci)->param_value(1).c_str());
             int _y = atoi((*ci)->param_value(0).c_str());
@@ -425,7 +426,6 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
     COMPONENT* port = findplace(x, parsedvalue[0], parsedvalue[1]);
     string portname;
     if(!port){
-        untested();
         portname = "netnode"+::to_string(nodenumber++);
         _placeq.push( portinfo{portname, coord[0], coord[1]} );
     } else {
@@ -569,8 +569,6 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
         string portname = "incomplete";
         if (!port){
             portname = "cmpnode_"+::to_string(nodenumber++);
-            incomplete();
-            // create_place(_portvalue, newx, newy, x);
             _placeq.push( portinfo{portname, atoi(newx), atoi(newy)} );
         } else {
             portname = port->port_value(0);
