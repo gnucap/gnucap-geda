@@ -284,9 +284,10 @@ void LANG_GEDA::parse_place(CS& cmd, COMPONENT* x)
 /*--------------------------------------------------------------------------*/
 void LANG_GEDA::create_place(string n, string x, string y, COMPONENT* c)const
 {
+    MODEL_SUBCKT* owner = dynamic_cast<MODEL_SUBCKT*>(c->owner());
     string cmdstr = "place "+n+" "+x+" "+y;
     CS place_cmd(CS::_STRING,cmdstr);
-    lang_geda.new__instance(place_cmd, sch_Scope, c->scope());
+    lang_geda.new__instance(place_cmd, owner, c->scope());
 }
 /*--------------------------------------------------------------------------*/
 static std::string findplacewithsameposition(COMPONENT* x,std::string xco,std::string yco)
