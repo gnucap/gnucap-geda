@@ -623,9 +623,9 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
             }
         }
     }
-	 static unsigned anothernumber;
+    static unsigned instance;
     if(x->short_label()==""){
-        x->set_label(basename+to_string(anothernumber++));
+        x->set_label(basename+"_"+to_string(instance++));
     }
     if(source!=""){untested();
         trace1("parse_component", source);
