@@ -284,7 +284,7 @@ std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
 //place <nodename> x y
 void LANG_GEDA::parse_place(CS& cmd, COMPONENT* x)
 {
-    trace1("parse_place", x->long_label());
+    trace2("parse_place", x->long_label(), cmd.fullstring());
     assert(x);
     assert(find_type_in_string(cmd)=="place");
     if (cmd.umatch("place")){
@@ -303,7 +303,24 @@ void LANG_GEDA::parse_place(CS& cmd, COMPONENT* x)
         x->set_param_by_name("y",p.y);
         x->set_port_by_index(0,p.name);
         _placeq.pop();
+        if (_placeq.size()){
+            cmd.reset();
+            _gotline = 1;
+        }
+    } else if(cmd.umatch("}")){ // BUG: repeat
+        untested();
+        assert(_placeq.size());
+        portinfo p = _placeq.front();
+        x->set_param_by_name("x",p.x);
+        x->set_param_by_name("y",p.y);
+        x->set_port_by_index(0,p.name);
+        _placeq.pop();
+        if (_placeq.size()){
+            cmd.reset();
+            _gotline = 1;
+        }
     } else {
+        trace1("parse_place, huh?", cmd.fullstring());
         incomplete();
     }
 }
@@ -398,82 +415,93 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
         }else{
             gotthenet=false;
             cmd.warn(bDANGER, here, x->long_label() +": Not correct format for net");
+            return; // throw?
             break;
         }
         ++i;
     }
-    if (gotthenet){
-        //lang_geda.nets.push_back(x);
-        //To check if any of the previous nodes have same placement.
-        x->set_param_by_name("color",parsedvalue[4]);
-        x->set_label("net"+::to_string(netnumber++)); //BUG : names may coincide!. Doesn't matter? Or try some initialisation method. (latch like digital)
+    //lang_geda.nets.push_back(x);
+    //To check if any of the previous nodes have same placement.
+    x->set_param_by_name("color",parsedvalue[4]);
+    x->set_label("net"+::to_string(netnumber++)); //BUG : names may coincide!. Doesn't matter? Or try some initialisation method. (latch like digital)
 
-        COMPONENT* port = findplace(x, parsedvalue[0], parsedvalue[1]);
-        string portname;
-        if(!port){
-            portname = "netnode"+::to_string(nodenumber++);
-            // BUG: needs new__instance from toplevel
-            // create_place(_portvalue, parsedvalue[0], parsedvalue[1], x);
-            _placeq.push( portinfo{portname, parsedvalue[0], parsedvalue[1]} );
-        } else {
-            portname = port->port_value(0);
-        }
-        x->set_port_by_index(0, portname);
+    COMPONENT* port = findplace(x, parsedvalue[0], parsedvalue[1]);
+    string portname;
+    if(!port){
+        untested();
+        portname = "netnode"+::to_string(nodenumber++);
+        // BUG: needs new__instance from toplevel
+        // create_place(_portvalue, parsedvalue[0], parsedvalue[1], x);
+        _placeq.push( portinfo{portname, parsedvalue[0], parsedvalue[1]} );
+    } else {
+        portname = port->port_value(0);
+    }
+    x->set_port_by_index(0, portname);
 
-        port = findplace(x, parsedvalue[2], parsedvalue[3]);
-        if(!port){
-            portname = "netnode"+::to_string(nodenumber++);
-            // BUG: needs new__instance from toplevel
-            // create_place(_portvalue, parsedvalue[2], parsedvalue[3], x);
-            _placeq.push( portinfo{portname, parsedvalue[2], parsedvalue[3]});
-        } else {
-            portname = port->port_value(0);
-        }
-        x->set_port_by_index(1, portname);
+    port = findplace(x, parsedvalue[2], parsedvalue[3]);
+    if(!port){
+        untested();
+        portname = "netnode"+::to_string(nodenumber++);
+        // BUG: needs new__instance from toplevel
+        // create_place(_portvalue, parsedvalue[2], parsedvalue[3], x);
+        _placeq.push( portinfo{portname, parsedvalue[2], parsedvalue[3]});
+    } else {
+        portname = port->port_value(0);
+    }
+    x->set_port_by_index(1, portname);
 
-        std::string* nodeonthisnet = findnodeonthisnet(x,parsedvalue[0],parsedvalue[1],parsedvalue[2],parsedvalue[3]);
-        if (nodeonthisnet) {
-            trace2("nodeonthisnet", nodeonthisnet[0], nodeonthisnet[1]);
-            //create new net from nodeonthisnet to one of edges of net.
-            std::string netcmdstr="N "+parsedvalue[0]+" "+parsedvalue[1]+" "+nodeonthisnet[0]+" "+nodeonthisnet[1]+" 5";
+    std::string* nodeonthisnet = findnodeonthisnet(x,parsedvalue[0],parsedvalue[1],parsedvalue[2],parsedvalue[3]);
+    if (nodeonthisnet) {
+        trace2("nodeonthisnet", nodeonthisnet[0], nodeonthisnet[1]);
+        //create new net from nodeonthisnet to one of edges of net.
+        std::string netcmdstr="N "+parsedvalue[0]+" "+parsedvalue[1]+" "+nodeonthisnet[0]+" "+nodeonthisnet[1]+" 5";
 //            CS net_cmd(CS::_STRING,netcmdstr);
-            incomplete();
+        incomplete();
 //            lang_geda.new__instance(net_cmd, owner, x->scope());
-        }
-        //To check if there are any attributes
-        try {
-            cmd.get_line("gnucap-geda>");
-        }catch(Exception_End_Of_Input&){
-            return;
-        }
-        std::string temp=(cmd.fullstring()).substr(0,1);
-        std::string _paramvalue,_paramname,dump;
-        if(temp!="{"){
-            cmd.reset();
-            lang_geda._gotline = true;
-            //OPT::language->new__instance(cmd,NULL,x->scope());
-            return;
-        }
-        cmd>>"{";
-        for (;;) {
-            cmd.get_line("gnucap-geda-net>");
-            if (cmd >> "}") {
-                break;
-            }else{
-                if(cmd>>"T"){
-                    cmd>>dump;
-                }
-                else {
-                    std::string _paramname=cmd.ctos("=","",""),_paramvalue;
-                    cmd>>"=">>_paramvalue;
-                    if (_paramname=="netname" && _paramvalue!="?"){
-                        x->set_label(_paramvalue);
-                    }else{
-                        x->set_param_by_name(_paramname,_paramvalue);
-                    }
+    }
+    if(_placeq.size()){
+        trace1("queuing place", cmd.fullstring());
+        _gotline = 1;
+        cmd.reset();
+    }
+    //To check if there are any attributes
+    try {
+        cmd.get_line("gnucap-geda>");
+    }catch(Exception_End_Of_Input&){
+        return;
+    }
+    std::string temp=(cmd.fullstring()).substr(0,1);
+    std::string _paramvalue,_paramname,dump;
+    if(temp!="{"){
+        cmd.reset();
+        _gotline = true;
+        //OPT::language->new__instance(cmd,NULL,x->scope());
+        return;
+    }
+    cmd>>"{";
+    for (;;) {
+        cmd.get_line("gnucap-geda-net>");
+        if (cmd >> "}") {
+            break;
+        }else{
+            if(cmd>>"T"){
+                cmd>>dump;
+            }
+            else {
+                std::string _paramname=cmd.ctos("=","",""),_paramvalue;
+                cmd>>"=">>_paramvalue;
+                if (_paramname=="netname" && _paramvalue!="?"){
+                    x->set_label(_paramvalue);
+                }else{
+                    x->set_param_by_name(_paramname,_paramvalue);
                 }
             }
-        } 
+        }
+    }
+    if(_placeq.size()){
+        trace1("done net. queuing place", cmd.fullstring());
+        _gotline = 1;
+        cmd.reset();
     }
 }
 /*--------------------------------------------------------------------------*/
@@ -803,13 +831,21 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
     unsigned here = cmd.cursor(); //store cursor position to reset back later
     std::string type;   //stores type : should check device attribute..
     //graphical=["v","L","G","B","V","A","H","T"]
-    if (cmd >> "v " || cmd >> "L " || cmd >> "G " || cmd >> "B " || cmd >>"V "
+    if (_placeq.size()){ // hack?
+            type = "place";
+    }else if (cmd >> "v " || cmd >> "L " || cmd >> "G " || cmd >> "B " || cmd >>"V "
         || cmd >> "A " || cmd >> "H " || cmd >> "T " ){ type="dev_comment";}
-    else if (cmd >> "N "){ 
+    else if (cmd >> "}"){
+        if (_placeq.size()){ // hack?
+            type = "place";
+        }else{
+            unreachable();
+        }
+    }else if (cmd >> "N "){
         if (_placeq.size()){
             type = "place";
         } else {
-            type="net";
+            type = "net";
         }
     }
     else if (cmd >> "U "){ type="bus";}
@@ -842,11 +878,6 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
  */
 void LANG_GEDA::parse_top_item(CS& cmd, CARD_LIST* Scope)
 {
-    if (cmd.skip1("}")){ unreachable();
-        // someone forgot to eat braceline
-        _gotline = false;
-    }
-
    // trace2("LANG_GEDA::parse_top_item", _gotline, cmd.fullstring());
     if(!_gotline){
         cmd.get_line("gnucap-geda>");
