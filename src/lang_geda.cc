@@ -343,6 +343,7 @@ static std::string* findnodeonthisnet(CARD *x, std::string x0, std::string y0, s
 void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 {
     trace0("got into parse_net");
+    MODEL_SUBCKT* owner = dynamic_cast<MODEL_SUBCKT*>(x->owner());
     assert(x);
     assert(lang_geda.find_type_in_string(cmd)=="net");
     cmd>>"N";     //Got N
@@ -388,7 +389,8 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
             //create new net from nodeonthisnet to one of edges of net.
             std::string netcmdstr="N "+parsedvalue[0]+" "+parsedvalue[1]+" "+nodeonthisnet[0]+" "+nodeonthisnet[1]+" 5";
             CS net_cmd(CS::_STRING,netcmdstr);
-            lang_geda.new__instance(net_cmd, sch_Scope, x->scope());
+
+            lang_geda.new__instance(net_cmd, owner, x->scope());
         }
         //To check if there are any attributes
         try {
