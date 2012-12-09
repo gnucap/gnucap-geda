@@ -112,6 +112,7 @@ private:
     void create_place(string name, string x, string y, COMPONENT* c)const;
     void parse_component(CS& cmd,COMPONENT* x);
     std::vector<std::string*> parse_symbol_file(CARD* x, std::string basename) const;
+    COMPONENT* findplace(COMPONENT* x, std::string xco, std::string yco)const;
 
 }lang_geda;
 
@@ -325,16 +326,16 @@ void LANG_GEDA::create_place(string n, string x, string y, COMPONENT* c)const
     lang_geda.new__instance(place_cmd, owner, scope);
 }
 /*--------------------------------------------------------------------------*/
-static std::string findplacewithsameposition(COMPONENT* x,std::string xco,std::string yco)
+COMPONENT* LANG_GEDA::findplace(COMPONENT* x, std::string xco, std::string yco)const
 {
     for (CARD_LIST::const_iterator ci = x->scope()->begin(); ci != x->scope()->end(); ++ci) {
         if((*ci)->dev_type()=="place"){
             if(xco==(*ci)->param_value(1) && yco==(*ci)->param_value(0)){
-                return static_cast<COMPONENT*>(*ci)->port_value(0);
+                return static_cast<COMPONENT*>(*ci); // ->port_value(0);
             }
         }
     }
-    return "";
+    return NULL;
 }
 /*--------------------------------------------------------------------------*/
 static std::string* findnodeonthisnet(CARD *x, std::string x0, std::string y0, std::string x1, std::string y1)
@@ -407,25 +408,30 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
         x->set_param_by_name("color",parsedvalue[4]);
         x->set_label("net"+::to_string(netnumber++)); //BUG : names may coincide!. Doesn't matter? Or try some initialisation method. (latch like digital)
 
-        std::string _portvalue=findplacewithsameposition(x,parsedvalue[0],parsedvalue[1]);
-        if(_portvalue==""){
-            _portvalue="netnode"+::to_string(nodenumber++);
+        COMPONENT* port = findplace(x, parsedvalue[0], parsedvalue[1]);
+        string portname;
+        if(!port){
+            portname = "netnode"+::to_string(nodenumber++);
             // BUG: needs new__instance from toplevel
             // create_place(_portvalue, parsedvalue[0], parsedvalue[1], x);
-            _placeq.push( portinfo{_portvalue, parsedvalue[0], parsedvalue[1]} );
+            _placeq.push( portinfo{portname, parsedvalue[0], parsedvalue[1]} );
+        } else {
+            portname = port->port_value(0);
         }
-        x->set_port_by_index(0,_portvalue);
+        x->set_port_by_index(0, portname);
 
-        _portvalue=findplacewithsameposition(x,parsedvalue[2],parsedvalue[3]);
-        if(_portvalue==""){
-            _portvalue="netnode"+::to_string(nodenumber++);
+        port = findplace(x, parsedvalue[2], parsedvalue[3]);
+        if(!port){
+            portname = "netnode"+::to_string(nodenumber++);
             // BUG: needs new__instance from toplevel
             // create_place(_portvalue, parsedvalue[2], parsedvalue[3], x);
-            _placeq.push( portinfo{_portvalue, parsedvalue[2], parsedvalue[3]});
+            _placeq.push( portinfo{portname, parsedvalue[2], parsedvalue[3]});
+        } else {
+            portname = port->port_value(0);
         }
-        x->set_port_by_index(1,_portvalue);
+        x->set_port_by_index(1, portname);
 
-        std::string* nodeonthisnet=findnodeonthisnet(x,parsedvalue[0],parsedvalue[1],parsedvalue[2],parsedvalue[3]);
+        std::string* nodeonthisnet = findnodeonthisnet(x,parsedvalue[0],parsedvalue[1],parsedvalue[2],parsedvalue[3]);
         if (nodeonthisnet) {
             trace2("nodeonthisnet", nodeonthisnet[0], nodeonthisnet[1]);
             //create new net from nodeonthisnet to one of edges of net.
@@ -533,12 +539,14 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x){
         //delete (*i);
         //setting new place devices for each node searching for .
         //new__instance(cmd,NULL,Scope); //cmd : can create. Scope? how to get Scope? Yes!
-        std::string _portvalue=findplacewithsameposition(x,newx,newy);
-        if (_portvalue==""){
-            _portvalue="cmpnode_"+::to_string(nodenumber++);
-            create_place(_portvalue, newx, newy, x);
+        COMPONENT* port = findplace(x,newx,newy);
+        string portname = "incomplete";
+        if (!port){
+            portname = "cmpnode_"+::to_string(nodenumber++);
+            incomplete();
+            // create_place(_portvalue, newx, newy, x);
         }
-        x->set_port_by_index(index,_portvalue);
+        x->set_port_by_index(index, portname);
         ++index;
     }
     x->set_param_by_name("basename",basename);
