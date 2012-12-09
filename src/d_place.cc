@@ -52,7 +52,7 @@ class DEV_PLACE : public COMPONENT {
     private:
         char        id_letter()const {return 'P';}
         std::string value_name()const {return "";}
-        std::string dev_type()const {untested(); return "place";}
+        std::string dev_type()const {return "place";}
         uint_t      max_nodes() const {return 1;}
         uint_t      min_nodes()const {return 1;}
         uint_t      matrix_nodes()const {return 1;}

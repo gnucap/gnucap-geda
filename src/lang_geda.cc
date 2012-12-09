@@ -19,6 +19,8 @@
  * 02110-1301, USA.
  *
  */
+
+#include "l_lib.h"
 #include "c_comand.h"
 #include "d_dot.h"
 #include "d_coment.h"
@@ -34,15 +36,24 @@ extern "C"{
 }
 #undef COMPLEX
 /*--------------------------------------------------------------------------*/
-using namespace std;
+// using namespace std;
+using std::string;
+using std::vector;
 /*--------------------------------------------------------------------------*/
 namespace {
 /*--------------------------------------------------------------------------*/
 class LANG_GEDA : public LANGUAGE {
+    friend class CMD_GSCHEM;
     TOPLEVEL* pr_current;
-    MODEL_SUBCKT* sch_Scope;
+
+    typedef struct {
+        string name;
+        string x;
+        string y;
+    } portinfo;
+    mutable std::queue<portinfo> _placeq;
 public:
-    LANG_GEDA() : sch_Scope(NULL), LANGUAGE(){
+    LANG_GEDA() : LANGUAGE(){
       trace0("gedainit");
         scm_init_guile(); // urghs why?
         libgeda_init();
@@ -76,6 +87,7 @@ public: //functions to be declared
 
 public:
     void		  parse_top_item(CS&, CARD_LIST*);
+    void parse_item_(CS& cmd, CARD* owner, CARD_LIST*) const;
     DEV_COMMENT*  parse_comment(CS&, DEV_COMMENT*);
     DEV_DOT*	  parse_command(CS&, DEV_DOT*);
     MODEL_CARD*	  parse_paramset(CS&, MODEL_CARD*);
@@ -152,7 +164,7 @@ std::string* LANG_GEDA::parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel
     std::string temp=(cmd.fullstring()).substr(0,1);
     if(temp!="{"){
         if(ismodel and x){
-            _portvalue="port"+_portvalue+to_string(number++);
+            _portvalue="port"+_portvalue+::to_string(number++);
             x->set_port_by_index(index,_portvalue);
             return NULL;
         }else{
@@ -274,20 +286,43 @@ void LANG_GEDA::parse_place(CS& cmd, COMPONENT* x)
     trace1("parse_place", x->long_label());
     assert(x);
     assert(find_type_in_string(cmd)=="place");
-    cmd>>"place";
-    std::string _portname,_x,_y;
-    cmd>>" ">>_portname>>" ">>_x>>" ">>_y;
-    x->set_param_by_name("x",_x);
-    x->set_param_by_name("y",_y);
-    x->set_port_by_index(0,_portname);
+    if (cmd.umatch("place")){
+        incomplete();
+        cmd>>"place";
+        std::string _portname,_x,_y;
+        cmd>>" ">>_portname>>" ">>_x>>" ">>_y;
+        x->set_param_by_name("x",_x);
+        x->set_param_by_name("y",_y);
+        x->set_port_by_index(0,_portname);
+    } else if(cmd.umatch("N")){
+        untested();
+        assert(_placeq.size());
+        portinfo p = _placeq.front();
+        x->set_param_by_name("x",p.x);
+        x->set_param_by_name("y",p.y);
+        x->set_port_by_index(0,p.name);
+        _placeq.pop();
+    } else {
+        incomplete();
+    }
 }
 /*--------------------------------------------------------------------------*/
 void LANG_GEDA::create_place(string n, string x, string y, COMPONENT* c)const
 {
+    trace1("create_place", n);
     MODEL_SUBCKT* owner = dynamic_cast<MODEL_SUBCKT*>(c->owner());
+    CARD_LIST* scope = owner?owner->scope():c->scope();
     string cmdstr = "place "+n+" "+x+" "+y;
     CS place_cmd(CS::_STRING,cmdstr);
-    lang_geda.new__instance(place_cmd, owner, c->scope());
+    // BUG? new__instance is not const...
+    // problem: c->scope()==NULL
+    // why?
+    // create_place is called from parse_net.
+    // from parse_instance.
+    // from new__instance( net ... )
+    //
+    // but: new__instance doesnt pass the scope to parse_instance.
+    lang_geda.new__instance(place_cmd, owner, scope);
 }
 /*--------------------------------------------------------------------------*/
 static std::string findplacewithsameposition(COMPONENT* x,std::string xco,std::string yco)
@@ -313,6 +348,7 @@ static std::string* findnodeonthisnet(CARD *x, std::string x0, std::string y0, s
                     std::string* coord=new std::string[2];
                     coord[0]=_x;
                     coord[1]=_y;
+                    untested();
                     return coord;
                 }
                 else{
@@ -324,6 +360,7 @@ static std::string* findnodeonthisnet(CARD *x, std::string x0, std::string y0, s
                     std::string* coord=new std::string[2];
                     coord[0]=_x;
                     coord[1]=_y;
+                    untested();
                     return coord;
                 }else{
                     return NULL;
@@ -334,6 +371,7 @@ static std::string* findnodeonthisnet(CARD *x, std::string x0, std::string y0, s
             }
         }
     }
+    return 0;
 }
 /*--------------------------------------------------------------------------*/
 // A net is in form N x0 y0 x1 y1 c
@@ -343,7 +381,7 @@ static std::string* findnodeonthisnet(CARD *x, std::string x0, std::string y0, s
 // Need to specify a name for a card?
 void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 {
-    trace0("got into parse_net");
+    trace1("LANG_GEDA::parse_net", hp(x->scope()));
     MODEL_SUBCKT* owner = dynamic_cast<MODEL_SUBCKT*>(x->owner());
     assert(x);
     assert(lang_geda.find_type_in_string(cmd)=="net");
@@ -367,31 +405,34 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
         //lang_geda.nets.push_back(x);
         //To check if any of the previous nodes have same placement.
         x->set_param_by_name("color",parsedvalue[4]);
-        x->set_label("net"+to_string(netnumber++)); //BUG : names may coincide!. Doesn't matter? Or try some initialisation method. (latch like digital)
+        x->set_label("net"+::to_string(netnumber++)); //BUG : names may coincide!. Doesn't matter? Or try some initialisation method. (latch like digital)
 
         std::string _portvalue=findplacewithsameposition(x,parsedvalue[0],parsedvalue[1]);
         if(_portvalue==""){
-            _portvalue="node"+to_string(nodenumber++);
-            create_place(_portvalue, parsedvalue[0], parsedvalue[1], x);
+            _portvalue="netnode"+::to_string(nodenumber++);
+            // BUG: needs new__instance from toplevel
+            // create_place(_portvalue, parsedvalue[0], parsedvalue[1], x);
+            _placeq.push( portinfo{_portvalue, parsedvalue[0], parsedvalue[1]} );
         }
         x->set_port_by_index(0,_portvalue);
 
         _portvalue=findplacewithsameposition(x,parsedvalue[2],parsedvalue[3]);
         if(_portvalue==""){
-            _portvalue="node"+to_string(nodenumber++);
-            create_place(_portvalue, parsedvalue[2], parsedvalue[3], x);
+            _portvalue="netnode"+::to_string(nodenumber++);
+            // BUG: needs new__instance from toplevel
+            // create_place(_portvalue, parsedvalue[2], parsedvalue[3], x);
+            _placeq.push( portinfo{_portvalue, parsedvalue[2], parsedvalue[3]});
         }
         x->set_port_by_index(1,_portvalue);
 
         std::string* nodeonthisnet=findnodeonthisnet(x,parsedvalue[0],parsedvalue[1],parsedvalue[2],parsedvalue[3]);
-        if (!nodeonthisnet)
-        {
-        }else{
+        if (nodeonthisnet) {
+            trace2("nodeonthisnet", nodeonthisnet[0], nodeonthisnet[1]);
             //create new net from nodeonthisnet to one of edges of net.
             std::string netcmdstr="N "+parsedvalue[0]+" "+parsedvalue[1]+" "+nodeonthisnet[0]+" "+nodeonthisnet[1]+" 5";
-            CS net_cmd(CS::_STRING,netcmdstr);
-
-            lang_geda.new__instance(net_cmd, owner, x->scope());
+//            CS net_cmd(CS::_STRING,netcmdstr);
+            incomplete();
+//            lang_geda.new__instance(net_cmd, owner, x->scope());
         }
         //To check if there are any attributes
         try {
@@ -431,6 +472,7 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 }
 /*--------------------------------------------------------------------------*/
 void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x){
+    // "component" means instance of a subckt
     trace1("got into parse_component", x->long_label());
     assert(x);
     std::string component_x, component_y, mirror, angle, dump,basename;
@@ -493,7 +535,7 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x){
         //new__instance(cmd,NULL,Scope); //cmd : can create. Scope? how to get Scope? Yes!
         std::string _portvalue=findplacewithsameposition(x,newx,newy);
         if (_portvalue==""){
-            _portvalue="node_"+to_string(nodenumber++);
+            _portvalue="cmpnode_"+::to_string(nodenumber++);
             create_place(_portvalue, newx, newy, x);
         }
         x->set_port_by_index(index,_portvalue);
@@ -584,7 +626,7 @@ DEV_COMMENT* LANG_GEDA::parse_comment(CS& cmd, DEV_COMMENT* x)
 /*--------------------------------------------------------------------------*/
 DEV_DOT* LANG_GEDA::parse_command(CS& cmd, DEV_DOT* x)
 {
-    trace1("LANG_GEDA::parse_command", cmd.fullstring());
+    trace2("LANG_GEDA::parse_command", cmd.fullstring(), x->owner());
     std::string component_x, component_y, mirror, angle, dump, basename;
     cmd >> "C" >> component_x >> " " >> component_y >> " " >> dump
         >> " " >> angle >> " " >> mirror >> " " >> basename;
@@ -609,6 +651,7 @@ DEV_DOT* LANG_GEDA::parse_command(CS& cmd, DEV_DOT* x)
     // bug: parse_symbol_file needs to tell us, if it is a command
     if( x->s() == "include"
             || x->s() == "end"
+            || x->s() == "directive"
             || x->s() == "C"
             || x->s() == "list" ){
 
@@ -712,9 +755,9 @@ COMPONENT* LANG_GEDA::parse_componmod(CS& cmd, COMPONENT* x)
 /*--------------------------------------------------------------------------*/
 COMPONENT* LANG_GEDA::parse_instance(CS& cmd, COMPONENT* x)
 {
-    trace1("parse_instance", cmd.fullstring());
     cmd.reset();
     parse_type(cmd, x); //parse type will parse the component type and set_dev_type
+    trace2("parse_instance", cmd.fullstring(), x->dev_type());
     if (x->dev_type()=="net") {
     parse_net(cmd,x);
     }else if(x->dev_type()=="place"){
@@ -754,7 +797,13 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
     //graphical=["v","L","G","B","V","A","H","T"]
     if (cmd >> "v " || cmd >> "L " || cmd >> "G " || cmd >> "B " || cmd >>"V "
         || cmd >> "A " || cmd >> "H " || cmd >> "T " ){ type="dev_comment";}
-    else if (cmd >> "N "){ type="net";}
+    else if (cmd >> "N "){ 
+        if (_placeq.size()){
+            type = "place";
+        } else {
+            type="net";
+        }
+    }
     else if (cmd >> "U "){ type="bus";}
     else if (cmd >> "P "){ type="pin";}
     else if (cmd >> "C "){ 
@@ -764,7 +813,10 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
             type=_componentname;
         }
     }
-    else if (cmd >> "place "){ type="place";}
+    else if (cmd >> "place "){ 
+        // hmmm. ouch
+        type="place"; 
+    }
     else {  
         switch(_mode){
             case mCOMMENT: return "dev_comment";
@@ -782,7 +834,12 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
  */
 void LANG_GEDA::parse_top_item(CS& cmd, CARD_LIST* Scope)
 {
-    trace2("LANG_GEDA::parse_top_item", _gotline, cmd.fullstring());
+    if (cmd.skip1("}")){ unreachable();
+        // someone forgot to eat braceline
+        _gotline = false;
+    }
+
+   // trace2("LANG_GEDA::parse_top_item", _gotline, cmd.fullstring());
     if(!_gotline){
         cmd.get_line("gnucap-geda>");
     }else{
@@ -791,7 +848,23 @@ void LANG_GEDA::parse_top_item(CS& cmd, CARD_LIST* Scope)
 
     //problem: if new__instance interprets as command, Scope is lost.
     trace1("LANG_GEDA::parse_top_item", cmd.fullstring());
-    new__instance(cmd, sch_Scope, Scope);
+    new__instance(cmd, NULL, Scope);
+}
+/*----------------------------------------------------------------------*/
+// check: LANGUAGE::parse_item...
+void LANG_GEDA::parse_item_(CS& cmd, CARD* owner, CARD_LIST* scope)const
+{
+    trace2("LANG_GEDA::parse_top_item", _gotline, cmd.fullstring());
+    if(!_gotline){
+        cmd.get_line("gnucap-geda>");
+    }else{
+        _gotline = false;
+    }
+
+    //problem: if new__instance interprets as command, Scope is lost.
+    trace1("LANG_GEDA::parse_item", cmd.fullstring());
+    CARD_LIST* s = (owner) ? owner->subckt() : scope;
+    lang_geda.new__instance(cmd, dynamic_cast<MODEL_SUBCKT*>(owner), s);
 }
 /*----------------------------------------------------------------------*/
 // Code for Printing schematic follows
@@ -1076,18 +1149,29 @@ public:
       } else {
           arg="";
       }
+      MODEL_SUBCKT* sckt = 0;
 
       if(arg!=""){
           trace1("reading file", hp(Scope));
-          read_file(arg, Scope);
+          string mod;
+          cmd >> mod;
+          if( mod == "module"){
+              sckt = new MODEL_SUBCKT();
+              sckt->set_label("foo");
+              read_file(arg, Scope, sckt);
+              Scope->push_back(sckt);
+          } else {
+              read_file(arg, Scope);
+          }
+
       }else{
           command("options lang=gschem", Scope);
       }
     }
-    void read_file(string, CARD_LIST* Scope);
+    void read_file(string, CARD_LIST* Scope, MODEL_SUBCKT* owner=0);
 } p8;
 /*----------------------------------------------------------------------*/
-void CMD_GSCHEM::read_file(string f, CARD_LIST* Scope)
+void CMD_GSCHEM::read_file(string f, CARD_LIST* Scope, MODEL_SUBCKT* owner)
 {
     CS cmd(CS::_INC_FILE, f);
 
@@ -1098,8 +1182,8 @@ void CMD_GSCHEM::read_file(string f, CARD_LIST* Scope)
 
     try{
     for(;;){
-        trace1("CMD_GSCHEM::read_file", hp(Scope));
-        lang_geda.parse_top_item(cmd, Scope);
+        // new__instance. but _gotline hack
+        lang_geda.parse_item_(cmd, owner, Scope);
     }
 
     }catch (Exception_End_Of_Input& e){
@@ -1122,9 +1206,6 @@ class CMD_C : public CMD {
       CARD* clone = c->clone();
       COMPONENT* new_compon = prechecked_cast<COMPONENT*>(clone);
       untested();
-
-
-
 
       assert(new_compon);
       assert(!new_compon->owner());
