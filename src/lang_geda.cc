@@ -34,6 +34,7 @@
 extern "C"{
 # include <libgeda/libgeda.h>
 }
+#include "symbol.h"
 #undef COMPLEX
 /*--------------------------------------------------------------------------*/
 // using namespace std;
@@ -120,10 +121,14 @@ private:
     COMPONENT* findplace(COMPONENT* x, std::string xco, std::string yco)const;
     pair<int,int>* findnode(CARD *x, int x0, int y0, int x1, int y1)const;
 
+    static GEDA_SYMBOL_MAP _symbol;
+
 }lang_geda;
 
 DISPATCHER<LANGUAGE>::INSTALL
     d(&language_dispatcher, lang_geda.name(), &lang_geda);
+/*----------------------------------------------------------------------*/
+GEDA_SYMBOL_MAP LANG_GEDA::_symbol;
 /*----------------------------------------------------------------------*/
 static unsigned netnumber, nodenumber;
 /*----------------------------------------------------------------------*/
@@ -218,13 +223,15 @@ std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
     std::string filename(s_clib_symbol_get_filename(symbol));
     std::string dump;
 
+
     // name of the symbol category (collection name)
     // const char* sourcename = s_clib_source_get_name (s_clib_symbol_get_source(symbol));
     //
     // the file contents as string (wtf?!)
     // char* data = s_clib_symbol_get_data(symbol);
 
-    trace2("parse_symbol_file", basename, filename);
+    trace2("LANG_GEDA::parse_symbol_file", basename, filename);
+    GEDA_SYMBOL s = _symbol[basename];
     CS sym_cmd(CS::_INC_FILE, filename);
     //Now parse the sym_cmd which will get lines
     int index=0;
@@ -268,15 +275,13 @@ std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
                 untested();
             }
         }else if(linetype=="net"){
-            untested();
             if(c = dynamic_cast<COMPONENT*>(x)){
+                untested();
                 // c->set_label("port");
             }
         }else if(linetype=="device"){
-            trace2("parse_symbol_file", sym_cmd.fullstring(), linetype);
             sym_cmd>>"device=";
             sym_cmd>>dump;
-            trace2("parse_symbol_file", linetype, dump);
             DEV_DOT* d = dynamic_cast<DEV_DOT*>(x);
             if(d){
                 d->set(dump);
@@ -308,7 +313,7 @@ void LANG_GEDA::parse_place(CS& cmd, COMPONENT* x)
         x->set_param_by_name("x",_x);
         x->set_param_by_name("y",_y);
         x->set_port_by_index(0,_portname);
-    } else if(cmd.umatch("N") || cmd.umatch("}")){
+    } else if(cmd.umatch("N") || cmd.match1('}')){
         assert(_placeq.size());
         portinfo p = _placeq.front();
         x->set_param_by_name("x",to_string(p.x));
@@ -497,6 +502,7 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
                 if (_paramname=="netname" && _paramvalue!="?"){
                     x->set_label(_paramvalue);
                 }else{
+                    untested();
                     x->set_param_by_name(_paramname,_paramvalue);
                 }
             }
@@ -511,7 +517,7 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 /*--------------------------------------------------------------------------*/
 void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
 { // "component" means instance of a subckt
-    trace1("got into parse_component", x->long_label());
+    trace2("LANG_GEDA::parse_component", x->long_label(), cmd.fullstring());
     assert(x);
     assert(!_placeq.size());
     std::string component_x, component_y, mirror, angle, dump,basename;
@@ -583,7 +589,11 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
         x->set_port_by_index(index, portname);
         ++index;
     }
-    x->set_param_by_name("basename",basename);
+    try{
+        x->set_param_by_name("basename",basename);
+    } catch(Exception_No_Match){
+        untested();
+    }
     if(_placeq.size()){
         cmd.reset();
         _gotline = 1;
@@ -625,7 +635,11 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
 //                }else if (_paramname=="source"){
 //                    source = _paramvalue;
                 }else{
-                    x->set_param_by_name(_paramname,_paramvalue);
+                    try{
+                        x->set_param_by_name(_paramname,_paramvalue);
+                    } catch (Exception_No_Match){
+                        untested();
+                    }
                 }
             }
         }
@@ -869,9 +883,24 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 //if it claims to be a device or port or something, then
 //don't do subckt voodoo
         if(_componentmod){
-            type="C";
+            type = "C";
         }else{
-            type=_componentname;
+            type = _componentname;
+            string X, basename;
+            cmd>>X>>" ">>X>>" ">>X>>" ">>X>>" ">>X>>" ">>basename;
+            GEDA_SYMBOL sym = _symbol[basename];
+            if(sym.has_key("device")){
+                if (CARD* c = device_dispatcher[sym["device"]]){
+                    COMPONENT* d = prechecked_cast<COMPONENT*>(c);
+			if ( d->max_nodes() >= sym.pincount()
+                          && d->min_nodes() <= sym.pincount()){
+                            // type = _symbol[basename]["device"];
+                            trace4("have component??", type, sym.pincount(),  d->max_nodes(), d->min_nodes());
+                        }else{
+                            untested();
+                        }
+                }
+            }
         }
     }
     else if (cmd >> "place "){ 
@@ -884,7 +913,7 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
             default : cmd >> type;
         } 
     } //Not matched with the type. What now?
-    trace2("find_type_in_string", cmd.fullstring(),type);
+    //trace2("find_type_in_string", cmd.fullstring(),type);
     cmd.reset(here);//Reset cursor back to the position that
                     //has been started with at beginning
     return type;    // returns the type of the string
@@ -1045,7 +1074,7 @@ static void print_net(OMSTREAM& o, const COMPONENT* x)
 void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
 {
     assert(x);
-    trace0("Got into print_component");
+    trace0("LANG_GEDA::print_component");
     std::string _x,_y,_angle,_mirror;
     o <<  "C ";
     std::string _basename=x->param_value(x->param_count()-1);
@@ -1126,6 +1155,7 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
             o << "refdes=" << x->short_label() << "\n";
         }
         if(_parameters){
+            untested();
             for(int i=x->param_count()-1; i>=0 ; --i){
                 if (!(x->param_value(i)=="NA( 0.)" or x->param_value(i)=="NA( NA)" or x->param_value(i)=="NA( 27.)" or x->param_name(i)=="basename")){
                     o << "T "<< xy << " 5 10 0 1 0 0 1\n";
