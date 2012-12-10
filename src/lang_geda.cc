@@ -334,9 +334,11 @@ void LANG_GEDA::parse_place(CS& cmd, COMPONENT* x)
 /*--------------------------------------------------------------------------*/
 void LANG_GEDA::create_place(string n, string x, string y, COMPONENT* c)const
 {
+    unreachable();
     trace1("create_place", n);
     MODEL_SUBCKT* owner = dynamic_cast<MODEL_SUBCKT*>(c->owner());
     CARD_LIST* scope = owner?owner->scope():c->scope();
+    assert(c);
     string cmdstr = "place "+n+" "+x+" "+y;
     CS place_cmd(CS::_STRING,cmdstr);
     // BUG? new__instance is not const...
@@ -481,34 +483,33 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
     }catch(Exception_End_Of_Input&){
         return;
     }
-    std::string temp=(cmd.fullstring()).substr(0,1);
     std::string _paramvalue,_paramname,dump;
-    if(temp!="{"){
+    if(cmd.match1('{')){
+        for (;;) {
+            cmd.get_line("gnucap-geda-net>");
+            if (cmd >> "}") {
+                break;
+            }else{
+                if(cmd>>"T"){
+                    cmd>>dump;
+                }
+                else {
+                    std::string _paramname=cmd.ctos("=","",""),_paramvalue;
+                    cmd>>"=">>_paramvalue;
+                    if (_paramname=="netname" && _paramvalue!="?"){
+                        x->set_label(_paramvalue);
+                    }else{
+                        untested();
+                        x->set_param_by_name(_paramname,_paramvalue);
+                    }
+                }
+            }
+        }
+    } else {
         cmd.reset();
         _gotline = true;
         //OPT::language->new__instance(cmd,NULL,x->scope());
         return;
-    }
-    cmd>>"{";
-    for (;;) {
-        cmd.get_line("gnucap-geda-net>");
-        if (cmd >> "}") {
-            break;
-        }else{
-            if(cmd>>"T"){
-                cmd>>dump;
-            }
-            else {
-                std::string _paramname=cmd.ctos("=","",""),_paramvalue;
-                cmd>>"=">>_paramvalue;
-                if (_paramname=="netname" && _paramvalue!="?"){
-                    x->set_label(_paramvalue);
-                }else{
-                    untested();
-                    x->set_param_by_name(_paramname,_paramvalue);
-                }
-            }
-        }
     }
     if(_placeq.size()){
         trace1("done net. queuing place", cmd.fullstring());
