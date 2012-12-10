@@ -607,9 +607,8 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
     }catch(Exception_End_Of_Input&){
         return;
     }
-    trace0("got line");
-    std::string temp=(cmd.fullstring()).substr(0,1);
-    if(temp!="{"){
+    trace0("parse_component got line");
+    if(!cmd.match1('{')){
         trace0("no {");
         cmd.reset();
         lang_geda._componentmod=true;
