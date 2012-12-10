@@ -176,7 +176,7 @@ std::string* LANG_GEDA::parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel
         return NULL;
     }
     std::string temp=(cmd.fullstring()).substr(0,1);
-    if(temp!="{"){
+    if(cmd.match1('{')){
         if(ismodel and x){
             _portvalue="port"+_portvalue+::to_string(number++);
             x->set_port_by_index(index,_portvalue);
@@ -315,7 +315,7 @@ void LANG_GEDA::parse_place(CS& cmd, COMPONENT* x)
         x->set_param_by_name("x",_x);
         x->set_param_by_name("y",_y);
         x->set_port_by_index(0,_portname);
-    } else if(cmd.umatch("N") || cmd.match1('}')){
+    } else if(cmd.umatch("N ") || cmd.umatch("C ") || cmd.match1('}')){
         assert(_placeq.size());
         portinfo p = _placeq.front();
         x->set_param_by_name("x",to_string(p.x));
@@ -324,8 +324,8 @@ void LANG_GEDA::parse_place(CS& cmd, COMPONENT* x)
         _placeq.pop();
         if (_placeq.size()){
             cmd.reset();
-            _gotline = 1;
         }
+        cmd.reset();
     } else {
         trace1("parse_place, huh?", cmd.fullstring());
         unreachable();
@@ -468,13 +468,11 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
         unsigned col = 5;
         _netq.push( netinfo{ coord[0], coord[1], nodeonthisnet->first, nodeonthisnet->second, col });
         delete nodeonthisnet;
-//            CS net_cmd(CS::_STRING,netcmdstr);
         incomplete();
-//            lang_geda.new__instance(net_cmd, owner, x->scope());
+        cmd.reset();
     }
     if(_placeq.size()){
         trace1("queuing place", cmd.fullstring());
-        _gotline = 1;
         cmd.reset();
     }
     //To check if there are any attributes
@@ -513,7 +511,6 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
     }
     if(_placeq.size()){
         trace1("done net. queuing place", cmd.fullstring());
-        _gotline = 1;
         cmd.reset();
     }
 }
@@ -599,7 +596,6 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
     }
     if(_placeq.size()){
         cmd.reset();
-        _gotline = 1;
     }
     trace0("getting line");
     try{
@@ -655,7 +651,6 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
     }
     if(_placeq.size()){
         cmd.reset();
-        _gotline = 1;
     }
 
     lang_geda._componentmod=true;
@@ -761,7 +756,7 @@ DEV_DOT* LANG_GEDA::parse_command(CS& cmd, DEV_DOT* x)
             }
         }
     }else{
-       //  _gotline = 1;
+        _gotline = 1;
     }
     trace1("LANG_GEDA::parse_command instance done", x->s());
 
@@ -927,31 +922,29 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
  */
 void LANG_GEDA::parse_top_item(CS& cmd, CARD_LIST* Scope)
 {
-   // trace2("LANG_GEDA::parse_top_item", _gotline, cmd.fullstring());
-    if(!_gotline){
-        cmd.get_line("gnucap-geda>");
-    }else{
-        _gotline = false;
-    }
-
-    //problem: if new__instance interprets as command, Scope is lost.
-    trace1("LANG_GEDA::parse_top_item", cmd.fullstring());
-    new__instance(cmd, NULL, Scope);
+    parse_item_(cmd, NULL, Scope);
 }
 /*----------------------------------------------------------------------*/
 // check: LANGUAGE::parse_item...
 void LANG_GEDA::parse_item_(CS& cmd, CARD* owner, CARD_LIST* scope)const
 {
-    trace2("LANG_GEDA::parse_top_item", _gotline, cmd.fullstring());
-    if(!_gotline){
+
+    // .... _gotline means:
+    // - component needs to be instanciated after sckt declaration.
+    // - parser found nonbrace when trying to parse body
+    trace4("LANG_GEDA::parse_item_", _gotline, _placeq.size(), _netq.size(), cmd.fullstring());
+    if(!_gotline && !_placeq.size() && !_netq.size() ){
         cmd.get_line("gnucap-geda>");
-    }else{
-        _gotline = false;
+    } else if (!_placeq.size() && !_netq.size() ){
+        _gotline = 0;
     }
 
+
     //problem: if new__instance interprets as command, Scope is lost.
-    trace1("LANG_GEDA::parse_item", cmd.fullstring());
+    trace1("LANG_GEDA::parse_item_", cmd.fullstring());
     CARD_LIST* s = (owner) ? owner->subckt() : scope;
+    assert(!cmd.match1("{"));
+
     lang_geda.new__instance(cmd, dynamic_cast<MODEL_SUBCKT*>(owner), s);
 }
 /*----------------------------------------------------------------------*/
@@ -1324,9 +1317,9 @@ class CMD_C : public CMD {
         }
 
         lang_geda._componentmod=false;
-//        cmd.reset();
+        cmd.reset();
         trace1("not calling new__instance ", cmd.fullstring());
-        lang_geda._gotline=true;
+        lang_geda._gotline = true;
       } else {
         untested();
         delete clone;
