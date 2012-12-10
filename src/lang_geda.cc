@@ -122,6 +122,8 @@ private:
     pair<int,int>* findnode(CARD *x, int x0, int y0, int x1, int y1)const;
 
     static GEDA_SYMBOL_MAP _symbol;
+    static unsigned _nodenumber;
+    static unsigned _netnumber;
 
 }lang_geda;
 
@@ -130,7 +132,7 @@ DISPATCHER<LANGUAGE>::INSTALL
 /*----------------------------------------------------------------------*/
 GEDA_SYMBOL_MAP LANG_GEDA::_symbol;
 /*----------------------------------------------------------------------*/
-static unsigned netnumber, nodenumber;
+unsigned LANG_GEDA::_netnumber, LANG_GEDA::_nodenumber;
 /*----------------------------------------------------------------------*/
 /*----------------------------------------------------------------------*/
 //Finds type from find_type_in_string
@@ -433,12 +435,12 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
     //lang_geda.nets.push_back(x);
     //To check if any of the previous nodes have same placement.
     x->set_param_by_name("color",parsedvalue[4]);
-    x->set_label("net"+::to_string(netnumber++)); //BUG : names may coincide!. Doesn't matter? Or try some initialisation method. (latch like digital)
+    x->set_label("net"+::to_string(_netnumber++));
 
     COMPONENT* port = findplace(x, parsedvalue[0], parsedvalue[1]);
     string portname;
     if(!port){
-        portname = "netnode"+::to_string(nodenumber++);
+        portname = "netnode"+::to_string(_nodenumber++);
         _placeq.push( portinfo{portname, coord[0], coord[1]} );
     } else {
         portname = port->port_value(0);
@@ -448,7 +450,7 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
     port = findplace(x, parsedvalue[2], parsedvalue[3]);
     if(!port){
         untested();
-        portname = "netnode"+::to_string(nodenumber++);
+        portname = "netnode"+::to_string(_nodenumber++);
         _placeq.push( portinfo{portname, coord[2], coord[3]});
     } else {
         portname = port->port_value(0);
@@ -581,7 +583,7 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
         COMPONENT* port = findplace(x, newx, newy);
         string portname = "incomplete";
         if (!port){
-            portname = "cmpnode_"+::to_string(nodenumber++);
+            portname = "cmpnode_"+::to_string(_nodenumber++);
             _placeq.push( portinfo{portname, atoi(newx), atoi(newy)} );
         } else {
             portname = port->port_value(0);
