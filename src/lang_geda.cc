@@ -267,6 +267,11 @@ std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
             }else{
                 untested();
             }
+        }else if(linetype=="net"){
+            untested();
+            if(c = dynamic_cast<COMPONENT*>(x)){
+                // c->set_label("port");
+            }
         }else if(linetype=="device"){
             trace2("parse_symbol_file", sym_cmd.fullstring(), linetype);
             sym_cmd>>"device=";
@@ -275,6 +280,8 @@ std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
             DEV_DOT* d = dynamic_cast<DEV_DOT*>(x);
             if(d){
                 d->set(dump);
+            }else if(c = dynamic_cast<COMPONENT*>(x)){
+                // c->set_label(dump);
             }else{
                 incomplete();
             }
@@ -857,7 +864,10 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
     }
     else if (cmd >> "U "){ type="bus";}
     else if (cmd >> "P "){ type="pin";}
-    else if (cmd >> "C "){ 
+    else if (cmd >> "C "){
+//todo: inspect symbol file
+//if it claims to be a device or port or something, then
+//don't do subckt voodoo
         if(_componentmod){
             type="C";
         }else{
@@ -874,6 +884,7 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
             default : cmd >> type;
         } 
     } //Not matched with the type. What now?
+    trace2("find_type_in_string", cmd.fullstring(),type);
     cmd.reset(here);//Reset cursor back to the position that
                     //has been started with at beginning
     return type;    // returns the type of the string
@@ -1203,8 +1214,14 @@ public:
           cmd >> mod;
           if( mod == "module"){
               sckt = new MODEL_SUBCKT();
+              COMPONENT* x = sckt;
               sckt->set_label("foo");
               read_file(arg, Scope, sckt);
+
+              /// hmmm
+    x->set_port_by_index(0,*(new string("p1")));
+    x->set_port_by_index(1,*(new string("p3")));
+
               Scope->push_back(sckt);
           } else {
               read_file(arg, Scope);
@@ -1262,9 +1279,12 @@ class CMD_C : public CMD {
       if (lang_geda.parse_componmod(cmd, new_compon)) {
         // this is not graphical
         lang_geda._componentname=new_compon->short_label();
+        trace2("do_it", lang_geda._componentname, cmd.fullstring());
         CARD_LIST::const_iterator i = Scope->find_(new_compon->short_label());
         if (i != Scope->end()) {
           untested();
+          // i'm here, because the "C" command has type "C" first....
+          // hmm maybe it should look for the symbol first, as it might be there already.
           delete clone;
         }else{
             trace1("CMD_C pushback", hp(Scope));
