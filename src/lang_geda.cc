@@ -531,6 +531,59 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
     std::vector<std::string*> coordinates=parse_symbol_file(x,basename);
     char    newx[10],newy[10];
     int index=0;
+
+    try{
+        x->set_param_by_name("basename",basename);
+    } catch(Exception_No_Match){
+        untested();
+    }
+    // set parameters
+    try{
+        cmd.get_line("gnucap-geda>");
+    }catch(Exception_End_Of_Input&){
+        // return;
+    }
+    trace0("parse_component got line");
+    if(cmd.match1('{')){
+        cmd>>"{";
+        trace0("got {");
+        for (;;) {
+            cmd.get_line("gnucap-geda-"+basename+">");
+            if (cmd >> "}") {
+                break;
+            }else{
+                if(cmd>>"T"){
+                    cmd>>dump;
+                }
+                else {
+                    std::string _paramname=cmd.ctos("=","",""),_paramvalue;
+                    cmd>>"=">>_paramvalue;
+                    trace0("got the parameter");
+                    if(_paramname=="device"){
+                        x->set_dev_type(_paramvalue);
+                    }else if (_paramname=="refdes" && _paramvalue!="?"){
+                        x->set_label(_paramvalue);
+                        //                }else if (_paramname=="source"){
+                        //                    source = _paramvalue;
+                }else{
+                    try{
+                        x->set_param_by_name(_paramname,_paramvalue);
+                    } catch (Exception_No_Match){
+                        untested();
+                    }
+                }
+                }
+            }
+        }
+    } else {
+        trace0("no {");
+        cmd.reset();
+        lang_geda._componentmod=true;
+        lang_geda._gotline = true;
+        //OPT::language->new__instance(cmd,NULL,x->scope());
+        // return;
+    }
+    // connect ports
     for (std::vector<std::string*>::const_iterator i=coordinates.begin();i<coordinates.end();++i){
         //to do integer casting, addition and then reconverting to string
         if(mirror=="0"){
@@ -589,59 +642,10 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
         x->set_port_by_index(index, portname);
         ++index;
     }
-    try{
-        x->set_param_by_name("basename",basename);
-    } catch(Exception_No_Match){
-        untested();
-    }
     if(_placeq.size()){
         cmd.reset();
     }
     trace0("getting line");
-    try{
-        cmd.get_line("gnucap-geda>");
-    }catch(Exception_End_Of_Input&){
-        return;
-    }
-    trace0("parse_component got line");
-    if(!cmd.match1('{')){
-        trace0("no {");
-        cmd.reset();
-        lang_geda._componentmod=true;
-        lang_geda._gotline = true;
-        //OPT::language->new__instance(cmd,NULL,x->scope());
-        return;
-    }
-    cmd>>"{";
-    trace0("got {");
-    for (;;) {
-        cmd.get_line("gnucap-geda-"+basename+">");
-        if (cmd >> "}") {
-            break;
-        }else{
-            if(cmd>>"T"){
-                cmd>>dump;
-            }
-            else {
-                std::string _paramname=cmd.ctos("=","",""),_paramvalue;
-                cmd>>"=">>_paramvalue;
-                trace0("got the parameter");
-                if(_paramname=="device"){
-                    x->set_dev_type(_paramvalue);
-                }else if (_paramname=="refdes" && _paramvalue!="?"){
-                    x->set_label(_paramvalue);
-//                }else if (_paramname=="source"){
-//                    source = _paramvalue;
-                }else{
-                    try{
-                        x->set_param_by_name(_paramname,_paramvalue);
-                    } catch (Exception_No_Match){
-                        untested();
-                    }
-                }
-            }
-        }
-    }
     static unsigned instance;
     if(x->short_label()==""){
         x->set_label(basename+"_"+to_string(instance++));
