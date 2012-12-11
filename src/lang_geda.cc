@@ -639,6 +639,7 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
         } else {
             portname = port->port_value(0);
         }
+        trace2("setting port", index, portname);
         x->set_port_by_index(index, portname);
         ++index;
     }
@@ -895,7 +896,7 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
                     COMPONENT* d = prechecked_cast<COMPONENT*>(c);
 			if ( d->max_nodes() >= sym.pincount()
                           && d->min_nodes() <= sym.pincount()){
-                            // type = _symbol[basename]["device"];
+                            type = _symbol[basename]["device"];
                             trace4("have component??", type, sym.pincount(),  d->max_nodes(), d->min_nodes());
                         }else{
                             untested();
