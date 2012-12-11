@@ -1240,13 +1240,8 @@ public:
           if( mod == "module"){
               sckt = new MODEL_SUBCKT();
               COMPONENT* x = sckt;
-              sckt->set_label("foo");
+              sckt->set_label(arg);
               read_file(arg, Scope, sckt);
-
-              /// hmmm
-    x->set_port_by_index(0,*(new string("p1")));
-    x->set_port_by_index(1,*(new string("p3")));
-
               Scope->push_back(sckt);
           } else {
               read_file(arg, Scope);
