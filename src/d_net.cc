@@ -1,5 +1,4 @@
-/* 
- * Written by Savant Krishna <savant.2020@gmail.com>
+/* (c) 2012 Felix Salfelder
  *
  * This file is part of "Gnucap", the Gnu Circuit Analysis Package
  *
@@ -18,56 +17,55 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  *------------------------------------------------------------------
- * This is the device 'net' : a connection between components.
+ * base class for net devices, implementation.
+ * collapses nodes. may be overriden by loading another net.
  */
-#include "e_compon.h"
-#include "e_node.h"
-#ifndef HAVE_UINT_T
-typedef int uint_t;
-#endif
-/*--------------------------------------------------------------------------*/
-namespace {
-/*--------------------------------------------------------------------------*/
-class DEV_NET : public COMPONENT {
 
-public:
-  explicit DEV_NET() :COMPONENT()
-    {
-        _n=_nodes;
-    }
-  explicit DEV_NET(const DEV_NET& p) :COMPONENT(p){
-    _n=_nodes;
-  }
-  ~DEV_NET(){}
-private:
-  bool      param_is_printable(int)const {return false;}
-private:
-  char      id_letter()const {return 'N';}
-  std::string value_name()const   {return "color";}
-  std::string dev_type()const {untested(); return "net";}
-  uint_t    max_nodes()const {return 2;}
-  uint_t    min_nodes()const {return 2;}
-  uint_t    matrix_nodes()const {return 2;}
-  uint_t    net_nodes()const {return 2;}
-  bool      has_iv_probe()const {return true;}
-  CARD*     clone()const     {return new DEV_NET(*this);}
-  bool      print_type_in_spice()const {return false;}
-  int       param_count()const  {return COMPONENT::param_count();}
-  std::string port_name(uint_t i)const{
-    assert(i>=0);
-    assert(i<2);
-    static std::string names[]={"p","n"};
-    return names[i];
-  }
-public:
-  node_t    _nodes[NODES_PER_BRANCH];
-  void expand(){ incomplete(); }
-};
+#include "d_net.h"
 /*--------------------------------------------------------------------------*/
+DEV_NET::DEV_NET(const DEV_NET& p) : COMPONENT(p)
+{
+	_n = _nodes;
+	if (p._n == p._nodes) {
+		for (int ii = 0;  ii < NODES_PER_BRANCH;  ++ii) {
+			_n[ii] = p._n[ii];
+		}
+	}else{
+		assert(p._nodes);
+		// the constructor for a derived class will take care of it
+	}
+}
 /*--------------------------------------------------------------------------*/
+void DEV_NET::tr_iwant_matrix()
+{
+	assert(_n[OUT1].m_() != INVALID_NODE);
+	assert(_n[OUT2].m_() != INVALID_NODE);
+
+	//_sim->_aa.iwant(_n[OUT1].m_(),_n[OUT2].m_());
+	//_sim->_lu.iwant(_n[OUT1].m_(),_n[OUT2].m_());
+}
+/*--------------------------------------------------------------------------*/
+void DEV_NET::ac_iwant_matrix() {}
+/*--------------------------------------------------------------------------*/
+void DEV_NET::expand()
+{
+#ifdef HAVE_COLLAPSE
+	for( unsigned i=net_nodes(); --i>0; ){
+		trace1("DEV_NET::expand collapse", i);
+		_n[0].collapse(this, _n[i]);
+	}
+#else
+	incomplete();
+#endif
+}
+/*--------------------------------------------------------------------------*/
+void DEV_NET::tr_begin()
+{
+	trace2("DEV_NET::tr_begin", _n[0].m_(), _n[1].m_());
+ 	assert(_n[0].m_() == _n[1].m_());
+}
+namespace {
 DEV_NET p1;
 DISPATCHER<CARD>::INSTALL d1(&device_dispatcher,"net",&p1);
 /*--------------------------------------------------------------------------*/
 }
-/*--------------------------------------------------------------------------*/
-// vim:ts=8:sw=2:et
