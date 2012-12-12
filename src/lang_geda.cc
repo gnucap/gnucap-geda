@@ -717,6 +717,7 @@ DEV_DOT* LANG_GEDA::parse_command(CS& cmd, DEV_DOT* x)
     // bug: parse_symbol_file needs to tell us, if it is a command
     if( x->s() == "include"
             || x->s() == "end"
+            || x->s() == "simulator"
             || x->s() == "directive"
             || x->s() == "C"
             || x->s() == "list" ){
@@ -862,7 +863,9 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
     std::string type;   //stores type : should check device attribute..
     //graphical=["v","L","G","B","V","A","H","T"]
     if (_placeq.size()){ // hack?
-            type = "place";
+        type = "place";
+    } else if (_netq.size()){
+        type = "net";
     }else if (cmd >> "v " || cmd >> "L " || cmd >> "G " || cmd >> "B " || cmd >>"V "
         || cmd >> "A " || cmd >> "H " || cmd >> "T " ){ type="dev_comment";}
     else if (cmd >> "}"){
