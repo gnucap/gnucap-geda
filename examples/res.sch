@@ -1,0 +1,29 @@
+v 20110115 2
+C 40000 40000 0 0 0 title-B.sym
+C 49000 44500 1 0 0 passive-1.sym
+{
+T 49900 44700 5 10 1 0 0 0 1
+net=a
+T 49200 45200 5 10 0 0 0 0 1
+device=none
+T 49900 44600 5 10 1 1 0 1 1
+value=PASSIVE
+}
+C 48100 44700 1 180 0 passive-1.sym
+{
+T 47200 44500 5 10 1 0 180 0 1
+net=b
+T 47900 44000 5 10 0 0 180 0 1
+device=none
+T 47200 44600 5 10 1 1 180 1 1
+value=PASSIVE
+}
+C 48100 44500 1 0 0 resistor-1.sym
+{
+T 48400 44900 5 10 0 0 0 0 1
+device=RESISTOR
+T 48300 44800 5 10 1 1 0 0 1
+refdes=R_1
+T 48100 44500 5 10 1 0 0 0 1
+value=1
+}
