@@ -70,14 +70,14 @@ public:
        // i_vars_set (pr_current); // why?
       }
 
+private:
+    mutable bool _gotline_sym;
 public:
-    //
     enum MODE {mATTRIBUTE, mCOMMENT} _mode;
     mutable int _no_of_lines;
+    mutable bool _gotline;
     mutable bool _componentmod;
     mutable std::string _componentname;
-    mutable bool _gotline;
-    //
     std::string name()const {return "gschem";}
     bool case_insensitive()const {return false;}
     UNITS units()const {return uSI;}
@@ -151,8 +151,8 @@ std::string* LANG_GEDA::parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel
 {
     //assert(x); can parse NULL also
     trace0("Got into parse_pin");
-    std::string type = find_type_in_string(cmd),dump;
-    assert(type=="pin");
+    assert( find_type_in_string(cmd) =="pin");
+    string dump;
     cmd>>"P";
     std::string* coord = new std::string[3];
     if (!ismodel){
@@ -180,14 +180,6 @@ std::string* LANG_GEDA::parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel
     }
     std::string temp=(cmd.fullstring()).substr(0,1);
     if(cmd.match1('{')){
-        if(ismodel and x){
-            string portname = "np_" + _portvalue+::to_string(number++);
-            x->set_port_by_index(index, portname);
-            return NULL;
-        }else{
-            return coord;
-        }
-    }
     cmd>>"{";
     for(;;){
         cmd.get_line("");
@@ -208,6 +200,7 @@ std::string* LANG_GEDA::parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel
             }
         }
     }
+    }
     if(ismodel and x){
         string portname = "np_" + _portvalue+::to_string(number++);
         x->set_port_by_index(index, portname);
@@ -221,6 +214,7 @@ std::string* LANG_GEDA::parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel
 std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
             string basename)const
 {
+    _gotline_sym = 0;
     COMPONENT* c = dynamic_cast<COMPONENT*>(x);
     MODEL_SUBCKT* m = dynamic_cast<MODEL_SUBCKT*>(x);
     const CLibSymbol* symbol = s_clib_get_symbol_by_name(basename.c_str());
@@ -245,11 +239,12 @@ std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
     std::vector<std::string*> coord;
     while(true){
         try{
-            sym_cmd.get_line("");
+            if (!_gotline_sym) sym_cmd.get_line("");
         }catch (Exception_End_Of_Input&){
             break;
         }
         std::string linetype = find_type_in_string(sym_cmd);
+        trace2("LANG_GEDA::parse_symbol_file", linetype, sym_cmd.fullstring());
         bool ismodel=false;
         if (x && x->short_label()=="!_"+basename){
             ismodel=true;
@@ -259,6 +254,7 @@ std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
         }else if (linetype=="pin" && (c || !x)){
             trace2("parse_symbol_file parsing pin", basename, sym_cmd.fullstring());
             coord.push_back(parse_pin(sym_cmd,c,index++,ismodel));
+            trace2("parse_symbol_file pin done", basename, sym_cmd.fullstring());
         }else if(linetype=="pin"){
             // pin. this is a device, but we are in command mode
             coord.push_back(new string("foo"));
