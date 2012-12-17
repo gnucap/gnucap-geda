@@ -1,14 +1,14 @@
-For lang_gschem (gEDA plugin)
+For lang_geda (gEDA plugin)
 
 **TODO (In the order of preference)
 -(BUG) precalc_first is 'printing parameter <basename> has no value' : To Fix!
 -Parse and print heirarchical schematic (using parse_module and print_module)
 -Create augmented verilog netlist from a verilog netlist
--Hack a button/option into gschem to get a netlist in verilog from gnucap
+-cleanup gschem command arguments
 
-**Completed
--Print component
--Parsing a net
--Parsing a component
--Reading a symbol file to get ports
--Printing a net
+**optional/later
+-Hack a button/option into gschem to get a netlist in verilog from gnucap
+-support more gEDA symbols
+-global nodes?
+-gEDA style commands
+-more nets/ports (node numbering && behaviour)
