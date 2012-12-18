@@ -60,8 +60,9 @@ class LANG_GEDA : public LANGUAGE {
         unsigned color;
     } netinfo;
     mutable std::queue<netinfo> _netq;
+    mutable GEDA_SYMBOL* _dev;
 public:
-    LANG_GEDA() : LANGUAGE(){
+    LANG_GEDA() : LANGUAGE(), _dev(NULL){
       trace0("gedainit");
         scm_init_guile(); // urghs why?
         libgeda_init();
@@ -570,52 +571,23 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
         untested();
     }
     // set parameters
-    try{
-        cmd.get_line("gnucap-geda>");
-    trace0("parse_component got line");
-    if(cmd.match1('{')){
-        cmd>>"{";
-        trace0("got {");
-        for (;;) {
-            cmd.get_line("gnucap-geda-"+basename+">");
-            if (cmd >> "}") {
-                break;
-            }else{
-                if(cmd>>"T"){
-                    cmd>>dump;
-                }
-                else {
-                    std::string _paramname=cmd.ctos("=","",""),_paramvalue;
-                    cmd>>"=">>_paramvalue;
-                    trace0("got the parameter");
-                    if(_paramname=="device"){
-                        //incomplete!
-                        x->set_dev_type(_paramvalue);
-                    }else if (_paramname=="refdes" && _paramvalue!="?"){
-                        x->set_label(_paramvalue);
-                        //                }else if (_paramname=="source"){
-                        //                    source = _paramvalue;
-                }else{
-                    try{
-                        x->set_param_by_name(_paramname,_paramvalue);
-                    } catch (Exception_No_Match){
-                        untested();
-                    }
-                }
-                }
+
+    for(GEDA_SYMBOL::const_iterator i = _dev->begin(); i!=_dev->end(); ++i) {
+        if (i->first == "device") {
+            x->set_dev_type( i->second );
+        } else if ( i->first == "refdes" && i->second != "?" ) {
+            x->set_label(i->second);
+            //                else if (_paramname=="source")
+            //                    source = _paramvalue;
+        } else {
+            try{
+                x->set_param_by_name(i->first, i->second);
+            } catch (Exception_No_Match){
+                untested();
             }
         }
-    } else {
-        trace0("no {");
-        cmd.reset();
-        lang_geda._componentmod=true;
-        lang_geda._gotline = true;
-        //OPT::language->new__instance(cmd,NULL,x->scope());
-        // return;
     }
-    }catch(Exception_End_Of_Input&){
-        // return;
-    }
+
     // connect ports
     for (std::vector<std::string*>::const_iterator i=coordinates.begin();i<coordinates.end();++i){
         //to do integer casting, addition and then reconverting to string
@@ -910,52 +882,64 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
     else if (cmd >> "U "){ type="bus";}
     else if (cmd >> "P "){ type="pin";}
     else if (cmd >> "C "){
-//todo: inspect symbol file
-//if it claims to be a device or port or something, then
-//don't do subckt voodoo
-        if(_componentmod){
-            type = "C";
-        }else{
-            type = _componentname;
-            string X, basename;
-            cmd>>X>>" ">>X>>" ">>X>>" ">>X>>" ">>X>>" ">>basename;
-            GEDA_SYMBOL sym = _symbol[basename];
-            if(sym.has_key("device")){
-                CARD_LIST::const_iterator i = CARD_LIST::card_list.find_(sym["device"]);
-                if (CARD* c = device_dispatcher[sym["device"]]){
-                    COMPONENT* d = prechecked_cast<COMPONENT*>(c);
-			if ( d->max_nodes() >= sym.pincount()
-                          && d->min_nodes() <= sym.pincount()){
-                            type = sym["device"];
-                            trace4("have component??", type, sym.pincount(),  d->max_nodes(), d->min_nodes());
-                        }
-                } else if (i!= CARD_LIST::card_list.end()){
-                    if( COMPONENT* d = prechecked_cast<COMPONENT*>(*i))
-			if ( d->max_nodes() >= sym.pincount()
-                          && d->min_nodes() <= sym.pincount()){
-                            type = sym["device"];
-                            trace4("have sckt??", type, sym.pincount(),  d->max_nodes(), d->min_nodes());
-                        }
-                    if(MODEL_SUBCKT* d = prechecked_cast<MODEL_SUBCKT*>(*i))
-			if ( d->max_nodes() >= sym.pincount()
-                          && d->min_nodes() <= sym.pincount()){
-                            type = sym["device"];
-                            trace4("have sckt??", type, sym.pincount(),  d->max_nodes(), d->min_nodes());
-                        }
-                }
-            } else if(sym.has_key("net")){
-                if (CARD* c = device_dispatcher["rail"]){
-                    COMPONENT* d = prechecked_cast<COMPONENT*>(c);
-			if ( d->max_nodes() >= sym.pincount()
-                          && d->min_nodes() <= sym.pincount()){
-                            type = "rail";
-                            trace4("have component??", type, sym.pincount(),  d->max_nodes(), d->min_nodes());
-                        }
+        if(_dev) return (*_dev)["device"];
+        cmd >> X >> " " >> X >> " " >> X >> " " >> X >> " " >> X >> " " >> basename;
+        GEDA_SYMBOL* d = new GEDA_SYMBOL(_symbol[basename]);
+        GEDA_SYMBOL& D = *d;
+        try{
+            cmd.get_line("gnucap-geda-"+basename+">");
+        }catch(Exception_End_Of_Input&){
+        }
+        if(cmd >> '{') {
+            for (;;) {
+                cmd.get_line("gnucap-geda-"+basename+">");
+                if (cmd >> "}") {
+                    break;
+                } else if(cmd >> "T") {
+                } else {
+                    string name = cmd.ctos("=","",""), value;
+                    cmd >> "=" >> value;
+                    D[name] = value;
                 }
             }
+        } else { // "C" without body
+            trace1("C w/o body", cmd.fullstring());
+            _gotline = 1; // dont read another time.
+        }
+        if (D.has_key("device")){
+            CARD_LIST::const_iterator i = CARD_LIST::card_list.find_(D["device"]);
+            if (CARD* c = device_dispatcher[D["device"]]){
+                COMPONENT* d = prechecked_cast<COMPONENT*>(c);
+                if ( d->max_nodes() >= D.pincount()
+                        && d->min_nodes() <= D.pincount()){
+                    type = D["device"];
+                }
+            } else if (i!= CARD_LIST::card_list.end()){
+                if (COMPONENT* d = prechecked_cast<COMPONENT*>(*i))
+                    if ( d->max_nodes() >= D.pincount()
+                            && d->min_nodes() <= D.pincount()){
+                        type = D["device"];
+                    }
+                if (MODEL_SUBCKT* d = prechecked_cast<MODEL_SUBCKT*>(*i))
+                    if ( d->max_nodes() >= D.pincount()
+                            && d->min_nodes() <= D.pincount()){
+                        type = D["device"];
+                    }
+            }
+        } else if (D.has_key("net")) {
+            if (CARD* c = device_dispatcher["rail"]){
+                COMPONENT* d = prechecked_cast<COMPONENT*>(c);
+                if ( d->max_nodes() >= D.pincount()
+                        && d->min_nodes() <= D.pincount()){
+                    type = "rail";
+                }
+            }
+        } else {
+            type = "C"; // declare module first...
+            _dev = d;
         }
     } else if (cmd >> "place "){ 
-        // hmmm. ouch
+    // hmmm. ouch
         type="place"; 
     } else {
         switch(_mode){
