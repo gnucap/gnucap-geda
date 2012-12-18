@@ -547,23 +547,30 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
     }
 }
 /*--------------------------------------------------------------------------*/
+pair<int,int> componentposition(int* absxy, int* relxy, int angle, bool mirror);
+/*--------------------------------------------------------------------------*/
 void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
 { // "component" means instance of a subckt
     trace4("LANG_GEDA::parse_component", x->long_label(), cmd.fullstring(),
             hp(x->owner()), hp(x->scope()));
     assert(x);
     assert(!_placeq.size());
-    std::string component_x, component_y, mirror, angle, dump,basename;
+    int c_x, c_y, angle;
+    string mirror, dump,basename;
     std::string type=lang_geda.find_type_in_string(cmd);
     std::string source("");
     cmd >> type;
-    cmd>>component_x>>" ">>component_y>>" ">>dump>>" ">>angle>>" ">>mirror>>" ">>basename;
+    c_x = cmd.ctoi();
+    c_y = cmd.ctoi();
+    cmd >> dump;
+    angle = cmd.ctoi();
+    cmd >> " " >> mirror >> " " >> basename;
     //To get port names and values from symbol?
     //Then set params below
     //Search for the file name
     std::vector<std::string*> coordinates=parse_symbol_file(x,basename);
-    char    newx[10],newy[10];
-    int index=0;
+    int newx, newy;
+    int index = 0;
 
     try{
         x->set_param_by_name("basename",basename);
@@ -590,49 +597,16 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
 
     // connect ports
     for (std::vector<std::string*>::const_iterator i=coordinates.begin();i<coordinates.end();++i){
-        //to do integer casting, addition and then reconverting to string
-        if(mirror=="0"){
-            switch(atoi(angle.c_str())){
-            case 0:
-                sprintf(newx,"%d",atoi(component_x.c_str())+atoi((*i)[0].c_str()));
-                sprintf(newy,"%d",atoi(component_y.c_str())+atoi((*i)[1].c_str()));
-                break;
-            case 90:
-                sprintf(newx,"%d",atoi(component_x.c_str())-atoi((*i)[1].c_str()));
-                sprintf(newy,"%d",atoi(component_y.c_str())+atoi((*i)[0].c_str()));
-                break;
-            case 180:
-                sprintf(newx,"%d",atoi(component_x.c_str())-atoi((*i)[0].c_str()));
-                sprintf(newy,"%d",atoi(component_y.c_str())-atoi((*i)[1].c_str()));
-                break;
-            case 270:
-                sprintf(newx,"%d",atoi(component_x.c_str())+atoi((*i)[1].c_str()));
-                sprintf(newy,"%d",atoi(component_y.c_str())-atoi((*i)[0].c_str()));
-                break;
-            }
-        }else if(mirror=="1"){
-            switch(atoi(angle.c_str())){
-            case 0:
-                sprintf(newx,"%d",atoi(component_x.c_str())-atoi((*i)[0].c_str()));
-                sprintf(newy,"%d",atoi(component_y.c_str())+atoi((*i)[1].c_str()));
-                break;
-            case 90:
-                sprintf(newx,"%d",atoi(component_x.c_str())-atoi((*i)[1].c_str()));
-                sprintf(newy,"%d",atoi(component_y.c_str())-atoi((*i)[0].c_str()));
-                break;
-            case 180:
-                sprintf(newx,"%d",atoi(component_x.c_str())+atoi((*i)[0].c_str()));
-                sprintf(newy,"%d",atoi(component_y.c_str())-atoi((*i)[1].c_str()));
-                break;
-            case 270:
-                sprintf(newx,"%d",atoi(component_x.c_str())+atoi((*i)[1].c_str()));
-                sprintf(newy,"%d",atoi(component_y.c_str())+atoi((*i)[0].c_str()));
-                break;
-            }
-        }else{
-            unreachable();
-        //not correct mirror!
-        }
+        int cc[2];
+        cc[0] = c_x;
+        cc[1] = c_y;
+        int delta[2];
+        delta[0] = - atoi((*i)[0].c_str());
+        delta[1] = - atoi((*i)[1].c_str());
+        assert(mirror=="1" || mirror=="0");
+        pair<int,int> new_ = componentposition( cc, delta, angle, mirror=="1" );
+        newx = new_.first;
+        newy = new_.second;
         //delete (*i);
         //setting new place devices for each node searching for .
         //new__instance(cmd,NULL,Scope); //cmd : can create. Scope? how to get Scope? Yes!
@@ -640,7 +614,7 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
         string portname = "incomplete";
         if (!port){
             portname = "cn_" + ::to_string(_nodenumber++);
-            _placeq.push( portinfo{portname, atoi(newx), atoi(newy)} );
+            _placeq.push( portinfo{portname, newx, newy} );
             portname = string(INT_PREFIX) + portname;
         } else {
             portname = port->port_value(0);
@@ -883,6 +857,7 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
     else if (cmd >> "P "){ type="pin";}
     else if (cmd >> "C "){
         if(_dev) return (*_dev)["device"];
+        string X, basename;
         cmd >> X >> " " >> X >> " " >> X >> " " >> X >> " " >> X >> " " >> basename;
         GEDA_SYMBOL* d = new GEDA_SYMBOL(_symbol[basename]);
         GEDA_SYMBOL& D = *d;
@@ -1013,54 +988,61 @@ static void print_node_xy(OMSTREAM& o,const COMPONENT* x,int _portindex)
     }
 }
 /*--------------------------------------------------------------------------*/
-static std::string findcomponentposition(std::string* absxy, std::string* pinxy, std::string angle, std::string mirror)
+pair<int,int> componentposition(int* absxy, int* delxy, int angle, bool mirror)
 {
-    char newx[10];
-    char newy[10];
-    if(mirror=="0"){
-        switch(atoi(angle.c_str())){
-        case 0:
-            sprintf(newx,"%d",atoi(absxy[0].c_str())-atoi(pinxy[0].c_str()));
-            sprintf(newy,"%d",atoi(absxy[1].c_str())-atoi(pinxy[1].c_str()));
-            break;
-        case 90:
-            sprintf(newx,"%d",atoi(absxy[0].c_str())+atoi(pinxy[1].c_str()));
-            sprintf(newy,"%d",atoi(absxy[1].c_str())-atoi(pinxy[0].c_str()));
-            break;
-        case 180:
-            sprintf(newx,"%d",atoi(absxy[0].c_str())+atoi(pinxy[0].c_str()));
-            sprintf(newy,"%d",atoi(absxy[1].c_str())+atoi(pinxy[1].c_str()));
-            break;
-        case 270:
-            sprintf(newx,"%d",atoi(absxy[0].c_str())-atoi(pinxy[1].c_str()));
-            sprintf(newy,"%d",atoi(absxy[1].c_str())+atoi(pinxy[0].c_str()));
-            break;
+    int newx = absxy[0];
+    int newy = absxy[1];
+    //if(mirror=="0")
+    if(!mirror){
+        switch(angle){
+            case 0:
+                newx -= delxy[0];
+                newy -= delxy[1];
+                break;
+            case 90:
+                newx += delxy[1];
+                newy -= delxy[0];
+                break;
+            case 180:
+                newx += delxy[0];
+                newy += delxy[1];
+                break;
+            case 270:
+                newx -= delxy[1];
+                newy += delxy[0];
+                break;
         }
-    }else if(mirror=="1"){
-        switch(atoi(angle.c_str())){
-        case 0:
-            sprintf(newx,"%d",atoi(absxy[0].c_str())+atoi(pinxy[0].c_str()));
-            sprintf(newy,"%d",atoi(absxy[1].c_str())-atoi(pinxy[1].c_str()));
-            break;
-        case 90:
-            sprintf(newx,"%d",atoi(absxy[0].c_str())+atoi(pinxy[1].c_str()));
-            sprintf(newy,"%d",atoi(absxy[1].c_str())+atoi(pinxy[0].c_str()));
-            break;
-        case 180:
-            sprintf(newx,"%d",atoi(absxy[0].c_str())-atoi(pinxy[0].c_str()));
-            sprintf(newy,"%d",atoi(absxy[1].c_str())+atoi(pinxy[1].c_str()));
-            break;
-        case 270:
-            sprintf(newx,"%d",atoi(absxy[0].c_str())-atoi(pinxy[1].c_str()));
-            sprintf(newy,"%d",atoi(absxy[1].c_str())-atoi(pinxy[0].c_str()));
-            break;
+    } else if(mirror){
+        switch(angle){
+            case 0:
+                newx += delxy[0];
+                newy -= delxy[1];
+                break;
+            case 90:
+                newx += delxy[1];
+                newy += delxy[0];
+                break;
+            case 180:
+                newx -= delxy[0];
+                newy += delxy[1];
+                break;
+            case 270:
+                newx -= delxy[1];
+                newy -= delxy[0];
+                break;
         }
     }else{
     //not correct mirror!
     }
-    std::string sx=newx;
-    std::string sy=newy;
-    return sx+" "+sy;
+    return pair<int,int>(newx,newy);
+}
+/*--------------------------------------------------------------------------*/
+// urghs
+static std::string componentposition_string(int* absxy, int* relxy, int angle, bool mirror)
+{
+    return to_string(componentposition(absxy, relxy, angle, mirror).first)
+            + " " +
+           to_string(componentposition(absxy, relxy, angle, mirror).second);
 }
 /*--------------------------------------------------------------------------*/
 static std::string* find_place(const COMPONENT* x, std::string _portvalue)
@@ -1127,24 +1109,35 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
             xy="";
             gottheanglemirror=true;
             for(int pinind=0; pinind<coordinates.size(); ++pinind){
+                int a[2];
+                int c[2];
+                a[0] = atoi(abscoord[pinind][0].c_str());
+                a[1] = atoi(abscoord[pinind][1].c_str());
+                c[0] = atoi(coordinates[pinind][0].c_str());
+                c[1] = atoi(coordinates[pinind][1].c_str());
                 if (xy==""){
-                    xy=findcomponentposition(abscoord[pinind],coordinates[pinind],_angle,_mirror);
-                }else if(xy!=findcomponentposition(abscoord[pinind],coordinates[pinind],_angle,_mirror)){
+                    xy = componentposition_string(a, c, 90*ii, _mirror=="1");
+                }else if(xy != componentposition_string(a, c, 90*ii, _mirror=="1")){
                         gottheanglemirror=false;
                         break;
                 }
             }
             if (gottheanglemirror) {
                 o << xy << " " << "1" << " " << _angle << " " << _mirror << " " << _basename<< "\n";
-            }
-            else{
+            } else {
                 _mirror="1";
                 xy="";
                 gottheanglemirror=true;
                 for(int pinind=0; pinind<coordinates.size(); ++pinind){
+                    int a[2];
+                    int c[2];
+                    a[0] = atoi(abscoord[pinind][0].c_str());
+                    a[1] = atoi(abscoord[pinind][1].c_str());
+                    c[0] = atoi(coordinates[pinind][0].c_str());
+                    c[1] = atoi(coordinates[pinind][1].c_str());
                     if (xy==""){
-                        xy=findcomponentposition(abscoord[pinind],coordinates[pinind],_angle,_mirror);
-                    }else if(xy!=findcomponentposition(abscoord[pinind],coordinates[pinind],_angle,_mirror)){
+                        xy = componentposition_string(a, c, 90*ii, _mirror=="1");
+                    }else if(xy != componentposition_string(a, c, 90*ii, _mirror=="1")){
                             gottheanglemirror=false;
                             break;
                     }
