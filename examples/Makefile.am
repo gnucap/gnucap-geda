@@ -1,4 +1,4 @@
-REG_TEST=res.reg res_net.reg short.reg rail.reg
+REG_TEST=res res_net short rail
 
 %.reg: %.test %.ref
 	diff $+
@@ -7,6 +7,11 @@ REG_TEST=res.reg res_net.reg short.reg rail.reg
 	GUILE_WARN_DEPRECATED=no \
 	gnucap $< | grep '^[a-zA-Z0-9]*=' > $@
 
-check: $(REG_TEST)
+check: $(REG_TEST:%=%.reg)
 
-.PHONY: %.reg
+clean: clean-test
+
+clean-test:
+	rm -f $(REG_TEST:%=%.test)
+
+.PHONY: %.reg check
