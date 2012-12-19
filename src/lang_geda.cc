@@ -37,6 +37,8 @@ extern "C"{
 }
 #include "symbol.h"
 #include "lang_geda.h"
+#include "d_net.h"
+#include "d_place.h"
 #undef COMPLEX
 /*--------------------------------------------------------------------------*/
 // using namespace std;
@@ -44,7 +46,7 @@ using std::string;
 using std::vector;
 using std::pair;
 /*--------------------------------------------------------------------------*/
-namespace {
+namespace geda{
 /*--------------------------------------------------------------------------*/
 class LANG_GEDA : public LANGUAGE {
     friend class CMD_GSCHEM;
@@ -390,11 +392,15 @@ COMPONENT* LANG_GEDA::findplace(COMPONENT* x, string xco, string yco)const
 void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
 {
     trace4("connect", x0, y0, x1, y1);
+    assert(x0!=x1 || y0!=y1);
     CARD_LIST* scope = x->owner()?x->owner()->scope():x->scope();
     for(CARD_LIST::const_iterator ci = scope->begin(); ci != scope->end(); ++ci) {
-        if((*ci)->dev_type()=="place"){
-            int _x = atoi((*ci)->param_value(1).c_str());
-            int _y = atoi((*ci)->param_value(0).c_str());
+        if(const DEV_NET* net=dynamic_cast<DEV_NET*>(*ci)){
+            // connect end points to existing nets
+        } else if(const place::DEV_PLACE* pl=dynamic_cast<place::DEV_PLACE*>(*ci)){
+            // connect interior places
+            int _x = pl->x();
+            int _y = pl->y();
             trace3("findnode, found.", (*ci)->long_label(), _x, _y );
             if (y0==y1){ // horizontal
                 if((((x1 < _x) && (_x<x0) ) || ((x0<_x) && (_x<x1))) && _y==y0 && _x!=x0 && _x!=x1){
@@ -405,7 +411,6 @@ void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
                     _netq.push( netinfo{ x0, y0, _x, _y, col });
                 }
                 else{
-                    trace4("... nothing IV", y0 == _y, x0, x1, _x );
                 }
             }else if (x0==x1){
                 if((((y1 < _y) && (_y<y0)) || ((y0 < _y) && (_y<y1))) && _x==x0 && _y!=y0 && _y!=y1){
@@ -418,7 +423,6 @@ void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
                     // connect place to 1st endpoint.
                     _netq.push( netinfo{ x0, y0, _x, _y, col });
                 }else{
-                    trace0("... nothing III");
                 }
             }
             else{
@@ -1109,22 +1113,33 @@ static std::string componentposition_string(int* absxy, int* relxy, int angle, b
            to_string(componentposition(absxy, relxy, angle, mirror).second);
 }
 /*--------------------------------------------------------------------------*/
-static std::string* find_place(const COMPONENT* x, std::string _portvalue)
+// can this be done faster?!
+pair<int,int> find_place(const COMPONENT* x, std::string name)
 {
     for(CARD_LIST::const_iterator ci=x->scope()->begin(); ci!=x->scope()->end(); ++ci) {
-        if((*ci)->dev_type()=="place"){
-            if(static_cast<COMPONENT*>(*ci)->port_value(0)==_portvalue){
-                trace0("Got the coord");
-                std::string*  a= new std::string[2];
-                a[0]=(*ci)->param_value(1);     
-                a[1]=(*ci)->param_value(0);
-                trace0("Got out of find_place");
+        if(const place::DEV_PLACE*p=dynamic_cast<const place::DEV_PLACE*>(*ci)){
+            if(p->port_value(0)==name){
+                pair<int,int> a;
+                a.first = p->x();
+                a.second = p->y();
                 return a;
             }
         }
     }
-    return NULL;
-    //To return place coordinates after searching for it.
+    throw(Exception_Cant_Find("",name));
+}
+/*--------------------------------------------------------------------------*/
+static std::string* find_place_(const COMPONENT* x, std::string name)
+{
+    std::string* a = new std::string[2];
+    try{
+        pair<int,int> b = find_place(x, name);
+        a[0] = to_string(b.first);
+        a[1] = to_string(b.second);
+        return a;
+    }catch(Exception_Cant_Find){
+        return NULL;
+    }
 }
 /*--------------------------------------------------------------------------*/
 static void print_net(OMSTREAM& o, const COMPONENT* x)
@@ -1160,7 +1175,7 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
     std::vector<std::string*> coordinates=parse_symbol_file(NULL, _basename);
     std::vector<std::string*> abscoord;
     for(int ii=0; ii<coordinates.size(); ++ii){
-        abscoord.push_back(find_place(x,x->port_value(ii)));
+        abscoord.push_back(find_place_(x,x->port_value(ii)));
     }
     std::string angle[4]={"0","90","180","270"};
     int index=0; 
