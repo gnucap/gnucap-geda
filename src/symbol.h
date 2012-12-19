@@ -31,6 +31,11 @@ using std::map;
 using std::string;
 using std::pair;
 
+enum angle_t { a_0 = 0,
+               a_90 = 90,
+               a_180 = 180,
+               a_270 = 270 };
+
 class GEDA_SYMBOL : public map<string, string>{
 	typedef map<string, string> parent;
 	string _filename;
@@ -43,7 +48,7 @@ class GEDA_SYMBOL : public map<string, string>{
 
 		GEDA_SYMBOL(){}
 //		GEDA_SYMBOL(const GEDA_SYMBOL&p): parent(p), _filename(p._filename){}
-		GEDA_SYMBOL(string basename):_pincount(0) {
+		GEDA_SYMBOL(string basename):_pincount(0), x(0), y(0), mirror(0), angle(a_0) {
 			unsigned scope = 0;
 			trace1( "GEDA_SYMBOL", basename);
 			const CLibSymbol* symbol = s_clib_get_symbol_by_name(basename.c_str());
@@ -76,9 +81,7 @@ class GEDA_SYMBOL : public map<string, string>{
 						cmd >> "=";
 						if(!cmd.stuck(&here)){
 							cmd >> pvalue;
-							trace3("GEDA_SYMBOL push", pname, pvalue, cmd.fullstring());
 							parent::operator[](pname) = pvalue;
-							trace1("GEDA_SYMBOL push", parent::operator[](pname) );
 						}
 					}
 				}
@@ -89,6 +92,11 @@ class GEDA_SYMBOL : public map<string, string>{
 			 return (it != end());
 		}
 		unsigned pincount()const {return _pincount;}
+	public: // abuse for symbol instances
+		int x;
+		int y;
+		bool mirror;
+		angle_t angle;
 };
 /*--------------------------------------------------------------------------*/
 class GEDA_SYMBOL_MAP : public std::map<string, GEDA_SYMBOL> {

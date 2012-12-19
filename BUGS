@@ -1,3 +1,2 @@
-- find_type_in_string doesnt read body
 - nets don't connect right (if net crosses place)
 - breaks "v" device in spice

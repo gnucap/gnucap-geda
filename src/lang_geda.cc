@@ -77,7 +77,6 @@ public:
     enum MODE {mATTRIBUTE, mCOMMENT} _mode;
     mutable int _no_of_lines;
     mutable bool _gotline;
-    mutable bool _componentmod;
     mutable std::string _componentname;
     std::string name()const {return "gschem";}
     bool case_insensitive()const {return false;}
@@ -215,6 +214,9 @@ std::string* LANG_GEDA::parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel
 std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
             string basename)const
 {
+    assert(!_dev);
+    assert(!_netq.size());
+    assert(!_placeq.size());
     _gotline_sym = 0;
     COMPONENT* c = dynamic_cast<COMPONENT*>(x);
     MODEL_SUBCKT* m = dynamic_cast<MODEL_SUBCKT*>(x);
@@ -435,7 +437,7 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
     trace1("LANG_GEDA::parse_net", hp(x->scope()));
     MODEL_SUBCKT* owner = dynamic_cast<MODEL_SUBCKT*>(x->owner());
     assert(x);
-    assert(lang_geda.find_type_in_string(cmd)=="net");
+    // assert(lang_geda.find_type_in_string(cmd)=="net"); // no. at end of body...
     int coord[4];
     if(_netq.size()){
         netinfo n = _netq.front();
@@ -555,31 +557,42 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
             hp(x->owner()), hp(x->scope()));
     assert(x);
     assert(!_placeq.size());
+    assert(_dev);
     int c_x, c_y, angle;
-    string mirror, dump,basename;
+    bool mirror;
+    string dump,basename;
     std::string type=lang_geda.find_type_in_string(cmd);
+    GEDA_SYMBOL* dev = _dev;
+    _dev = 0; // to make parse_symbol_file work
+    assert(type==(*dev)["device"]);
     std::string source("");
-    cmd >> type;
-    c_x = cmd.ctoi();
-    c_y = cmd.ctoi();
-    cmd >> dump;
-    angle = cmd.ctoi();
-    cmd >> " " >> mirror >> " " >> basename;
+
+    // cannot read from cmd. too late.
+    // cmd >> " " >> mirror >> " " >> basename;
+    basename = (*dev)["basename"];
+    c_x = dev->x;
+    c_y = dev->y;
+    angle = dev->angle;
+    mirror = dev->mirror;
+    trace1("LANG_GEDA::parse_component", basename);
+
     //To get port names and values from symbol?
     //Then set params below
     //Search for the file name
+    // FIXME: should not need basename (dev instead)
+    // FIXME: reads symbol file twice
     std::vector<std::string*> coordinates=parse_symbol_file(x,basename);
     int newx, newy;
     int index = 0;
 
     try{
-        x->set_param_by_name("basename",basename);
+        x->set_param_by_name("basename", basename);
     } catch(Exception_No_Match){
         untested();
     }
     // set parameters
 
-    for(GEDA_SYMBOL::const_iterator i = _dev->begin(); i!=_dev->end(); ++i) {
+    for(GEDA_SYMBOL::const_iterator i = dev->begin(); i!=dev->end(); ++i) {
         if (i->first == "device") {
             x->set_dev_type( i->second );
         } else if ( i->first == "refdes" && i->second != "?" ) {
@@ -603,8 +616,7 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
         int delta[2];
         delta[0] = - atoi((*i)[0].c_str());
         delta[1] = - atoi((*i)[1].c_str());
-        assert(mirror=="1" || mirror=="0");
-        pair<int,int> new_ = componentposition( cc, delta, angle, mirror=="1" );
+        pair<int,int> new_ = componentposition( cc, delta, angle, mirror );
         newx = new_.first;
         newy = new_.second;
         //delete (*i);
@@ -626,7 +638,6 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
     if(_placeq.size()){
         cmd.reset();
     }
-    trace0("getting line");
     static unsigned instance;
     if(x->short_label()==""){
         x->set_label(basename+"_"+to_string(instance++));
@@ -637,9 +648,9 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
     if(_placeq.size()){
         cmd.reset();
     }
+    delete dev;
 
-    lang_geda._componentmod=true;
-    trace0("got out of parse_component");
+    trace0("LANG_GEDA::parse_component done");
 }
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
@@ -721,7 +732,11 @@ DEV_DOT* LANG_GEDA::parse_command(CS& cmd, DEV_DOT* x)
     }
 
 
-    cmd.get_line(""); // bug? may fail and abort...
+    try{
+        cmd.get_line("");
+        trace1("cmd body?", cmd.fullstring());
+    }catch(Exception_End_Of_Input&){
+    }
 
     if (cmd.skip1("{")){
         for(;;){
@@ -774,7 +789,7 @@ COMPONENT* LANG_GEDA::parse_componmod(CS& cmd, COMPONENT* x)
     assert(x);
     cmd.reset();
     std::string type = find_type_in_string(cmd);
-    trace0("found string type");
+    trace1("LANG_GEDA::parse_componmod", type);
     assert(type=="C");
     std::string component_x, component_y, mirror, angle, dump,basename;
     cmd>>"C";
@@ -839,30 +854,75 @@ COMPONENT* LANG_GEDA::parse_instance(CS& cmd, COMPONENT* x)
  */
 std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 {
+    trace2("LANG_GEDA::find_type_in_string", cmd.fullstring(), hp(_dev));
     unsigned here = cmd.cursor(); //store cursor position to reset back later
     std::string type;   //stores type : should check device attribute..
     //graphical=["v","L","G","B","V","A","H","T"]
-    if (_placeq.size()){ // hack?
-        type = "place";
-    } else if (_netq.size()){
-        type = "net";
-    }else if (cmd >> "v " || cmd >> "L " || cmd >> "G " || cmd >> "B " || cmd >>"V "
-        || cmd >> "A " || cmd >> "H " || cmd >> "T " ){ type="dev_comment";}
-    else if (cmd >> "}"){
-        unreachable();
-    }else if (cmd >> "N "){
-        type = "net";
+    if(_dev) { untested();
+        assert( (*_dev)["basename"] != "" );
+        assert( (*_dev)["device"] != "" );
+        return (*_dev)["device"];
     }
-    else if (cmd >> "U "){ type="bus";}
+    if (_placeq.size()){ // hack?
+        return "place";
+    }
+    if (_netq.size()){
+        return "net";
+    }
+    if (cmd >> "v " || cmd >> "L " || cmd >> "G " || cmd >> "B " || cmd >>"V "
+        || cmd >> "A " || cmd >> "H " || cmd >> "T " ){
+        return "dev_comment";
+    }
+    if (cmd >> "}"){
+        unreachable();
+        try {
+            cmd.get_line("brace-bug>");
+            return find_type_in_string(cmd);
+        } catch(Exception_End_Of_Input&){
+            untested();
+            return "dev_comment";
+        }
+    }
+    if (cmd >> "N "){
+        return "net";
+    }
+    trace1("LANG_GEDA::find_type_in_string II", cmd.fullstring());
+
+    if (cmd >> "U "){ type="bus";}
     else if (cmd >> "P "){ type="pin";}
     else if (cmd >> "C "){
-        if(_dev) return (*_dev)["device"];
-        string X, basename;
-        cmd >> X >> " " >> X >> " " >> X >> " " >> X >> " " >> X >> " " >> basename;
-        GEDA_SYMBOL* d = new GEDA_SYMBOL(_symbol[basename]);
-        GEDA_SYMBOL& D = *d;
+        int c_x, c_y, c_a;
+        bool c_m, c_sel;
+        string basename;
+        c_x = cmd.ctoi();
+        c_y = cmd.ctoi();
+        c_sel = cmd.ctob();
+        c_a = cmd.ctoi();
+        c_m = cmd.ctob();
+        cmd >> " " >> basename;
+        assert( ! ( c_a % 90 ) );
+        assert( -1 < c_a && c_a < 271 );
+        GEDA_SYMBOL sym = _symbol[basename];
+        if (!sym.pincount()){
+            if ( sym.has_key("device") ){
+                if (sym["device"] == "directive")
+                    incomplete();
+                // return "some command"
+                // don't need non-directive symbol hold directives.
+                // (for now?)
+            }
+            untested();
+            return "dev_comment";
+        }
+        GEDA_SYMBOL* sd = new GEDA_SYMBOL(sym);
+        GEDA_SYMBOL& D = *sd;
+        D.x = c_x; D.y = c_y;
+        D.angle = angle_t( c_a );
+        D.mirror = c_m;
+        D["basename"] = basename; // hmmm...
         try{
             cmd.get_line("gnucap-geda-"+basename+">");
+            trace1("body?", cmd.fullstring());
         }catch(Exception_End_Of_Input&){
         }
         if(cmd >> '{') {
@@ -887,18 +947,24 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
                 COMPONENT* d = prechecked_cast<COMPONENT*>(c);
                 if ( d->max_nodes() >= D.pincount()
                         && d->min_nodes() <= D.pincount()){
+                    untested();
                     type = D["device"];
+                    _dev = sd;
                 }
             } else if (i!= CARD_LIST::card_list.end()){
                 if (COMPONENT* d = prechecked_cast<COMPONENT*>(*i))
                     if ( d->max_nodes() >= D.pincount()
                             && d->min_nodes() <= D.pincount()){
+                        untested();
                         type = D["device"];
+                        _dev = sd;
                     }
                 if (MODEL_SUBCKT* d = prechecked_cast<MODEL_SUBCKT*>(*i))
                     if ( d->max_nodes() >= D.pincount()
                             && d->min_nodes() <= D.pincount()){
+                        untested();
                         type = D["device"];
+                        _dev = sd;
                     }
             }
         } else if (D.has_key("net")) {
@@ -907,11 +973,14 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
                 if ( d->max_nodes() >= D.pincount()
                         && d->min_nodes() <= D.pincount()){
                     type = "rail";
+                    _dev = sd;
+                    D["device"] = type;
                 }
             }
         } else {
+            untested();
             type = "C"; // declare module first...
-            _dev = d;
+            _dev = sd;
         }
     } else if (cmd >> "place "){ 
     // hmmm. ouch
@@ -944,7 +1013,7 @@ void LANG_GEDA::parse_item_(CS& cmd, CARD* owner, CARD_LIST* scope)const
     // .... _gotline means:
     // - component needs to be instanciated after sckt declaration.
     // - parser found nonbrace when trying to parse body
-    trace4("LANG_GEDA::parse_item_", _gotline, _placeq.size(), _netq.size(), cmd.fullstring());
+    trace4("LANG_GEDA::parse_item_", _gotline, _placeq.size(), _netq.size(), hp(_dev));
     if(!_gotline && !_placeq.size() && !_netq.size() ){
         cmd.get_line("gnucap-geda>");
     } else if (!_placeq.size() && !_netq.size() ){
@@ -1247,7 +1316,6 @@ public:
       // BUG breaks direct "options lang=gschem", does it?
       lang_geda._mode=lang_geda.mATTRIBUTE;
       lang_geda._no_of_lines=0;
-      lang_geda._componentmod=true;
       lang_geda._gotline=false;
       //
       
@@ -1344,7 +1412,6 @@ class CMD_C : public CMD {
             Scope->push_back(new_compon);
         }
 
-        lang_geda._componentmod=false;
         cmd.reset();
         trace1("not calling new__instance ", cmd.fullstring());
         lang_geda._gotline = true;
