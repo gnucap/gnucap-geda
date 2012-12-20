@@ -18,57 +18,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  *------------------------------------------------------------------
- * This is the device 'net' : a connection between components.
+ * This is the device 'place' : a schematic node location.
  */
-#include "e_compon.h"
-#include "e_node.h"
+#include <e_compon.h>
+#include <e_node.h>
+#include "d_place.h"
 #ifndef HAVE_UINT_T
 typedef int uint_t;
 #endif
 /*--------------------------------------------------------------------------*/
 namespace place {
 /*--------------------------------------------------------------------------*/
-class DEV_PLACE : public COMPONENT {
-    public:
-        explicit DEV_PLACE() :COMPONENT()
-        {
-            _n=_nodes;
-        }
-        explicit DEV_PLACE(const DEV_PLACE& p) :COMPONENT(p){
-            _n=_nodes;
-        }
-        ~DEV_PLACE(){}
-    private:
-        bool param_is_printable(int)const;
-    protected:
-        PARAMETER<double> _xco;
-        PARAMETER<double> _yco;
-    private:
-        std::string param_name(int) const;
-        std::string param_name(int, int) const;
-        void set_param_by_name(std::string, std::string);
-        void set_param_by_index(int, std::string, int);
-        std::string param_value(int) const;
-    private:
-        char        id_letter()const {return 'P';}
-        std::string value_name()const {return "";}
-        std::string dev_type()const {return "place";}
-        uint_t      max_nodes() const {return 1;}
-        uint_t      min_nodes()const {return 1;}
-        uint_t      matrix_nodes()const {return 1;}
-        uint_t      net_nodes()const {return 1;}
-        bool      has_iv_probe()const {return true;}
-        bool        print_type_in_spice()const {return true;}
-        bool        is_device() const {return false;}
-        CARD*       clone()const    {return new DEV_PLACE(*this);}
-        int         param_count()const {return 2;}
-        std::string port_name(uint_t i)const{
-            assert(i==0);
-            return "port";
-        }
-    public:
-        node_t      _nodes[NODES_PER_BRANCH];
-};
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 std::string DEV_PLACE::param_name(int i) const
@@ -105,8 +65,8 @@ void DEV_PLACE::set_param_by_name(std::string Name,std::string Value)
 void DEV_PLACE::set_param_by_index(int i, std::string Value, int offset)
 {
     switch(DEV_PLACE::param_count()-1-i) {
-    case 0: _xco = Value; break;
-    case 1: _yco = Value; break;
+    case 0: _x = atoi(Value.c_str()); break;
+    case 1: _y = atoi(Value.c_str()); break;
     default: throw Exception_Too_Many(i,2,offset);
     }
 }
@@ -123,8 +83,8 @@ bool DEV_PLACE::param_is_printable(int i)const
 std::string DEV_PLACE::param_value(int i)const
 {
     switch(DEV_PLACE::param_count()-1-i) {
-    case 0: return _xco.string();
-    case 1: return _yco.string();
+        case 0: return to_string(_x);
+        case 1: return to_string(_y);
     }
 }
 /*--------------------------------------------------------------------------*/
@@ -134,4 +94,4 @@ DISPATCHER<CARD>::INSTALL d1(&device_dispatcher,"place",&p1);
 /*--------------------------------------------------------------------------*/
 }
 /*--------------------------------------------------------------------------*/
-// vim:ts=8:sw=2:et
+// vim:ts=8:sw=4:et
