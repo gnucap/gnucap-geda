@@ -1,4 +1,7 @@
-REG_TEST=res res_net short rail
+REG_TEST=res res_net short rail nets
+
+nets.test: nets.sch
+	gnucap-geda nets.sch  |grep ^net | wc -l > $@
 
 %.reg: %.test %.ref
 	diff $+
