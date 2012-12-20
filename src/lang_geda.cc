@@ -119,11 +119,13 @@ private:
     void print_command(OMSTREAM& o, const DEV_DOT* c);
     void print_component(OMSTREAM& o, const COMPONENT* x);
 
-    void create_place(string name, string x, string y, COMPONENT* c)const;
     void parse_component(CS& cmd,COMPONENT* x);
     std::vector<std::string*> parse_symbol_file(CARD* x, std::string basename) const;
-    COMPONENT* findplace(COMPONENT* x, int xco, int yco)const;
-    COMPONENT* findplace(COMPONENT* x, std::string xco, std::string yco)const;
+    const place::DEV_PLACE* find_place(const CARD* x, int xco, int yco)const;
+    const place::DEV_PLACE* find_place(const CARD* x, std::string name)const;
+    const place::DEV_PLACE* find_place(const CARD* x, std::string xco, std::string yco)const;
+    pair<int,int> find_place_(const CARD* x, std::string name)const;
+    string* find_place_string(const CARD* x, std::string name)const;
     void connect(CARD *x, int x0, int y0, int x1, int y1)const;
 
     static GEDA_SYMBOL_MAP _symbol;
@@ -332,9 +334,8 @@ void LANG_GEDA::parse_place(CS& cmd, COMPONENT* x)
         string portname = string(INT_PREFIX) + p.name;
         x->set_port_by_index(0, portname);
         _placeq.pop();
-        if (_placeq.size()){
-            cmd.reset();
-        }
+        x->set_label( to_string(p.x)+":"+to_string(p.y) );
+
         cmd.reset();
     } else if ( cmd.umatch("place") ) {
         incomplete();
@@ -345,82 +346,102 @@ void LANG_GEDA::parse_place(CS& cmd, COMPONENT* x)
         x->set_param_by_name("y",_y);
         string portname = string(INT_PREFIX) + "np_" + _portname;
         x->set_port_by_index(0, portname);
+        x->set_label( _x + ":" + _y);
     } else {
         trace1("parse_place, huh?", cmd.fullstring());
         unreachable();
     }
 }
 /*--------------------------------------------------------------------------*/
-void LANG_GEDA::create_place(string n, string x, string y, COMPONENT* c)const
+const place::DEV_PLACE* LANG_GEDA::find_place(const CARD* x, string xco, string yco)const
 {
-    assert(0);
-    trace1("create_place", n);
-    MODEL_SUBCKT* owner = dynamic_cast<MODEL_SUBCKT*>(c->owner());
-    CARD_LIST* scope = owner?owner->scope():c->scope();
-    assert(c);
-    string cmdstr = "place "+n+" "+x+" "+y;
-    CS place_cmd(CS::_STRING,cmdstr);
-    // BUG? new__instance is not const...
-    // problem: c->scope()==NULL
-    // why?
-    // create_place is called from parse_net.
-    // from parse_instance.
-    // from new__instance( net ... )
-    //
-    // but: new__instance doesnt pass the scope to parse_instance.
-    lang_geda.new__instance(place_cmd, owner, scope);
+    return find_place(x, atoi(xco.c_str()), atoi(yco.c_str()));
 }
 /*--------------------------------------------------------------------------*/
-COMPONENT* LANG_GEDA::findplace(COMPONENT* x, int xco, int yco)const
+const place::DEV_PLACE* LANG_GEDA::find_place(const CARD* x, int xco, int yco)const
 {
-    return findplace(x, to_string(xco), to_string(yco));
-}
-/*--------------------------------------------------------------------------*/
-COMPONENT* LANG_GEDA::findplace(COMPONENT* x, string xco, string yco)const
-{
-    CARD_LIST* scope = x->owner()?x->owner()->scope():x->scope();
+    const CARD_LIST* scope = x->owner()?x->owner()->scope():x->scope();
     for (CARD_LIST::const_iterator ci = scope->begin(); ci != scope->end(); ++ci) {
-        if((*ci)->dev_type()=="place"){
-            if(xco==(*ci)->param_value(1) && yco==(*ci)->param_value(0)){
-                return static_cast<COMPONENT*>(*ci); // ->port_value(0);
+        if( place::DEV_PLACE* pl=dynamic_cast<place::DEV_PLACE*>(*ci)){
+            if(xco==pl->x() && yco==pl->y()){
+                return pl;
             }
         }
     }
     return NULL;
 }
 /*--------------------------------------------------------------------------*/
+static bool in_order(int a, int b, int c){
+    if (a<b){
+        return b<c;
+    }else if (b<a){
+        return c<b;
+    }
+    return 0;
+}
+/*--------------------------------------------------------------------------*/
 void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
 {
-    trace4("connect", x0, y0, x1, y1);
+    trace4("LANG_GEDA::connect", x0, y0, x1, y1);
     assert(x0!=x1 || y0!=y1);
     CARD_LIST* scope = x->owner()?x->owner()->scope():x->scope();
     for(CARD_LIST::const_iterator ci = scope->begin(); ci != scope->end(); ++ci) {
         if(const DEV_NET* net=dynamic_cast<DEV_NET*>(*ci)){
+            if((net->port_value(0)+"AA").substr(0, strlen(INT_PREFIX)) != INT_PREFIX) continue;
+            if((net->port_value(1)+"AA").substr(0, strlen(INT_PREFIX)) != INT_PREFIX) continue;
             // connect end points to existing nets
+            // (this will take ages.)
+            const place::DEV_PLACE* n1 = find_place(x, net->port_value(0));
+            assert(n1);
+            const place::DEV_PLACE* n2 = find_place(x, net->port_value(1));
+            assert(n2);
+            assert(n1->x()!=n2->x() || n1->y()!=n2->y());
+            if (n1->x() == n2->x() && (y0 == y1)){
+                if (in_order( n2->y(), y1, n1->y())){
+                    if (n1->x() == x0){
+                        assert( y0 !=  n1->y());
+                        _netq.push( netinfo{ x0, y0, n1->x(), n1->y(), 4 });
+                    } else if (n2->x() == x1){
+                        assert( y1 !=  n1->y());
+                        _netq.push( netinfo{ x1, y1, n1->x(), n1->y(), 4 });
+                    }
+                }
+            } else if (n1->y() == n2->y() && (x0 == x1)){
+                if (in_order(n1->x(), x1, n2->x())){
+                    if (n1->y() == y0){
+                        assert( x0 !=  n1->x());
+                        _netq.push( netinfo{ x0, y0, n1->x(), n1->y(), 4 });
+                    } else if (n2->y() == y1){
+                        assert( x1 !=  n1->x());
+                        _netq.push( netinfo{ x1, y1, n1->x(), n1->y(), 4 });
+                    }
+                }
+            }
         } else if(const place::DEV_PLACE* pl=dynamic_cast<place::DEV_PLACE*>(*ci)){
             // connect interior places
             int _x = pl->x();
             int _y = pl->y();
-            trace3("findnode, found.", (*ci)->long_label(), _x, _y );
+            trace3("place", _x, _y, pl->short_label());
             if (y0==y1){ // horizontal
-                if((((x1 < _x) && (_x<x0) ) || ((x0<_x) && (_x<x1))) && _y==y0 && _x!=x0 && _x!=x1){
+                trace5("horizontal", x0, _x, x1, _y, y0);
+                if( in_order( x1, _x, x0) && _y==y0 ){
                     trace0("found horizontal");
-                    pair<int,int>* coord = new pair<int,int>;
                     unsigned col = 5;
                     // connect place to 1st endpoint.
+                    assert(x0!=_x);
                     _netq.push( netinfo{ x0, y0, _x, _y, col });
                 }
                 else{
                 }
             }else if (x0==x1){
-                if((((y1 < _y) && (_y<y0)) || ((y0 < _y) && (_y<y1))) && _x==x0 && _y!=y0 && _y!=y1){
+                trace1("vertical", y0);
+                trace1("vertical", y1);
+                trace1("vertical", _y);
+                if( in_order( y1, _y, y0) && _x==x0 ){
                     trace0("found vertical");
-                    pair<int,int>* coord = new pair<int,int>;
-                    coord->first = _x;
-                    coord->second = _y;
-                    untested();
                     unsigned col = 5;
                     // connect place to 1st endpoint.
+                    assert(x0!=_x);
                     _netq.push( netinfo{ x0, y0, _x, _y, col });
                 }else{
                 }
@@ -439,7 +460,6 @@ void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
 // Need to specify a name for a card?
 void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 {
-    MODEL_SUBCKT* owner = dynamic_cast<MODEL_SUBCKT*>(x->owner());
     assert(x);
     // assert(lang_geda.find_type_in_string(cmd)=="net"); // no. at end of body...
     int coord[4];
@@ -449,7 +469,7 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
         coord[1] = n.y0;
         coord[2] = n.x1;
         coord[3] = n.y1;
-        x->set_param_by_name("color", to_string(n.color));
+        x->set_param_by_name("color", std::to_string(n.color));
         _netq.pop();
         x->set_label("extranet"+::to_string(_netnumber++));
     } else { // parse
@@ -473,7 +493,7 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
         x->set_label("net"+::to_string(_netnumber++));
     }
 
-    COMPONENT* port = findplace(x, coord[0], coord[1]);
+    const COMPONENT* port = find_place(x, coord[0], coord[1]);
     string portname;
     if(!port){
         portname = "nn_" + ::to_string(_nodenumber++);
@@ -484,7 +504,7 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
     }
     x->set_port_by_index(0, portname);
 
-    port = findplace(x, coord[2], coord[3]);
+    port = find_place(x, coord[2], coord[3]);
     if(!port){
         untested();
         portname = "nn_" + ::to_string(_nodenumber++);
@@ -497,7 +517,7 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 
     connect(x, coord[0], coord[1], coord[2], coord[3]);
 
-    if(_placeq.size()){
+    if(_placeq.size() || _netq.size()){
 //        unneccessary?
         trace1("queuing place", cmd.fullstring());
         cmd.reset();
@@ -618,7 +638,7 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
         //delete (*i);
         //setting new place devices for each node searching for .
         //new__instance(cmd,NULL,Scope); //cmd : can create. Scope? how to get Scope? Yes!
-        COMPONENT* port = findplace(x, newx, newy);
+        const COMPONENT* port = find_place(x, newx, newy);
         string portname = "incomplete";
         if (!port){
             portname = "cn_" + ::to_string(_nodenumber++);
@@ -1112,26 +1132,35 @@ static std::string componentposition_string(int* absxy, int* relxy, int angle, b
 }
 /*--------------------------------------------------------------------------*/
 // can this be done faster?!
-pair<int,int> find_place(const COMPONENT* x, std::string name)
+const place::DEV_PLACE* LANG_GEDA::find_place(const CARD* x, string name)const
 {
-    for(CARD_LIST::const_iterator ci=x->scope()->begin(); ci!=x->scope()->end(); ++ci) {
+    const CARD_LIST* scope = x->owner()?x->owner()->scope():x->scope();
+    for(CARD_LIST::const_iterator ci=scope->begin(); ci!=scope->end(); ++ci) {
         if(const place::DEV_PLACE*p=dynamic_cast<const place::DEV_PLACE*>(*ci)){
             if(p->port_value(0)==name){
-                pair<int,int> a;
-                a.first = p->x();
-                a.second = p->y();
-                return a;
+                return p;
             }
         }
     }
     throw(Exception_Cant_Find("",name));
 }
 /*--------------------------------------------------------------------------*/
-static std::string* find_place_(const COMPONENT* x, std::string name)
+pair<int,int> LANG_GEDA::find_place_(const CARD* x, string name)const
+{
+    const place::DEV_PLACE*p = find_place(x,name);
+    assert(p);
+    pair<int,int> a;
+    a.first = p->x();
+    a.second = p->y();
+    trace2("LANG_GEDA::find_place_", p->x(), p->y());
+    return a;
+}
+/*--------------------------------------------------------------------------*/
+string* LANG_GEDA::find_place_string(const CARD* x, std::string name)const
 {
     std::string* a = new std::string[2];
     try{
-        pair<int,int> b = find_place(x, name);
+        pair<int,int> b = find_place_(x, name);
         a[0] = to_string(b.first);
         a[1] = to_string(b.second);
         return a;
@@ -1173,7 +1202,7 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
     std::vector<std::string*> coordinates=parse_symbol_file(NULL, _basename);
     std::vector<std::string*> abscoord;
     for(unsigned ii=0; ii<coordinates.size(); ++ii){
-        abscoord.push_back(find_place_(x,x->port_value(ii)));
+        abscoord.push_back(find_place_string(x,x->port_value(ii)));
     }
     std::string angle[4]={"0","90","180","270"};
     std::string xy="";
