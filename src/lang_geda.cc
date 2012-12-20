@@ -294,7 +294,7 @@ std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
             DEV_DOT* d = dynamic_cast<DEV_DOT*>(x);
             if(d){
                 d->set(dump);
-            }else if(c = dynamic_cast<COMPONENT*>(x)){
+            }else if( (c = dynamic_cast<COMPONENT*>(x) )){
                 // c->set_label(dump);
             }else{
                 incomplete();
@@ -458,13 +458,11 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
         // x0 y0 x1 y1 color
         std::string parsedvalue[5];
         int i=0;
-        bool gotthenet=true;
         while (i<5) {
             if (cmd.is_alnum()){
                 cmd>>" ">>parsedvalue[i];
                 if(i!=4) coord[i] = atoi(parsedvalue[i].c_str());
             }else{
-                gotthenet=false;
                 cmd.warn(bDANGER, here, x->long_label() +": Not correct format for net");
                 return; // throw?
                 break;
@@ -894,7 +892,7 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
         string basename;
         c_x = cmd.ctoi();
         c_y = cmd.ctoi();
-        c_sel = cmd.ctob();
+        c_sel = cmd.ctob(); USE(c_sel);
         c_a = cmd.ctoi();
         c_m = cmd.ctob();
         cmd >> " " >> basename;
@@ -1174,11 +1172,10 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
     //go through the symbol file and get the relative pin positions
     std::vector<std::string*> coordinates=parse_symbol_file(NULL, _basename);
     std::vector<std::string*> abscoord;
-    for(int ii=0; ii<coordinates.size(); ++ii){
+    for(unsigned ii=0; ii<coordinates.size(); ++ii){
         abscoord.push_back(find_place_(x,x->port_value(ii)));
     }
     std::string angle[4]={"0","90","180","270"};
-    int index=0; 
     std::string xy="";
     bool gottheanglemirror=false;
     for(int ii=0; ii<4 ; ++ii){
@@ -1187,7 +1184,7 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
             _angle=angle[ii];
             xy="";
             gottheanglemirror=true;
-            for(int pinind=0; pinind<coordinates.size(); ++pinind){
+            for(unsigned pinind=0; pinind<coordinates.size(); ++pinind){
                 int a[2];
                 int c[2];
                 a[0] = atoi(abscoord[pinind][0].c_str());
@@ -1207,7 +1204,7 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
                 _mirror="1";
                 xy="";
                 gottheanglemirror=true;
-                for(int pinind=0; pinind<coordinates.size(); ++pinind){
+                for(unsigned pinind=0; pinind<coordinates.size(); ++pinind){
                     int a[2];
                     int c[2];
                     a[0] = atoi(abscoord[pinind][0].c_str());
@@ -1347,7 +1344,6 @@ public:
           cmd >> mod;
           if( mod == "module"){
               model = new MODEL_SUBCKT();
-              COMPONENT* x = model;
               model->set_label(arg);
               read_file(arg, Scope, model);
               //align(model); // might be needed for gnucap .36
