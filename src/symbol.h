@@ -26,36 +26,60 @@ extern "C"{
 # include <libgeda/libgeda.h>
 }
 #include <io_trace.h>
+#include <ap.h>
 
 using std::map;
 using std::string;
 using std::pair;
+using std::vector;
 
 enum angle_t { a_0 = 0,
                a_90 = 90,
                a_180 = 180,
                a_270 = 270 };
 
-class GEDA_SYMBOL : public map<string, string>{
+// should be map<string, morethanstring>?
+class GEDA_PIN : public map<string, string>{
+	public:
+		GEDA_PIN(CS& cmd);
+		typedef map<string, string> parent;
+		typedef parent::const_iterator const_iterator;
+	private:
+		int _xy[2];
+		unsigned _color;
+		bool _bus; //"type of pin"
+	public:
+	  int& x0(){return _xy[0];}
+	  int& y0(){return _xy[1];}
+	  //int& x1(){return _xy[2];}
+	  //int& y1(){return _xy[3];}
+	  unsigned& color(){return _color;}
+	  bool& bus(){return _bus;}
+};
+/*--------------------------------------------------------------------------*/
+class GEDA_SYMBOL : public map<string, string> {
 	typedef map<string, string> parent;
 	string _filename;
 	unsigned _pincount;
+	vector<GEDA_PIN> _pins;
 	// T and stuff?
 
 	public:
-//		typedef map<string, string>::const_iterator const_iterator;
-//		string& operator[](const string x){return _dict[x];}
-
 		GEDA_SYMBOL(){}
-//		GEDA_SYMBOL(const GEDA_SYMBOL&p): parent(p), _filename(p._filename){}
-		GEDA_SYMBOL(string basename):_pincount(0), x(0), y(0), mirror(0), angle(a_0) {
+		GEDA_SYMBOL(string basename) :
+		    _pincount(0),
+		    x(0),
+		    y(0),
+		    mirror(0),
+		    angle(a_0)
+		{
 			unsigned scope = 0;
 			trace1( "GEDA_SYMBOL", basename);
 			const CLibSymbol* symbol = s_clib_get_symbol_by_name(basename.c_str());
 			if(!symbol){
 				throw(Exception_Cant_Find("parsing gedanetlist", basename ));
 			}
-			std::string filename(s_clib_symbol_get_filename(symbol));
+			string filename(s_clib_symbol_get_filename(symbol));
 			CS cmd(CS::_INC_FILE, filename);
 			while(true){
 				try{
@@ -64,17 +88,19 @@ class GEDA_SYMBOL : public map<string, string>{
 					break;
 				}
 				if (cmd.match1('{')) {
-				  	scope++;
-			  	} else if(cmd.match1('}')) {
+					scope++;
+				} else if(cmd.match1('}')) {
 					assert(scope);
-				  	scope--;
+					scope--;
 					continue;
 				}
 
 				if (!scope){
 					if (cmd.umatch("P ")){
-						_pincount++;
-					} else {
+						GEDA_PIN p(cmd);
+						_pins.push_back(p);
+					}
+					{
 						string pname = cmd.ctos("=","","");
 						unsigned here = cmd.cursor();
 						string pvalue;
@@ -88,23 +114,64 @@ class GEDA_SYMBOL : public map<string, string>{
 			}
 		}
 		bool has_key(const string key){
-			 const_iterator it = parent::find( key );
-			 return (it != end());
+			const_iterator it = parent::find( key );
+			return (it != end());
 		}
-		unsigned pincount()const {return _pincount;}
+		unsigned pincount()const {return _pins.size();}
 	public: // abuse for symbol instances
 		int x;
 		int y;
 		bool mirror;
 		angle_t angle;
+		void push_back(const GEDA_PIN& x) {_pins.push_back(x);}
+		vector<GEDA_PIN>::const_iterator pinbegin()const {return _pins.begin();}
+		vector<GEDA_PIN>::const_iterator pinend()const {return _pins.end();}
 };
 /*--------------------------------------------------------------------------*/
-class GEDA_SYMBOL_MAP : public std::map<string, GEDA_SYMBOL> {
-	typedef std::map<string, GEDA_SYMBOL> parent;
+GEDA_PIN::GEDA_PIN( CS& cmd )
+{
+	_xy[0] = cmd.ctoi();
+	_xy[1] = cmd.ctoi();
+	int x = cmd.ctoi();
+	int y = cmd.ctoi();
+	_bus = cmd.ctob();
+	_color = cmd.ctou();
+	bool swap = cmd.ctob();
+	if (swap){
+		_xy[0] = x;
+		_xy[1] = y;
+	}
+	string    _portvalue="_";
+	static unsigned number;
+	try{
+		cmd.get_line("");
+	}catch(Exception_End_Of_Input&){
+		return;
+	}
+	if (cmd >> "{")
+		for(;;){
+			cmd.get_line("");
+			if(cmd>>"}"){
+				cmd.get_line("");
+				break;
+			}else{
+				if (cmd>>"T"){
+				} else {
+					string pname = cmd.ctos("=","","");
+					string value;
+					cmd >> "=" >> value;
+					operator[](pname) = value;
+				}
+			}
+		}
+}
+/*--------------------------------------------------------------------------*/
+class GEDA_SYMBOL_MAP : public map<string, GEDA_SYMBOL> {
+	typedef map<string, GEDA_SYMBOL> parent;
 
 	public:
 		GEDA_SYMBOL& operator[](const string key){
-			typename std::map<string, GEDA_SYMBOL>::const_iterator it = parent::find( key );
+			typename map<string, GEDA_SYMBOL>::const_iterator it = parent::find( key );
 			GEDA_SYMBOL& s = parent::operator[](key);
 			if ( it == parent::end() ) {
 				s = GEDA_SYMBOL(key);
