@@ -41,6 +41,10 @@ enum angle_t { a_0 = 0,
 // should be map<string, morethanstring>?
 class GEDA_PIN : public map<string, string>{
 	public:
+		GEDA_PIN(){
+			operator[]("label") = "unknown";
+			operator[]("pinseq") = "0";
+		}
 		GEDA_PIN(CS& cmd);
 		typedef map<string, string> parent;
 		typedef parent::const_iterator const_iterator;
@@ -49,12 +53,26 @@ class GEDA_PIN : public map<string, string>{
 		unsigned _color;
 		bool _bus; //"type of pin"
 	public:
-	  int& x0(){return _xy[0];}
-	  int& y0(){return _xy[1];}
-	  //int& x1(){return _xy[2];}
-	  //int& y1(){return _xy[3];}
-	  unsigned& color(){return _color;}
-	  bool& bus(){return _bus;}
+		int& x0(){return _xy[0];}
+		int& y0(){return _xy[1];}
+		//int& x1(){return _xy[2];}
+		//int& y1(){return _xy[3];}
+		unsigned& color(){return _color;}
+		bool& bus(){return _bus;}
+	public:
+		bool has_key(const string key){
+			const_iterator it = parent::find( key );
+			return (it != end());
+		}
+	public:
+		unsigned pinseq()const{
+			assert(find("pinseq") != end());
+			return atoi(find("pinseq")->second.c_str());
+		}
+		string label()const{
+			assert(find("label") != end());
+			return find("label")->second.c_str();
+		}
 };
 /*--------------------------------------------------------------------------*/
 class GEDA_SYMBOL : public map<string, string> {
@@ -66,20 +84,29 @@ class GEDA_SYMBOL : public map<string, string> {
 
 	public:
 		GEDA_SYMBOL(){}
+//		GEDA_SYMBOL(const GEDA_SYMBOL& x) :
+//			map<string, string>(x),
+//			_filename(x._filename),
+//			_pincount(x._pincount)
+//  		{
+//			trace1("copying pins", _pins.size());
+//			_pins = x._pins;
+//		}
 		GEDA_SYMBOL(string basename) :
-		    _pincount(0),
+		    _pins(),
 		    x(0),
 		    y(0),
 		    mirror(0),
 		    angle(a_0)
 		{
 			unsigned scope = 0;
-			trace1( "GEDA_SYMBOL", basename);
+			trace1( "GEDA_SYMBOL::GEDA_SYMBOL", basename);
 			const CLibSymbol* symbol = s_clib_get_symbol_by_name(basename.c_str());
 			if(!symbol){
 				throw(Exception_Cant_Find("parsing gedanetlist", basename ));
 			}
 			string filename(s_clib_symbol_get_filename(symbol));
+			trace1("...", filename);
 			CS cmd(CS::_INC_FILE, filename);
 			while(true){
 				try{
@@ -97,8 +124,17 @@ class GEDA_SYMBOL : public map<string, string> {
 
 				if (!scope){
 					if (cmd.umatch("P ")){
+						// waah unclever...
 						GEDA_PIN p(cmd);
-						_pins.push_back(p);
+						trace1("pin", cmd.fullstring());
+						if(!p.has_key("pinseq")) {
+							p["pinseq"] = to_string(1+_pins.size());
+						}
+						trace2("pin", p.pinseq(), max(1+p.pinseq(), _pins.size()));
+						_pins.resize(1+max(p.pinseq(), _pins.size()));
+						trace3("P", _pincount, _pins.size(), p.pinseq());
+						trace1("pin", p.pinseq());
+						_pins[p.pinseq()] = p;
 					}
 					{
 						string pname = cmd.ctos("=","","");
@@ -126,7 +162,15 @@ class GEDA_SYMBOL : public map<string, string> {
 		void push_back(const GEDA_PIN& x) {_pins.push_back(x);}
 		vector<GEDA_PIN>::const_iterator pinbegin()const {return _pins.begin();}
 		vector<GEDA_PIN>::const_iterator pinend()const {return _pins.end();}
+		MODEL_SUBCKT* operator>>(MODEL_SUBCKT*) const;
+		MODEL_SUBCKT* operator>>(COMPONENT*x) const{
+			if(MODEL_SUBCKT* x=dynamic_cast<MODEL_SUBCKT*>(x)){
+				return operator>>(x);
+			}
+			return 0;
+		}
 };
+/*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 GEDA_PIN::GEDA_PIN( CS& cmd )
 {
@@ -141,8 +185,8 @@ GEDA_PIN::GEDA_PIN( CS& cmd )
 		_xy[0] = x;
 		_xy[1] = y;
 	}
+	operator[]("label") = "unknown";
 	string    _portvalue="_";
-	static unsigned number;
 	try{
 		cmd.get_line("");
 	}catch(Exception_End_Of_Input&){
@@ -164,6 +208,15 @@ GEDA_PIN::GEDA_PIN( CS& cmd )
 				}
 			}
 		}
+}
+/*--------------------------------------------------------------------------*/
+MODEL_SUBCKT* GEDA_SYMBOL::operator>>(MODEL_SUBCKT* m) const{
+	for(vector<GEDA_PIN>::const_iterator i=pinbegin(); i!=pinend(); ++i){
+		string l=i->label(); // why string&? hmmm
+		trace1(__func__, l);
+		m->set_port_by_index(i->pinseq(), l);
+	}
+	return m;
 }
 /*--------------------------------------------------------------------------*/
 class GEDA_SYMBOL_MAP : public map<string, GEDA_SYMBOL> {
