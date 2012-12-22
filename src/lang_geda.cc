@@ -41,6 +41,8 @@ extern "C"{
 #include "d_place.h"
 #undef COMPLEX
 /*--------------------------------------------------------------------------*/
+#define DUMMY_PREFIX string("!_")
+/*--------------------------------------------------------------------------*/
 // using namespace std;
 using std::string;
 using std::vector;
@@ -264,7 +266,7 @@ std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
         std::string linetype = find_type_in_string(sym_cmd);
         trace2("LANG_GEDA::parse_symbol_file", linetype, sym_cmd.fullstring());
         bool ismodel=false;
-        if (x && x->short_label()=="!_"+basename){
+        if (x && x->short_label()==DUMMY_PREFIX+basename){
             ismodel=true;
         }
         if (linetype=="dev_comment"){
@@ -591,7 +593,7 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
     std::string type=lang_geda.find_type_in_string(cmd);
     GEDA_SYMBOL* dev = _C;
     _C = 0; // to make parse_symbol_file work
-    assert(type==(*dev)["device"] || type=="!_"+((*dev)["basename"]));
+    assert(type==(*dev)["device"] || type==DUMMY_PREFIX+((*dev)["basename"]));
     std::string source("");
 
     // cannot read from cmd. too late.
@@ -886,7 +888,7 @@ COMPONENT* LANG_GEDA::parse_componmod(CS& cmd, COMPONENT* x)
 
     //
     assert(_C->has_key("device"));
-    x->set_label("!_"+basename);
+    x->set_label(DUMMY_PREFIX+basename);
     // x->set_label((*_C)["device"]);
 
     // std::vector<std::string*> coord=parse_symbol_file(x,basename);
@@ -1079,7 +1081,7 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
                         type = D["device"];
                     }
             } else {
-                string modulename="!_"+D["basename"];
+                string modulename = DUMMY_PREFIX + D["basename"];
                 trace1("symbolthere?", modulename);
                 CARD_LIST::const_iterator i = CARD_LIST::card_list.find_(modulename);
                 if(i != CARD_LIST::card_list.end()) {
@@ -1380,7 +1382,7 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
     if(x->param_count()>6){
             _parameters=true;
     }
-    if(x->dev_type()!="" and (x->dev_type()).substr(0,2)!="!_"){
+    if(x->dev_type()!="" && x->dev_type().substr(0,DUMMY_PREFIX.length())!=DUMMY_PREFIX){
         _devtype=true;
     }
     if (_label or _parameters or _devtype){
@@ -1419,7 +1421,7 @@ void LANG_GEDA::print_module(OMSTREAM& o, const MODEL_SUBCKT* x)
   //o<<x->short_label();
   //o<<"\n";
   assert(x->subckt());
-  if(x->short_label().find("!_")!=std::string::npos){
+  if(x->short_label().find(DUMMY_PREFIX)!=std::string::npos){
     trace0("Got a placeholding model");
     return;
   }
