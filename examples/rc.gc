@@ -3,7 +3,7 @@ include ../include/analog.v
 
 spice
 V1 n1 n0 pulse iv=0 pv=1 delay=.1m
-R1 n0 0 n1
+R1 n0 0 1
 
 .load lang_geda.so
 
