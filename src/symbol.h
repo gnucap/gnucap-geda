@@ -60,7 +60,7 @@ class GEDA_PIN : public map<string, string>{
 		unsigned& color(){return _color;}
 		bool& bus(){return _bus;}
 	public:
-		bool has_key(const string key){
+		bool has_key(const string key)const{
 			const_iterator it = parent::find( key );
 			return (it != end());
 		}
@@ -109,7 +109,6 @@ class GEDA_SYMBOL : public map<string, string> {
 			CS cmd(CS::_INC_FILE, filename);
 			cmd.get_line("");
 			while(true){
-				trace3("parse sym", basename, scope, cmd.fullstring());
 				if (cmd.match1('{')) {
 					scope++;
 				} else if(cmd.match1('}')) {
@@ -139,7 +138,8 @@ class GEDA_SYMBOL : public map<string, string> {
 						cmd >> "=";
 						if(!cmd.stuck(&here)){
 							cmd >> pvalue;
-							parent::operator[](pname) = pvalue;
+							if(pvalue!="")
+								parent::operator[](pname) = pvalue;
 						}
 					}
 				}
@@ -151,11 +151,19 @@ class GEDA_SYMBOL : public map<string, string> {
 			}
 			trace2("done parse", basename, _pins.size());
 		}
-		bool has_key(const string key){
+		bool has_key(const string key) const{
 			const_iterator it = parent::find( key );
 			return (it != end());
 		}
 		unsigned pincount()const {return _pins.size();}
+		const string operator[](const string& x)const{
+			const_iterator it = parent::find( x );
+			if (it != end()) return it->second;
+			return "";
+		}
+		string& operator[](const string& x){
+			return parent::operator[](x);
+		}
 	public: // abuse for symbol instances
 		int x;
 		int y;

@@ -159,7 +159,9 @@ void DEV_RAIL::set_port_by_index(uint_t i, string& name){
 	if(net.has_hard_value()){
 		portname = net.string();
 	}
-	portname = string(INT_PREFIX) + portname;
+
+	// hmm better connect rails to the outside (optional ports?)
+// 	portname = string(INT_PREFIX) + portname;
 	// n_(1).new_sckt_node( portname, scope());
 	DEV_NET::set_port_by_index(1, portname);
 }
