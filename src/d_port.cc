@@ -72,9 +72,10 @@ class DEV_PORT : public DEV_NET {
 	private:
 		PARAMETER<double> basename;
 		PARAMETER<double> net;
-		PARAMETER<double> pinseq;
+		PARAMETER<double> pinseq; // int?!
 		PARAMETER<double> pinnumber;
 		PARAMETER<double> symversion;
+		PARAMETER<double> pinlabel; // string?!
 #ifdef HAVE_PARA_BASE
 		static map<string, PARA_BASE DEV_PORT::*> param_dict;
 #endif
@@ -92,7 +93,8 @@ map<string, PARA_BASE DEV_PORT::*> DEV_PORT::param_dict
 ("net",       (PARA_BASE DEV_PORT::*)  (&DEV_PORT::net))
 ("pinseq",    (PARA_BASE DEV_PORT::*)  (&DEV_PORT::pinseq))
 ("pinnumber", (PARA_BASE DEV_PORT::*)  (&DEV_PORT::pinnumber))
-("symversion",(PARA_BASE DEV_PORT::*)  (&DEV_PORT::symversion));
+("symversion",(PARA_BASE DEV_PORT::*)  (&DEV_PORT::symversion))
+("pinlabel",  (PARA_BASE DEV_PORT::*)  (&DEV_PORT::pinlabel));
 #endif
 /*--------------------------------------------------------------------------*/
 bool DEV_PORT::param_is_printable(int i)const{
@@ -102,6 +104,7 @@ bool DEV_PORT::param_is_printable(int i)const{
 		case 2: return pinseq.has_hard_value();
 		case 3: return pinnumber.has_hard_value();
 		case 4: return symversion.has_hard_value();
+		case 5: return pinlabel.has_hard_value();
 		default: return false;
 	}
 }
@@ -130,6 +133,7 @@ string DEV_PORT::param_name(int i)const
 		case 2: return("pinseq");
 		case 3: return("pinnumber");
 		case 4: return("symversion");
+		case 5: return("pinlabel");
 		default: return "";
 	}
 }
@@ -142,6 +146,7 @@ string DEV_PORT::param_value(int i)const
 		case 2: return pinseq.string();
 		case 3: return pinnumber.string();
 		case 4: return symversion.string();
+		case 5: return pinlabel.string();
 		default: return "";
 	}
 }
@@ -157,10 +162,23 @@ void DEV_PORT::set_port_by_index(uint_t i, string& name){
 	DEV_NET::set_port_by_index(i, name);
 	if(MODEL_SUBCKT* o = dynamic_cast<MODEL_SUBCKT*>(owner())){
 		string portname = name;
-		if(net.has_hard_value()){
+		if(pinlabel.has_hard_value()){
+			portname = pinlabel.string();
+		}else if(net.has_hard_value()){
 			portname = net.string();
 		}
 		unsigned portpos = o->net_nodes();
+		CARD_LIST empty;
+
+		if(pinseq.has_hard_value()){
+			// ouch.
+			portpos = atoi(pinseq.string().c_str())-1;
+		} else {
+			// rely on pinlabel?
+			untested();
+		}
+
+		trace3("DEV_PORT::set_port_by_index", portpos, portname, pinseq);
 		o->set_port_by_index(portpos, portname);
 		DEV_NET::set_port_by_index(1, portname);
 	}

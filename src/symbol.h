@@ -42,7 +42,7 @@ enum angle_t { a_0 = 0,
 class GEDA_PIN : public map<string, string>{
 	public:
 		GEDA_PIN(){
-			operator[]("label") = "unknown";
+			operator[]("pinlabel") = "unknown";
 			operator[]("pinseq") = "0";
 		}
 		GEDA_PIN(CS& cmd);
@@ -70,16 +70,15 @@ class GEDA_PIN : public map<string, string>{
 			return atoi(find("pinseq")->second.c_str());
 		}
 		string label()const{
-			assert(find("label") != end());
-			return find("label")->second.c_str();
+			assert(find("pinlabel") != end());
+			return find("pinlabel")->second.c_str();
 		}
 };
 /*--------------------------------------------------------------------------*/
 class GEDA_SYMBOL : public map<string, string> {
 	typedef map<string, string> parent;
 	string _filename;
-	unsigned _pincount;
-	vector<GEDA_PIN> _pins;
+	set<GEDA_PIN> _pins;
 	// T and stuff?
 
 	public:
@@ -108,12 +107,9 @@ class GEDA_SYMBOL : public map<string, string> {
 			string filename(s_clib_symbol_get_filename(symbol));
 			trace1("...", filename);
 			CS cmd(CS::_INC_FILE, filename);
+			cmd.get_line("");
 			while(true){
-				try{
-					cmd.get_line("");
-				}catch (Exception_End_Of_Input&){
-					break;
-				}
+				trace3("parse sym", basename, scope, cmd.fullstring());
 				if (cmd.match1('{')) {
 					scope++;
 				} else if(cmd.match1('}')) {
@@ -126,15 +122,15 @@ class GEDA_SYMBOL : public map<string, string> {
 					if (cmd.umatch("P ")){
 						// waah unclever...
 						GEDA_PIN p(cmd);
-						trace1("pin", cmd.fullstring());
 						if(!p.has_key("pinseq")) {
+							untested();
 							p["pinseq"] = to_string(1+_pins.size());
+						} else {
 						}
-						trace2("pin", p.pinseq(), max(1+p.pinseq(), _pins.size()));
-						_pins.resize(1+max(p.pinseq(), _pins.size()));
-						trace3("P", _pincount, _pins.size(), p.pinseq());
-						trace1("pin", p.pinseq());
-						_pins[p.pinseq()] = p;
+						// _pins.resize(max(p.pinseq(), _pins.size()+1));
+						assert(p.pinseq());
+						_pins.insert(p);
+						continue; // line has been read
 					}
 					{
 						string pname = cmd.ctos("=","","");
@@ -147,7 +143,13 @@ class GEDA_SYMBOL : public map<string, string> {
 						}
 					}
 				}
+				try{
+					cmd.get_line("");
+				}catch (Exception_End_Of_Input&){
+					break;
+				}
 			}
+			trace2("done parse", basename, _pins.size());
 		}
 		bool has_key(const string key){
 			const_iterator it = parent::find( key );
@@ -159,9 +161,9 @@ class GEDA_SYMBOL : public map<string, string> {
 		int y;
 		bool mirror;
 		angle_t angle;
-		void push_back(const GEDA_PIN& x) {_pins.push_back(x);}
-		vector<GEDA_PIN>::const_iterator pinbegin()const {return _pins.begin();}
-		vector<GEDA_PIN>::const_iterator pinend()const {return _pins.end();}
+		void push_back(const GEDA_PIN& x) {_pins.insert(x);}
+		set<GEDA_PIN>::const_iterator pinbegin()const {return _pins.begin();}
+		set<GEDA_PIN>::const_iterator pinend()const {return _pins.end();}
 		MODEL_SUBCKT* operator>>(MODEL_SUBCKT*) const;
 		MODEL_SUBCKT* operator>>(COMPONENT*x) const{
 			if(MODEL_SUBCKT* x=dynamic_cast<MODEL_SUBCKT*>(x)){
@@ -196,7 +198,7 @@ GEDA_PIN::GEDA_PIN( CS& cmd )
 		for(;;){
 			cmd.get_line("");
 			if(cmd>>"}"){
-				cmd.get_line("");
+				cmd.get_line(""); // better just try?
 				break;
 			}else{
 				if (cmd>>"T"){
@@ -211,10 +213,11 @@ GEDA_PIN::GEDA_PIN( CS& cmd )
 }
 /*--------------------------------------------------------------------------*/
 MODEL_SUBCKT* GEDA_SYMBOL::operator>>(MODEL_SUBCKT* m) const{
-	for(vector<GEDA_PIN>::const_iterator i=pinbegin(); i!=pinend(); ++i){
+	for(set<GEDA_PIN>::const_iterator i=pinbegin(); i!=pinend(); ++i){
 		string l=i->label(); // why string&? hmmm
-		trace1(__func__, l);
-		m->set_port_by_index(i->pinseq(), l);
+		trace2("GEDA_SYMBOL::operator>>", i->pinseq(), i->label());
+		assert(i->pinseq());
+		m->set_port_by_index(i->pinseq()-1, l);
 	}
 	return m;
 }
