@@ -1,2 +1,5 @@
-- nets don't connect right (if net crosses place)
-- breaks "v" device in spice
+- nets don't connect right (if net crosses place) (done?)
+- breaks "v" and "c" device in spice
+- geda deprecation warnings...
+- lots of "Conditional jump or move depends on uninitialised value" in libguile
+- OPT::sensitive?
