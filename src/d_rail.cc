@@ -27,7 +27,6 @@
 #include <u_nodemap.h>
 #include <d_subckt.h>
 #include "d_net.h"
-#include "lang_geda.h"
 #include <boost/assign.hpp>
 #ifndef HAVE_UINT_T
 typedef int uint_t;

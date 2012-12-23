@@ -36,12 +36,12 @@ extern "C"{
 # include <libgeda/libgeda.h>
 }
 #include "symbol.h"
-#include "lang_geda.h"
 #include "d_net.h"
 #include "d_place.h"
 #undef COMPLEX
 /*--------------------------------------------------------------------------*/
 #define DUMMY_PREFIX string("!_")
+#define INT_PREFIX string("_%")
 /*--------------------------------------------------------------------------*/
 // using namespace std;
 using std::string;
@@ -406,8 +406,8 @@ void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
         if(const DEV_NET* net=dynamic_cast<DEV_NET*>(*ci)){
             // exclude external ports and rails (HACK)
             if((*ci)->net_nodes()<2) continue;
-            if((net->port_value(0)+"AA").substr(0, strlen(INT_PREFIX)) != INT_PREFIX) continue;
-            if((net->port_value(1)+"AA").substr(0, strlen(INT_PREFIX)) != INT_PREFIX) continue;
+            if((net->port_value(0)+"AA").substr(0, INT_PREFIX.length()) != INT_PREFIX) continue;
+            if((net->port_value(1)+"AA").substr(0, INT_PREFIX.length()) != INT_PREFIX) continue;
 
 
             // connect end points to existing nets
