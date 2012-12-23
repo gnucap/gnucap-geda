@@ -315,9 +315,12 @@ std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
                 incomplete();
             }
         }else if(c && linetype != "" ){
-            sym_cmd>>(linetype + "=").c_str();
-            sym_cmd>>dump;
+            sym_cmd>>linetype;
+            unsigned here = sym_cmd.cursor();
+            sym_cmd >> "=";
+            if(!sym_cmd.stuck(&here))
             try {
+                sym_cmd>>dump;
                 untested();
                 x->set_param_by_name(linetype, dump);
             } catch (Exception_No_Match&) {
@@ -401,8 +404,10 @@ void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
     for(CARD_LIST::const_iterator ci = scope->begin(); ci != scope->end(); ++ci) {
         if(const DEV_NET* net=dynamic_cast<DEV_NET*>(*ci)){
             // exclude external ports and rails (HACK)
+            if((*ci)->net_nodes()<2) continue;
             if((net->port_value(0)+"AA").substr(0, strlen(INT_PREFIX)) != INT_PREFIX) continue;
             if((net->port_value(1)+"AA").substr(0, strlen(INT_PREFIX)) != INT_PREFIX) continue;
+
 
             // connect end points to existing nets
             // (this will take ages.)
@@ -850,6 +855,7 @@ MODEL_SUBCKT* LANG_GEDA::parse_module(CS& cmd, MODEL_SUBCKT* x)
         //cmd>>"C";
         //cmd>>component_x>>" ">>component_y>>" ">>dump>>" ">>angle>>" ">>mirror>>" ">>basename;
     } else {
+        *_C >> x;
         c_x = _C->x;
         c_y = _C->y;
         mirror = _C->mirror;
@@ -868,6 +874,7 @@ MODEL_SUBCKT* LANG_GEDA::parse_module(CS& cmd, MODEL_SUBCKT* x)
     return x;
 }
 /*--------------------------------------------------------------------------*/
+// is this really necessary?
 COMPONENT* LANG_GEDA::parse_componmod(CS& cmd, COMPONENT* x)
 {
     trace1("LANG_GEDA::parse_componmod", cmd.fullstring());
