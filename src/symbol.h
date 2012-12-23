@@ -165,12 +165,6 @@ class GEDA_SYMBOL : public map<string, string> {
 		set<GEDA_PIN>::const_iterator pinbegin()const {return _pins.begin();}
 		set<GEDA_PIN>::const_iterator pinend()const {return _pins.end();}
 		MODEL_SUBCKT* operator>>(MODEL_SUBCKT*) const;
-		MODEL_SUBCKT* operator>>(COMPONENT*x) const{
-			if(MODEL_SUBCKT* x=dynamic_cast<MODEL_SUBCKT*>(x)){
-				return operator>>(x);
-			}
-			return 0;
-		}
 };
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
@@ -214,7 +208,8 @@ GEDA_PIN::GEDA_PIN( CS& cmd )
 /*--------------------------------------------------------------------------*/
 MODEL_SUBCKT* GEDA_SYMBOL::operator>>(MODEL_SUBCKT* m) const{
 	for(set<GEDA_PIN>::const_iterator i=pinbegin(); i!=pinend(); ++i){
-		string l=i->label(); // why string&? hmmm
+		trace0("GEDA_SYMBOL::operator>>");
+		string l = i->label(); // why string&? hmmm
 		trace2("GEDA_SYMBOL::operator>>", i->pinseq(), i->label());
 		assert(i->pinseq());
 		m->set_port_by_index(i->pinseq()-1, l);

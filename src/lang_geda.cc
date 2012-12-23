@@ -892,7 +892,9 @@ COMPONENT* LANG_GEDA::parse_componmod(CS& cmd, COMPONENT* x)
     // x->set_label((*_C)["device"]);
 
     // std::vector<std::string*> coord=parse_symbol_file(x,basename);
-    *_C >> x; // for now.
+    MODEL_SUBCKT* m = dynamic_cast<MODEL_SUBCKT*>(x);
+    assert(m);
+    *_C >> m;
     // move?
     try{
         x->set_param_by_name("x", to_string(c_x));
