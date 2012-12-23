@@ -131,6 +131,7 @@ private:
     pair<int,int> find_place_(const CARD* x, std::string name)const;
     string* find_place_string(const CARD* x, std::string name)const;
     void connect(CARD *x, int x0, int y0, int x1, int y1)const;
+    static void read_file(string, CARD_LIST* Scope, MODEL_SUBCKT* owner=0);
 
     static GEDA_SYMBOL_MAP _symbol;
     static unsigned _nodenumber;
@@ -840,6 +841,8 @@ MODEL_CARD* LANG_GEDA::parse_paramset(CS& cmd, MODEL_CARD* x)
 /*--------------------------------------------------------------------------*/
 MODEL_SUBCKT* LANG_GEDA::parse_module(CS& cmd, MODEL_SUBCKT* x)
 {
+    CARD_LIST* scope = x->owner()?x->owner()->scope():x->scope();
+
     // here?? probably not.
     if ( !_C->has_key("source") && !_C->has_key("file") ){
         untested();
@@ -869,6 +872,12 @@ MODEL_SUBCKT* LANG_GEDA::parse_module(CS& cmd, MODEL_SUBCKT* x)
     }
 
     x->set_label((*_C)["device"]);
+    if ( _C->has_key("source")){
+        GEDA_SYMBOL* tmp=_C; _C=0;
+        read_file( (*tmp)["source"], scope, x);
+        _C=tmp;
+    }
+
     trace5("LANG_GEDA::parse_module", c_x, c_y, mirror, angle, basename);
 
     return x;
@@ -1510,28 +1519,27 @@ public:
           model = new MODEL_SUBCKT();
           sym >> model;
           model->set_label(label);
-          read_file(source, Scope, model);
+          LANG_GEDA::read_file(source, Scope, model);
           //align(model); // might be needed for gnucap .36
           Scope->push_back(model);
       }else if( module ) {
           trace1("reading module", hp(Scope));
           model = new MODEL_SUBCKT();
           model->set_label(label);
-          read_file(filename, Scope, model);
+          LANG_GEDA::read_file(filename, Scope, model);
           //align(model); // might be needed for gnucap .36
           Scope->push_back(model);
       } else if(filename!=""){
-              read_file(filename, Scope);
+          LANG_GEDA::read_file(filename, Scope);
       } else {
           unreachable();
       }
     }
 private:
-    void read_file(string, CARD_LIST* Scope, MODEL_SUBCKT* owner=0);
     // void align(MODEL_SUBCKT* s) const;
 } p8;
 /*----------------------------------------------------------------------*/
-void CMD_GSCHEM::read_file(string f, CARD_LIST* Scope, MODEL_SUBCKT* owner)
+void LANG_GEDA::read_file(string f, CARD_LIST* Scope, MODEL_SUBCKT* owner)
 {
     CS cmd(CS::_INC_FILE, f);
 
