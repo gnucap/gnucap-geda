@@ -1,0 +1,14 @@
+load lang_geda.so
+
+gschem spice.sch module
+
+list
+spice
+Xfoo 1 2 spice.sch
+V1 1 0 5
+R1 0 2 1k
+.print dc v(nodes) r(Xfoo.foo0.Xfoo.Rfoo)
+.store dc v(2)
+.dc
+.measure v2 at(probe="v(2)")
+.end

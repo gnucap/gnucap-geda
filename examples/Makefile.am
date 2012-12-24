@@ -1,4 +1,4 @@
-REG_TEST=res res_net short rail nets
+REG_TEST=res res_net short rail nets spice
 
 nets.test: nets.sch
 	gnucap-geda nets.sch  |grep ^net | wc -l > $@
