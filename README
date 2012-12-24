@@ -1,28 +1,19 @@
-README modified by 'Savant Krishna' "savant.2020@gmail.com"
-This  branch 'lang_gschem' is off the 2009.12.07 dev snapshot.
-Aims to add the functionality of parsing a schematic into a verilog netlist and building a schematic given a (augmented)netlist in verilog.
+lang_geda aims to add the functionality of parsing, writing and simulating geda
+schematics.
 
 In order to load lang_geda as a plugin, compile as follows:
-    g++ -DHAVE_GEDA -shared -fPIC -o lang_geda.so lang_geda.cc d_net.cc d_place.cc  $(pkg-config --cflags gtk+-2.0 --libs libgeda)
+g++ -DHAVE_GEDA -shared -fPIC -o lang_geda.so lang_geda.cc \
+   d_net.cc d_place.cc  $(pkg-config --cflags gtk+-2.0 --libs libgeda)
 
 load as follows
 -------------
 gnucap>load ./lang_geda.so
 -------------
 
-Additional Package Information (by Felix Salfelder):
+this gnucap-module package depends on yet unreleased upstream changes some are
+included in the 'dev' branch on tool/git/gnucap. all are included in the "geda"
+branch. see TODO.
 
-this gnucap-module package depends on yet unreleased upstream changes
-- lang_verilog.cc patch
-- d_coment.cc patch
-- gnucap development helpers
-these are included in the 'dev' branch on tool/git/gnucap
-
-if you do not insist on doing everything manually, you may just
--1) wait for gnucap+dev release
-0) run ./autogen.sh (not necessary when using release tarball)
-1) optional: ./configure --prefix=/your/favourite/prefix
-2) make install
-
-then loading works independently of cwd:
+if you do not insist on doing everything manually, see INSTALL
+after installation loading works independently of cwd:
 gnucap>load lang_geda.so
