@@ -132,6 +132,7 @@ private:
     string* find_place_string(const CARD* x, std::string name)const;
     void connect(CARD *x, int x0, int y0, int x1, int y1)const;
     static void read_file(string, CARD_LIST* Scope, MODEL_SUBCKT* owner=0);
+    static void read_spice(string, CARD_LIST* Scope, MODEL_SUBCKT* owner=0);
 
     static GEDA_SYMBOL_MAP _symbol;
     static unsigned _nodenumber;
@@ -843,11 +844,6 @@ MODEL_SUBCKT* LANG_GEDA::parse_module(CS& cmd, MODEL_SUBCKT* x)
 {
     CARD_LIST* scope = x->owner()?x->owner()->scope():x->scope();
 
-    // here?? probably not.
-    if ( !_C->has_key("source") && !_C->has_key("file") ){
-        untested();
-        return 0;
-    }
     int c_x;
     int c_y;
     bool mirror;
@@ -858,6 +854,10 @@ MODEL_SUBCKT* LANG_GEDA::parse_module(CS& cmd, MODEL_SUBCKT* x)
         //cmd>>"C";
         //cmd>>component_x>>" ">>component_y>>" ">>dump>>" ">>angle>>" ">>mirror>>" ">>basename;
     } else {
+        if ( !_C->has_key("source") && !_C->has_key("file") ){
+            untested();
+            return 0;
+        }
         *_C >> x;
         c_x = _C->x;
         c_y = _C->y;
@@ -876,10 +876,31 @@ MODEL_SUBCKT* LANG_GEDA::parse_module(CS& cmd, MODEL_SUBCKT* x)
         GEDA_SYMBOL* tmp=_C; _C=0;
         read_file( (*tmp)["source"], scope, x);
         _C=tmp;
+    } else if ( _C->has_key("file") ){ untested();
+        trace1("spice-sdb hack", (*_C)["file"] );
+        // file must be a spice deck defining device.
+        // just source it and check...
+        // then rewire (TODO)
+        read_spice((*_C)["file"], scope, x);
+        CARD_LIST::const_iterator i = x->subckt()->find_((*_C)["device"]);
+        if(i==scope->end()){
+            error(bDANGER,"spice-sdb compat: no %s in %s\n",
+                    (*_C)["device"].c_str(), (*_C)["file"].c_str());
+            untested();
+        } else {
+            COMPONENT* a=prechecked_cast<COMPONENT*>((*i)->clone_instance());
+            assert(a);
+            a->set_label("X"+(*_C)["device"]);
+            a->set_dev_type((*_C)["device"]);
+            a->set_owner(x);
+
+            string portname="X";
+            (*_C) >> a;
+            scope->push_back(a);
+        }
     }
 
     trace5("LANG_GEDA::parse_module", c_x, c_y, mirror, angle, basename);
-
     return x;
 }
 /*--------------------------------------------------------------------------*/
@@ -1538,6 +1559,24 @@ public:
 private:
     // void align(MODEL_SUBCKT* s) const;
 } p8;
+/*----------------------------------------------------------------------*/
+// fixme.
+void LANG_GEDA::read_spice(string f, CARD_LIST* Scope, MODEL_SUBCKT* owner)
+{
+    CS cmd(CS::_INC_FILE, f);
+    LANGUAGE* oldlang = OPT::language;
+    CMD::command("options lang=spice", Scope);
+
+    try{
+        for(;;){
+            cmd.get_line("spice-sdb>");
+            OPT::language->new__instance(cmd, owner, Scope);
+        }
+
+    }catch (Exception_End_Of_Input& e){
+    }
+    OPT::language = oldlang;
+}
 /*----------------------------------------------------------------------*/
 void LANG_GEDA::read_file(string f, CARD_LIST* Scope, MODEL_SUBCKT* owner)
 {

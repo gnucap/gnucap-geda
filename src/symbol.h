@@ -172,7 +172,7 @@ class GEDA_SYMBOL : public map<string, string> {
 		void push_back(const GEDA_PIN& x) {_pins.insert(x);}
 		set<GEDA_PIN>::const_iterator pinbegin()const {return _pins.begin();}
 		set<GEDA_PIN>::const_iterator pinend()const {return _pins.end();}
-		MODEL_SUBCKT* operator>>(MODEL_SUBCKT*) const;
+		COMPONENT* operator>>(COMPONENT*) const;
 };
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
@@ -214,7 +214,7 @@ GEDA_PIN::GEDA_PIN( CS& cmd )
 		}
 }
 /*--------------------------------------------------------------------------*/
-MODEL_SUBCKT* GEDA_SYMBOL::operator>>(MODEL_SUBCKT* m) const{
+COMPONENT* GEDA_SYMBOL::operator>>(COMPONENT* m) const{
 	for(set<GEDA_PIN>::const_iterator i=pinbegin(); i!=pinend(); ++i){
 		trace0("GEDA_SYMBOL::operator>>");
 		string l = i->label(); // why string&? hmmm
