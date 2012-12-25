@@ -42,7 +42,7 @@ private:
 private:
   void tr_iwant_matrix();
 // void tr_accept();
-//  double tr_probe_num(const std::string&)const;
+  double tr_probe_num(const std::string&)const;
   void ac_iwant_matrix();
 private:
   bool      param_is_printable(int)const {return false;}

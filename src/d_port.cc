@@ -65,10 +65,10 @@ class DEV_PORT : public DEV_NET {
 			return names[i];
 		}
 //		bool do_tr();
-		void tr_begin();
+//		void tr_begin(); //DEV_NET
 	public:
 		node_t _nodes[2];
-		void expand();
+		// void expand(); DEV_NET
 	private:
 		PARAMETER<double> basename;
 		PARAMETER<double> net;
@@ -186,6 +186,7 @@ void DEV_PORT::set_port_by_index(uint_t i, string& name){
 /*---------------------------------------------------------------------------*/
 // collapse happens after the parents map_sckt_nodes.
 // n[1] is external
+#if 0
 void DEV_PORT::expand()
 {
 #ifdef HAVE_COLLAPSE
@@ -196,15 +197,7 @@ void DEV_PORT::expand()
 #endif
  	assert(_n[0].e_() == _n[1].e_());
 }
-/*---------------------------------------------------------------------------*/
-void DEV_PORT::tr_begin()
-{
-	trace2("DEV_PORT::tr_begin", _n[0].m_(), _n[1].m_());
-	trace2("DEV_PORT::tr_begin", _n[0].t_(), _n[1].t_());
-	trace2("DEV_PORT::tr_begin", _n[0].e_(), _n[1].e_());
-	// in some cases the collapse doesnt work :|
- 	assert(_n[0].m_() == _n[1].m_());
-}
+#endif
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
 }

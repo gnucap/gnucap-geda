@@ -66,7 +66,7 @@ class DEV_RAIL : public DEV_NET {
 		}
 	public:
 		node_t    _nodes[2];
-		//void expand();
+		//void expand(); DEV_NET
 	private:
 		PARAMETER<double> basename;
 		PARAMETER<double> net;

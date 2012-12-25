@@ -38,8 +38,11 @@ DEV_NET::DEV_NET(const DEV_NET& p) : COMPONENT(p)
 /*--------------------------------------------------------------------------*/
 void DEV_NET::tr_iwant_matrix()
 {
-	assert(_n[OUT1].m_() != INVALID_NODE);
-	assert(_n[OUT2].m_() != INVALID_NODE);
+	trace4("DEV_NET::tr_iwant_matrix", long_label(), _n[OUT1].n_(), _n[OUT2].n_(), net_nodes());
+	for( unsigned i=net_nodes(); --i>0; ){
+		trace1("DEV_NET::tr_iwant_matrix", i);
+		assert(_n[i].m_() != INVALID_NODE);
+	}
 
 	//_sim->_aa.iwant(_n[OUT1].m_(),_n[OUT2].m_());
 	//_sim->_lu.iwant(_n[OUT1].m_(),_n[OUT2].m_());
@@ -51,7 +54,7 @@ void DEV_NET::expand()
 {
 #ifdef HAVE_COLLAPSE
 	for( unsigned i=net_nodes(); --i>0; ){
-		trace1("DEV_NET::expand collapse", i);
+		trace2("DEV_NET::expand collapse", i, long_label());
 		_n[0].collapse(this, _n[i]);
 	}
 #else
@@ -61,9 +64,23 @@ void DEV_NET::expand()
 /*--------------------------------------------------------------------------*/
 void DEV_NET::tr_begin()
 {
-	trace2("DEV_NET::tr_begin", _n[0].m_(), _n[1].m_());
- 	assert(_n[0].m_() == _n[1].m_());
+	for( unsigned i=net_nodes(); --i>0; ){
+		trace2("DEV_NET::tr_begin", _n[0].m_(), _n[1].m_());
+		assert(_n[0].m_() == _n[i].m_());
+	}
 }
+/*--------------------------------------------------------------------------*/
+double DEV_NET::tr_probe_num(const std::string& x)const
+{
+  if (Umatch(x, "v{out} ")) {
+    return _n[0].v0();
+  } else if (Umatch(x, "dv{out} ")) {
+	 incomplete();
+    return 18;
+  }
+  return COMPONENT::tr_probe_num(x);
+}
+/*--------------------------------------------------------------------------*/
 namespace {
 DEV_NET p1;
 DISPATCHER<CARD>::INSTALL d1(&device_dispatcher,"net",&p1);
