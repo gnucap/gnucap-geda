@@ -55,6 +55,8 @@ class GEDA_PIN : public map<string, string>{
 	public:
 		int& x0(){return _xy[0];}
 		int& y0(){return _xy[1];}
+		int x0()const{return _xy[0];}
+		int y0()const{return _xy[1];}
 		//int& x1(){return _xy[2];}
 		//int& y1(){return _xy[3];}
 		unsigned& color(){return _color;}
@@ -207,8 +209,14 @@ GEDA_PIN::GEDA_PIN( CS& cmd )
 				} else {
 					string pname = cmd.ctos("=","","");
 					string value;
-					cmd >> "=" >> value;
-					operator[](pname) = value;
+					unsigned here = cmd.cursor();
+					cmd >> "=";
+					if(!cmd.stuck(&here)){
+						cmd >> value;
+						operator[](pname) = value;
+					} else {
+						untested();
+					}
 				}
 			}
 		}
