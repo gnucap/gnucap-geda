@@ -627,7 +627,6 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
     // FIXME: reads symbol file twice
     std::vector<std::string*> coordinates=parse_symbol_file(x,basename);
     int newx, newy;
-    int index = 0;
 
     try{
         x->set_param_by_name("basename", basename);
@@ -652,14 +651,26 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
         }
     }
 
+    static unsigned instance;
+    if(x->short_label()==""){
+        if(dev->has_key("net")){
+            x->set_label((*dev)["net"]);
+        }else{
+            x->set_label(basename+"_"+to_string(instance++));
+        }
+    }
+
     // connect ports
-    for (std::vector<std::string*>::const_iterator i=coordinates.begin();i<coordinates.end();++i){
+    int index = 0;
+    index = 0;
+    trace1("LANG_GEDA::parse_component setting ports", x->long_label());
+    for (set<GEDA_PIN>::const_iterator i = dev->pinbegin(); i!=dev->pinend(); ++i ){
         int cc[2];
         cc[0] = c_x;
         cc[1] = c_y;
         int delta[2];
-        delta[0] = - atoi((*i)[0].c_str());
-        delta[1] = - atoi((*i)[1].c_str());
+        delta[0] = - i->x0();
+        delta[1] = - i->y0();
         pair<int,int> new_ = componentposition( cc, delta, angle, mirror );
         newx = new_.first;
         newy = new_.second;
@@ -675,17 +686,23 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
         } else {
             portname = port->port_value(0);
         }
-        x->set_port_by_index(index, portname);
-        trace4("LANG_GEDA::parse_component setting port", x->long_label(), index, portname, x->n_(index).e_());
-        ++index;
-    }
-    static unsigned instance;
-    if(x->short_label()==""){
-        if(dev->has_key("net")){
-            x->set_label((*dev)["net"]);
-        }else{
-            x->set_label(basename+"_"+to_string(instance++));
+        // port_by_name?!
+        try{
+            string p=i->label();
+            trace3("LANG_GEDA::parse_component setting port", i->label(), portname, hp(x));
+            x->set_port_by_name(p, portname);
+            assert(p==i->label());
+        }catch(Exception_No_Match){
+            try{
+                untested();
+                trace2("LANG_GEDA::parse_component by index", i->pinseq(), portname);
+                x->set_port_by_index(i->pinseq()-1, portname);
+            }catch(Exception_Too_Many){
+                // we have checked for pincount!
+                unreachable();
+            }
         }
+        ++index;
     }
     if(source!=""){untested();
         trace1("parse_component", source);
