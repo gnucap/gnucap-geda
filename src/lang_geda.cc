@@ -41,7 +41,7 @@ extern "C"{
 #undef COMPLEX
 /*--------------------------------------------------------------------------*/
 #define DUMMY_PREFIX string("!_")
-#define INT_PREFIX string("_%")
+#define INT_PREFIX string("x_")
 /*--------------------------------------------------------------------------*/
 // using namespace std;
 using std::string;
@@ -681,7 +681,11 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
     }
     static unsigned instance;
     if(x->short_label()==""){
-        x->set_label(basename+"_"+to_string(instance++));
+        if(dev->has_key("net")){
+            x->set_label((*dev)["net"]);
+        }else{
+            x->set_label(basename+"_"+to_string(instance++));
+        }
     }
     if(source!=""){untested();
         trace1("parse_component", source);
@@ -737,8 +741,8 @@ DEV_DOT* LANG_GEDA::parse_command(CS& cmd, DEV_DOT* x)
     CARD_LIST* scope = (x->owner()) ? x->owner()->subckt() : &CARD_LIST::card_list;
     if(_C){
         untested();
-        x->set("C");
-        CS c(CS::_STRING, "C");
+        x->set("gC");
+        CS c(CS::_STRING, "gC");
         CMD::cmdproc(c, scope );
     } else {
         CMD::cmdproc(cmd, scope );
@@ -771,7 +775,7 @@ DEV_DOT* LANG_GEDA::parse_command(CS& cmd, DEV_DOT* x)
             || x->s() == "end"
             || x->s() == "simulator"
             || x->s() == "directive"
-            || x->s() == "C"
+            || x->s() == "gC"
             || x->s() == "list" ){
 
     }else{
@@ -880,7 +884,7 @@ MODEL_SUBCKT* LANG_GEDA::parse_module(CS& cmd, MODEL_SUBCKT* x)
         trace1("spice-sdb hack", (*_C)["file"] );
         // file must be a spice deck defining device.
         // just source it and check...
-        // then rewire (TODO)
+        // then rewire
         read_spice((*_C)["file"], scope, x);
         CARD_LIST::const_iterator i = x->subckt()->find_((*_C)["device"]);
         if(i==scope->end()){
@@ -890,11 +894,12 @@ MODEL_SUBCKT* LANG_GEDA::parse_module(CS& cmd, MODEL_SUBCKT* x)
         } else {
             COMPONENT* a=prechecked_cast<COMPONENT*>((*i)->clone_instance());
             assert(a);
+            CMD::command("options lang=spice", scope); // still case problems...
             a->set_label("X"+(*_C)["device"]);
             a->set_dev_type((*_C)["device"]);
             a->set_owner(x);
 
-            string portname="X";
+            CMD::command("options lang=gschem", scope);
             (*_C) >> a;
             scope->push_back(a);
         }
@@ -1114,7 +1119,7 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
                     type = modulename;
                 } else {
                     trace0("C -- new subckt?");
-                    type = "C";
+                    type = "gC";
                 }
             }
         } else if (D.has_key("net")) {
@@ -1129,7 +1134,7 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
             }
         } else {
             untested();
-            type = "C"; // declare module first...
+            type = "gC"; // declare module first...
         }
         trace1("find_type_in_string, no reset", type);
         return type;
@@ -1349,7 +1354,7 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
     assert(x);
     trace0("LANG_GEDA::print_component");
     std::string _x,_y,_angle,_mirror;
-    o <<  "C ";
+    o << "gC";
     std::string _basename=x->param_value(x->param_count()-1);
     //go through the symbol file and get the relative pin positions
     std::vector<std::string*> coordinates=parse_symbol_file(NULL, _basename);
@@ -1501,6 +1506,8 @@ class CMD_GSCHEM : public CMD {
 public:
     void do_it(CS& cmd, CARD_LIST* Scope)
     {
+      string oldlang = OPT::language->name();
+      command("options lang=gschem", Scope);
       // BUG breaks direct "options lang=gschem", does it?
       lang_geda._mode=lang_geda.mATTRIBUTE;
       lang_geda._no_of_lines=0;
@@ -1510,7 +1517,6 @@ public:
       cmd >> filename;
       trace1("gschem", filename);
       if(filename==""){
-          command("options lang=gschem", Scope);
           return;
       }
       bool module = 0;
@@ -1535,8 +1541,10 @@ public:
           trace3("symbol", sym.pincount(), filename, lang_geda._symbol[filename].pincount());
           assert(sym.pincount());
           if(source!="") sym["source"] = source;
-          if(sym["source"]=="")
+          if(sym["source"]==""){
+              command("options lang="+oldlang, Scope);
               throw Exception_CS("empty source", cmd);
+          }
           model = new MODEL_SUBCKT();
           sym >> model;
           model->set_label(label);
@@ -1555,6 +1563,8 @@ public:
       } else {
           unreachable();
       }
+      trace1("done", oldlang);
+      command("options lang="+oldlang, Scope);
     }
 private:
     // void align(MODEL_SUBCKT* s) const;
@@ -1564,7 +1574,6 @@ private:
 void LANG_GEDA::read_spice(string f, CARD_LIST* Scope, MODEL_SUBCKT* owner)
 {
     CS cmd(CS::_INC_FILE, f);
-    LANGUAGE* oldlang = OPT::language;
     CMD::command("options lang=spice", Scope);
 
     try{
@@ -1575,7 +1584,7 @@ void LANG_GEDA::read_spice(string f, CARD_LIST* Scope, MODEL_SUBCKT* owner)
 
     }catch (Exception_End_Of_Input& e){
     }
-    OPT::language = oldlang;
+    CMD::command("options lang=gschem", Scope);
 }
 /*----------------------------------------------------------------------*/
 void LANG_GEDA::read_file(string f, CARD_LIST* Scope, MODEL_SUBCKT* owner)
@@ -1601,7 +1610,7 @@ void LANG_GEDA::read_file(string f, CARD_LIST* Scope, MODEL_SUBCKT* owner)
 }
 /*----------------------------------------------------------------------*/
 DISPATCHER<CMD>::INSTALL
-    d8(&command_dispatcher, "gschem|v", &p8);
+    d8(&command_dispatcher, "gschem|v ", &p8);
 /*----------------------------------------------------------------------*/
 class CMD_C : public CMD {
     void do_it(CS& cmd, CARD_LIST* Scope)
@@ -1656,7 +1665,7 @@ class CMD_C : public CMD {
     }
 } p2;
 DISPATCHER<CMD>::INSTALL
-    d2(&command_dispatcher, "C", &p2);
+    d2(&command_dispatcher, "gC", &p2);
 
 /*----------------------------------------------------------------------*/
 }
