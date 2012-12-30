@@ -1,4 +1,3 @@
-- breaks "v" and "c" device in spice
 - geda deprecation warnings...
 - lots of "Conditional jump or move depends on uninitialised value" in libguile
-- OPT::sensitive?
+- cannot access things with labels containing uppercases from insensitive spice
