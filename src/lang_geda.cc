@@ -492,7 +492,7 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
       coord[1] = n.y0;
       coord[2] = n.x1;
       coord[3] = n.y1;
-      x->set_param_by_name("color", std::to_string(n.color));
+      x->set_param_by_name("color", ::to_string(n.color));
       _netq.pop();
       x->set_label("extranet"+::to_string(_netnumber++));
    } else { // parse
