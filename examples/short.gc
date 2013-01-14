@@ -4,8 +4,6 @@ spice
 V1 n1 0 3
 R1 n2 0 1
 
-.load lang_geda.so
-
 .verilog
 gschem short.sch module
 short.sch s1(n1 n2);

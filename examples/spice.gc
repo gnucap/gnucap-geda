@@ -1,5 +1,3 @@
-load lang_geda.so
-
 gschem spice.sch module
 
 list

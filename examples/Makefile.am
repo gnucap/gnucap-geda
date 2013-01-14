@@ -1,4 +1,9 @@
-REG_TEST=res res_net short rail nets spice
+REG_TEST=res res_net short rail spice
+EXTRA_DIST = $(REG_TEST:%=%.ref) \
+             $(REG_TEST:%=%.gc) \
+             $(REG_TEST:%=%.sch) \
+             nets.sch nets.ref spice_foo.sp \
+				 gafrc
 
 nets.test: nets.sch
 	gnucap-geda nets.sch  |grep ^net | wc -l > $@
@@ -8,9 +13,9 @@ nets.test: nets.sch
 
 %.test: %.gc
 	GUILE_WARN_DEPRECATED=no \
-	gnucap $< | grep '^[a-zA-Z0-9]*=' > $@
+	gnucap -a ../src/.libs/lang_geda.so $< | grep '^[a-zA-Z0-9]*=' > $@
 
-check: $(REG_TEST:%=%.reg)
+check: $(REG_TEST:%=%.reg) nets.reg
 
 clean: clean-test
 

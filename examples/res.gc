@@ -1,10 +1,11 @@
-include ../include/analog.v
+module RESISTOR(n p);
+	parameter value=1;
+	resistor #(.r(value)) r(n,p);
+endmodule
 
 spice
 V1 n1 0 5
 R1 n2 0 1
-
-.load lang_geda.so
 
 .verilog
 gschem res.sch module
