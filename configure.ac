@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.67])
-AC_INIT([gnucap-geda], [0.0.0], [savant.2020@gmail.com])
+AC_INIT([gnucap-geda], [0.0.0], [felix@salfelder.org])
 # AC_CONFIG_SRCDIR([lang_geda.cc])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -29,7 +29,7 @@ AC_SUBST([gnucap_libdir])
 
 # Checks for library functions.
 
-PKG_CHECK_MODULES(GEDA, [libgeda >= 20110115],
+PKG_CHECK_MODULES(GEDA, [libgeda >= 20100214],
 		[
 			AC_CHECK_LIB(
 				[geda], [s_path_sys_data],
