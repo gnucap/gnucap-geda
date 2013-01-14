@@ -238,7 +238,7 @@ class GEDA_SYMBOL_MAP : public map<string, GEDA_SYMBOL> {
 
 	public:
 		GEDA_SYMBOL& operator[](const string key){
-			typename map<string, GEDA_SYMBOL>::const_iterator it = parent::find( key );
+			parent::const_iterator it = parent::find( key );
 			GEDA_SYMBOL& s = parent::operator[](key);
 			if ( it == parent::end() ) {
 				s = GEDA_SYMBOL(key);
