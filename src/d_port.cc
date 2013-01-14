@@ -57,7 +57,7 @@ class DEV_PORT : public DEV_NET {
 		bool has_iv_probe()const {return true;}
 		CARD* clone()const     {return new DEV_PORT(*this);}
 		bool print_type_in_spice()const {return false;}
-		int param_count()const  {return DEV_NET::param_count()+5;}
+		int param_count()const  {return DEV_NET::param_count()+6;}
 		string port_name(uint_t i)const{
 			assert(i>=0);
 			assert(i<2);
@@ -134,7 +134,7 @@ string DEV_PORT::param_name(int i)const
 		case 3: return("pinnumber");
 		case 4: return("symversion");
 		case 5: return("pinlabel");
-		default: return "";
+		default: return COMPONENT::param_name(i);
 	}
 }
 /*--------------------------------------------------------------------------*/
@@ -147,7 +147,7 @@ string DEV_PORT::param_value(int i)const
 		case 3: return pinnumber.string();
 		case 4: return symversion.string();
 		case 5: return pinlabel.string();
-		default: return "";
+		default: return COMPONENT::param_value(i);
 	}
 }
 /*--------------------------------------------------------------------------*/
