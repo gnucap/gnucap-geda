@@ -54,15 +54,18 @@ class LANG_GEDA : public LANGUAGE {
    friend class CMD_GSCHEM;
    TOPLEVEL* pr_current;
 
-   typedef struct {
+   struct portinfo {
+		portinfo(string n, int a, int b): name(n), x(a), y(b) {}
       string name;
       int x,y;
-   } portinfo;
+   };
    mutable std::queue<portinfo> _placeq;
-   typedef struct {
+   struct netinfo {
+		netinfo(int _x0, int _y0, int _x1, int _y1, unsigned c):
+		    x0(_x0), y0(_y0), x1(_x1), y1(_y1), color(c) {}
       int x0, y0, x1, y1;
       unsigned color;
-   } netinfo;
+   };
    mutable std::queue<netinfo> _netq;
    mutable GEDA_SYMBOL* _C; //stashes C command and body (HACK/workaround)
    public:
@@ -422,20 +425,20 @@ void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
             if (in_order( n2->y(), y1, n1->y())){
                if (n1->x() == x0){
                   assert( y0 !=  n1->y());
-                  _netq.push( netinfo{ x0, y0, n1->x(), n1->y(), 4 });
+                  _netq.push( netinfo( x0, y0, n1->x(), n1->y(), 4 ));
                } else if (n2->x() == x1){
                   assert( y1 !=  n1->y());
-                  _netq.push( netinfo{ x1, y1, n1->x(), n1->y(), 4 });
+                  _netq.push( netinfo( x1, y1, n1->x(), n1->y(), 4 ));
                }
             }
          } else if (n1->y() == n2->y() && (x0 == x1)){
             if (in_order(n1->x(), x1, n2->x())){
                if (n1->y() == y0){
                   assert( x0 !=  n1->x());
-                  _netq.push( netinfo{ x0, y0, n1->x(), n1->y(), 4 });
+                  _netq.push( netinfo( x0, y0, n1->x(), n1->y(), 4 ));
                } else if (n2->y() == y1){
                   assert( x1 !=  n1->x());
-                  _netq.push( netinfo{ x1, y1, n1->x(), n1->y(), 4 });
+                  _netq.push( netinfo( x1, y1, n1->x(), n1->y(), 4 ));
                }
             }
          }
@@ -451,7 +454,7 @@ void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
                unsigned col = 5;
                // connect place to 1st endpoint.
                assert(x0!=_x);
-               _netq.push( netinfo{ x0, y0, _x, _y, col });
+               _netq.push( netinfo( x0, y0, _x, _y, col ));
             }
             else{
             }
@@ -461,7 +464,7 @@ void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
                unsigned col = 5;
                // connect place to 1st endpoint.
                assert(x0!=_x);
-               _netq.push( netinfo{ x0, y0, _x, _y, col });
+               _netq.push( netinfo( x0, y0, _x, _y, col ));
             }else{
             }
          }
@@ -517,7 +520,7 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
    string portname;
    if(!port){
       portname = "nn_" + ::to_string(_nodenumber++);
-      _placeq.push( portinfo{portname, coord[0], coord[1]} );
+      _placeq.push( portinfo(portname, coord[0], coord[1]) );
       portname = string(INT_PREFIX) + portname;
    } else {
       portname = port->port_value(0);
@@ -528,7 +531,7 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
    if(!port){
       untested();
       portname = "nn_" + ::to_string(_nodenumber++);
-      _placeq.push( portinfo{portname, coord[2], coord[3]});
+      _placeq.push( portinfo(portname, coord[2], coord[3]));
       portname = string(INT_PREFIX) + portname;
    } else {
       portname = port->port_value(0);
@@ -681,7 +684,7 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
       string portname = "incomplete";
       if (!port){
          portname = "cn_" + ::to_string(_nodenumber++);
-         _placeq.push( portinfo{portname, newx, newy} );
+         _placeq.push( portinfo(portname, newx, newy) );
          portname = string(INT_PREFIX) + portname;
       } else {
          portname = port->port_value(0);
