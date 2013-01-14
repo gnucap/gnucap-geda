@@ -54,7 +54,9 @@ CPPFLAGS=${old_CPPFLAGS}
 gnucap=$(which gnucap)
 AC_SUBST([gnucap])
 
-AC_CONFIG_FILES([Makefile examples/Makefile src/Makefile
+AC_CONFIG_FILES([Makefile examples/Makefile
+                 src/Makefile
+                 include/Makefile
                  gnucap-geda])
 AC_OUTPUT
 
