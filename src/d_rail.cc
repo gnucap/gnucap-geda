@@ -27,7 +27,9 @@
 #include <u_nodemap.h>
 #include <d_subckt.h>
 #include "d_net.h"
-#include <boost/assign.hpp>
+#ifdef HAVE_BOOST_ASSIGN
+# include <boost/assign.hpp>
+#endif
 #ifndef HAVE_UINT_T
 typedef int uint_t;
 #endif
@@ -73,7 +75,7 @@ class DEV_RAIL : public DEV_NET {
 		PARAMETER<double> pinseq;
 		PARAMETER<double> pinnumber;
 		PARAMETER<double> symversion;
-#ifdef HAVE_PARA_BASE
+#if defined HAVE_PARA_BASE and defined HAVE_BOOST_ASSIGN
 		static map<string, PARA_BASE DEV_RAIL::*> param_dict;
 #endif
 };

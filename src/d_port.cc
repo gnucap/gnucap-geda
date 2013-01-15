@@ -27,7 +27,9 @@
 #include <u_nodemap.h>
 #include <d_subckt.h>
 #include "d_net.h"
-#include <boost/assign.hpp>
+#ifdef HAVE_BOOST_ASSIGN
+# include <boost/assign.hpp>
+#endif
 #ifndef HAVE_UINT_T
 typedef int uint_t;
 #endif
@@ -86,7 +88,7 @@ DEV_PORT p1;
 DISPATCHER<CARD>::INSTALL d1(&device_dispatcher,"bond|port|none|OUTPUT|INPUT",&p1);
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
-#ifdef HAVE_PARA_BASE
+#if defined HAVE_PARA_BASE and defined HAVE_BOOST_ASSIGN
 map<string, PARA_BASE DEV_PORT::*> DEV_PORT::param_dict
 = boost::assign::map_list_of
 ("basename",  (PARA_BASE DEV_PORT::*)  (&DEV_PORT::basename))

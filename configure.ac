@@ -14,6 +14,8 @@ AC_PROG_CC
 AC_PROG_MAKE_SET
 AC_PROG_CXX
 AC_PROG_LIBTOOL
+AC_LANG(C++)
+
 
 # Checks for libraries.
 
@@ -43,6 +45,15 @@ PKG_CHECK_MODULES(GEDA, [libgeda >= 20100214],
 				AC_MSG_ERROR([gEDA package not found])
 		] )
 
+have_boost_assign=no
+AC_CHECK_HEADERS([boost/assign.hpp],
+                 [have_boost_assign=yes
+                  AC_DEFINE([HAVE_BOOST_ASSIGN], [1], [have boost assign])
+                  AC_MSG_NOTICE(Using boost::assign.)
+                 ],
+                 [
+                  AC_MSG_NOTICE(Not using boost::assign.)
+                 ])
 
 old_CPPFLAGS=${CPPFLAGS}
 CPPFLAGS+=${GEDA_CFLAGS}
