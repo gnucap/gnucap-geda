@@ -8,3 +8,5 @@ lang_geda_la_CXXFLAGS = -std=c++0x
 lang_geda_la_LDFLAGS = $(PLUGIN_LDFLAGS)
 lang_geda_la_SOURCES = lang_geda.cc d_net.cc d_place.cc \
                        d_port.cc d_rail.cc
+
+EXTRA_DIST = symbol.h d_place.h d_net.h
