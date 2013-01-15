@@ -6,7 +6,7 @@ EXTRA_DIST = $(REG_TEST:%=%.ref) \
 				 gafrc
 
 nets.test: nets.sch
-	gnucap-geda nets.sch  |grep ^net | wc -l > $@
+	../gnucap-geda nets.sch  |grep ^net | wc -l > $@
 
 %.reg: %.test %.ref
 	diff $+
