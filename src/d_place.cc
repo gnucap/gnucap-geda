@@ -86,6 +86,8 @@ std::string DEV_PLACE::param_value(int i)const
         case 0: return to_string(_x);
         case 1: return to_string(_y);
     }
+    unreachable();
+    return "errorvalue";
 }
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/

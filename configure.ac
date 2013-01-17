@@ -61,6 +61,7 @@ AC_CHECK_HEADERS([libgeda/libgeda.h],
                  [ AC_DEFINE([HAVE_GEDA], [1], [geda present]) ],
 					  AC_MSG_ERROR([libgeda.h not available]), )
 CPPFLAGS=${old_CPPFLAGS}
+CXXFLAGS+=" -Wall -pedantic"
 
 gnucap=$(which gnucap)
 AC_SUBST([gnucap])
