@@ -85,7 +85,7 @@ class DEV_PORT : public DEV_NET {
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 DEV_PORT p1;
-DISPATCHER<CARD>::INSTALL d1(&device_dispatcher,"bond|port|none|OUTPUT|INPUT",&p1);
+DISPATCHER<CARD>::INSTALL d1(&device_dispatcher,"bond|port|none|OUTPUT|INPUT|spice-IO",&p1);
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 #if defined HAVE_PARA_BASE and defined HAVE_BOOST_ASSIGN
