@@ -1026,28 +1026,30 @@ GEDA_SYMBOL* LANG_GEDA::parse_C(CS& cmd)const
    D.mirror = c_m;
    string& s = (*_C)["basename"];
    s = basename; // hmmm...
-   try{
-      cmd.get_line("gnucap-geda-"+basename+">");
-      trace1("parse_C body?", cmd.fullstring());
-   }catch(Exception_End_Of_Input&){
-   }
-   if(cmd >> '{') {
-      for (;;) {
-         cmd.get_line("gnucap-geda-"+basename+">");
-         if (cmd >> "}") {
-            cmd.reset();
-            break;
-         } else if(cmd >> "T") {
-         } else {
-            string name = cmd.ctos("=","",""), value;
-            cmd >> "=" >> value;
-            (*_C)[name] = value;
-         }
-      }
-   } else { // "C" without body
-      trace1("C w/o body", cmd.fullstring());
-      _gotline = 1; // dont read another time.
-   }
+	try{
+		cmd.get_line("gnucap-geda-"+basename+">");
+		trace1("parse_C body?", cmd.fullstring());
+		if(cmd >> '{') {
+			for (;;) {
+				cmd.get_line("gnucap-geda-"+basename+">");
+				if (cmd >> "}") {
+					cmd.reset();
+					break;
+				} else if(cmd >> "T") {
+				} else {
+					string name = cmd.ctos("=","",""), value;
+					cmd >> "=" >> value;
+					(*_C)[name] = value;
+				}
+			}
+		} else { // "C" without body
+			trace1("C w/o body", cmd.fullstring());
+			_gotline = 1; // dont read another time.
+		}
+	}catch(Exception_End_Of_Input&){
+		_gotline = 0; // try again in main loop (and fail)
+		untested();
+	}
    assert(_C);
    return _C;
 }
