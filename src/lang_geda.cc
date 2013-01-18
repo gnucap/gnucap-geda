@@ -548,6 +548,7 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 	try {
 		cmd.get_line("gnucap-geda>");
 	}catch(Exception_End_Of_Input&){
+		_gotline = false;
 		return;
 	}
 	std::string _paramvalue,_paramname,dump;
@@ -583,7 +584,6 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 		return;
 	}
 	}
-	_gotline = true;
 	cmd.reset();
 	assert(!cmd.is_end()); // there could be a queue...
 	if(_placeq.size()){
