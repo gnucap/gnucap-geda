@@ -1,8 +1,9 @@
-REG_TEST=res res_net short rail spice
+REG_TEST=res res_net short rail spice testbench
 EXTRA_DIST = $(REG_TEST:%=%.ref) \
              $(REG_TEST:%=%.gc) \
              $(REG_TEST:%=%.sch) \
              nets.sch nets.ref spice_foo.sp \
+				 dut.sch \
 				 gafrc
 
 nets.test: nets.sch

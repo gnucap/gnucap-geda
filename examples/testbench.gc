@@ -1,0 +1,22 @@
+load ../src/.libs/lang_geda.so
+options picky
+options order=sinkr
+include ../include/analog.v
+
+gschem testbench.sch
+
+verilog
+list
+
+spice
+.options insensitive=0
+
+.mstat
+
+.store dc v(a)
+.print dc v(nhi) i(V1.v) v1(V1) v2(V1) v(a)
+.dc
+
+.measure va at(probe="v(a)")
+
+.end
