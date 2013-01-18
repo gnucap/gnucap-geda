@@ -21,4 +21,9 @@ module BATTERY(n p);
 	vsource #(.dc(value)) v(n,p);
 endmodule
 
+module VOLTAGE_SOURCE(p n);
+	parameter value=1;
+	vsource #(.dc(value)) v(p n);
+endmodule
+
 simulator lang=acs
