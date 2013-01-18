@@ -1,3 +1,6 @@
 - geda deprecation warnings...
 - lots of "Conditional jump or move depends on uninitialised value" in libguile
 - cannot access things with labels containing uppercases from insensitive spice
+- equal pinlabels not handled
+- bad connection error handling/reporting
+- need to ask geda where the schematics are (like symbols)
