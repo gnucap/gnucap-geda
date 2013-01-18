@@ -446,11 +446,8 @@ void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
          // connect interior places
          int _x = pl->x();
          int _y = pl->y();
-         trace3("place", _x, _y, pl->short_label());
          if (y0==y1){ // horizontal
-            trace5("horizontal", x0, _x, x1, _y, y0);
             if( in_order( x1, _x, x0) && _y==y0 ){
-               trace0("found horizontal");
                unsigned col = 5;
                // connect place to 1st endpoint.
                assert(x0!=_x);
@@ -460,7 +457,6 @@ void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
             }
          }else if (x0==x1){
             if( in_order( y1, _y, y0) && _x==x0 ){
-               trace0("found vertical");
                unsigned col = 5;
                // connect place to 1st endpoint.
                assert(x0!=_x);
@@ -469,7 +465,6 @@ void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
             }
          }
          else{
-            trace0("... nothing II");
          }
       }
    }
