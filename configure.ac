@@ -68,8 +68,10 @@ AC_SUBST([gnucap])
 
 AC_CONFIG_FILES([Makefile examples/Makefile
                  src/Makefile
-                 include/Makefile
-                 gnucap-geda])
+                 include/Makefile])
+
+AC_CONFIG_FILES([gnucap-geda], [chmod +x gnucap-geda])
+
 AC_OUTPUT
 
 AC_MSG_RESULT([
