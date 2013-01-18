@@ -478,8 +478,10 @@ void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
 // Need to specify a name for a card?
 void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 {
+	trace0("parse_net");
 	assert(x);
 	// assert(lang_geda.find_type_in_string(cmd)=="net"); // no. at end of body...
+	bool parse_net_body=0; // rearrange later!
 	int coord[4];
 	if(_netq.size()){
 		netinfo n = _netq.front();
@@ -491,6 +493,7 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 		_netq.pop();
 		x->set_label("extranet"+::to_string(_netnumber++));
 	} else { // parse
+		parse_net_body=1;
 		assert(cmd.fullstring().c_str()[0] == 'N');
 		unsigned here=cmd.cursor();
 		// x0 y0 x1 y1 color
@@ -541,6 +544,7 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 		cmd.reset();
 	}
 	//To check if there are any attributes
+	if(parse_net_body) { // rearrange.
 	try {
 		cmd.get_line("gnucap-geda>");
 	}catch(Exception_End_Of_Input&){
@@ -577,6 +581,7 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 		_gotline = true;
 		//OPT::language->new__instance(cmd,NULL,x->scope());
 		return;
+	}
 	}
 	_gotline = true;
 	cmd.reset();
@@ -652,6 +657,7 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
 	static unsigned instance;
 	if(x->short_label()==""){
 		if(dev->has_key("net")){
+			untested(); // this might lead to trouble...
 			x->set_label((*dev)["net"]);
 		}else{
 			x->set_label(basename+"_"+to_string(instance++));
@@ -1078,10 +1084,10 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 	unsigned here = cmd.cursor(); //store cursor position to reset back later
 	std::string type;   //stores type : should check device attribute..
 	//graphical=["v","L","G","B","V","A","H","T"]
-	if (_placeq.size()){ // hack?
+	if (_placeq.size()){ untested();
 		assert(!_C);
 		return "place";
-	} else if (_netq.size()){
+	} else if (_netq.size()){ untested();
 		assert(!_C);
 		return "net";
 	} else if (_C || cmd >> "C "){
@@ -1140,7 +1146,7 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 				}
 			}
 		} else if (D.has_key("net")) {
-			trace1("...", D["net"]);
+			trace2("found rail", D["net"], cmd.fullstring() );
 			if (CARD* c = device_dispatcher["rail"]){
 				COMPONENT* d = prechecked_cast<COMPONENT*>(c);
 				if ( d->max_nodes() >= D.pincount()
