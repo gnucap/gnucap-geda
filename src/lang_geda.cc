@@ -459,7 +459,7 @@ void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
 				if( in_order( y1, _y, y0) && _x==x0 ){
 					unsigned col = 5;
 					// connect place to 1st endpoint.
-					assert(x0!=_x);
+					assert(y0!=_y);
 					_netq.push( netinfo( x0, y0, _x, _y, col ));
 				}else{
 				}
