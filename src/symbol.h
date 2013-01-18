@@ -72,7 +72,11 @@ class GEDA_PIN : public map<string, string>{
 			return atoi(find("pinseq")->second.c_str());
 		}
 		string label()const{
-			assert(find("pinlabel") != end());
+			if(find("pinlabel") == end()){
+				incomplete();
+				assert(find("pinseq") != end());
+				return( "unknown_pin_" + find("pinseq")->second );
+			}
 			return find("pinlabel")->second.c_str();
 		}
 };
@@ -191,7 +195,6 @@ GEDA_PIN::GEDA_PIN( CS& cmd )
 		_xy[0] = x;
 		_xy[1] = y;
 	}
-	operator[]("label") = "unknown";
 	string    _portvalue="_";
 	try{
 		cmd.get_line("");
@@ -220,6 +223,9 @@ GEDA_PIN::GEDA_PIN( CS& cmd )
 				}
 			}
 		}
+	if(find("pinlabel") == end()){
+		untested();
+	}
 }
 /*--------------------------------------------------------------------------*/
 COMPONENT* GEDA_SYMBOL::operator>>(COMPONENT* m) const{
