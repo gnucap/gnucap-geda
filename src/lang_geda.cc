@@ -52,6 +52,7 @@ namespace geda{
 /*--------------------------------------------------------------------------*/
 class LANG_GEDA : public LANGUAGE {
 	friend class CMD_GSCHEM;
+	friend class CMD_C;
 	TOPLEVEL* pr_current;
 
 	struct portinfo {
@@ -136,6 +137,8 @@ class LANG_GEDA : public LANGUAGE {
 	void connect(CARD *x, int x0, int y0, int x1, int y1)const;
 	static void read_file(string, CARD_LIST* Scope, MODEL_SUBCKT* owner=0);
 	static void read_spice(string, CARD_LIST* Scope, MODEL_SUBCKT* owner=0);
+	static CARD_LIST::const_iterator find_nondevice(string name, CARD_LIST* Scope=0);
+	static CARD_LIST::const_iterator find_card(string name, CARD_LIST* Scope=0, bool model=0);
 
 	static GEDA_SYMBOL_MAP _symbol;
 	static unsigned _nodenumber;
@@ -865,6 +868,29 @@ MODEL_CARD* LANG_GEDA::parse_paramset(CS& cmd, MODEL_CARD* x)
 	return NULL;
 }
 /*--------------------------------------------------------------------------*/
+CARD_LIST::const_iterator LANG_GEDA::find_nondevice(string name, CARD_LIST* Scope) {
+	return find_card(name, Scope, true);
+}
+/*--------------------------------------------------------------------------*/
+CARD_LIST::const_iterator LANG_GEDA::find_card(string name, CARD_LIST* Scope, bool nondevice) {
+	if (!Scope) Scope = &CARD_LIST::card_list;
+	CARD_LIST::const_iterator i = Scope->find_(name);
+	if(nondevice){
+		while (i!=Scope->end()) {
+			if((*i)->is_device()){
+				trace1("skip", (*i)->long_label());
+				i = Scope->find_again(name, ++i); // skip
+			} else {
+				break;
+			}
+		}
+	}
+	if (i == Scope->end()) {
+		throw Exception_Cant_Find(name, "scope");
+	}
+	return i;
+}
+/*--------------------------------------------------------------------------*/
 MODEL_SUBCKT* LANG_GEDA::parse_module(CS& cmd, MODEL_SUBCKT* x)
 {
 	CARD_LIST* scope = x->owner()?x->owner()->scope():x->scope();
@@ -907,13 +933,18 @@ MODEL_SUBCKT* LANG_GEDA::parse_module(CS& cmd, MODEL_SUBCKT* x)
 		// just source it and check...
 		// then rewire
 		read_spice((*_C)["file"], scope, x);
-		CARD_LIST::const_iterator i = x->subckt()->find_((*_C)["device"]);
-		if(i==scope->end()){
+		const CARD* modelcard;
+		try{
+			modelcard = *find_nondevice( (*_C)["device"], x->subckt());
+		} catch(Exception_Cant_Find){
 			error(bDANGER,"spice-sdb compat: no %s in %s\n",
 					(*_C)["device"].c_str(), (*_C)["file"].c_str());
+			modelcard = NULL;
 			untested();
-		} else {
-			COMPONENT* a=prechecked_cast<COMPONENT*>((*i)->clone_instance());
+		}
+
+		if (modelcard) {
+			COMPONENT* a=prechecked_cast<COMPONENT*>(modelcard->clone_instance());
 			assert(a);
 			CMD::command("options lang=spice", scope); // still case problems...
 			a->set_label("X"+(*_C)["device"]);
@@ -1112,9 +1143,16 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 		trace1("have pins", _C->pincount());
 
 		if (D.has_key("device")){
-			trace1("...", D["device"]);
+			trace1("have devicekey", D["device"]);
 			assert(D["device"]!="");
-			CARD_LIST::const_iterator i = CARD_LIST::card_list.find_(D["device"]);
+			const CARD* modelcard;
+			try {
+				modelcard = *find_nondevice(D["device"]);
+				trace1("found nondevice", D["device"]);
+			} catch (Exception_Cant_Find){
+				modelcard = NULL;
+				trace1("no nondevice", D["device"]);
+			}
 			if (CARD* c = device_dispatcher[D["device"]]){
 				COMPONENT* d = prechecked_cast<COMPONENT*>(c);
 				if ( d->max_nodes() >= D.pincount()
@@ -1122,18 +1160,18 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 					untested();
 					type = D["device"];
 				}
-			} else if (i!= CARD_LIST::card_list.end()){
-				if (COMPONENT* d = prechecked_cast<COMPONENT*>(*i))
+			} else if (modelcard) { untested();
+				if (const COMPONENT* d = prechecked_cast<const COMPONENT*>(modelcard))
 					if ( d->max_nodes() >= D.pincount()
 							&& d->min_nodes() <= D.pincount()){
 						type = D["device"];
 					}
-				if (MODEL_SUBCKT* d = prechecked_cast<MODEL_SUBCKT*>(*i))
+				if (const MODEL_SUBCKT* d = prechecked_cast<const MODEL_SUBCKT*>(modelcard))
 					if ( d->max_nodes() >= D.pincount()
 							&& d->min_nodes() <= D.pincount()){
 						type = D["device"];
 					}
-			} else {
+			} else { untested();
 				string modulename = DUMMY_PREFIX + D["basename"];
 				trace1("symbolthere?", modulename);
 				CARD_LIST::const_iterator i = CARD_LIST::card_list.find_(modulename);
@@ -1663,16 +1701,11 @@ class CMD_C : public CMD {
 			// this is not graphical
 			lang_geda._componentname=new_compon->short_label();
 			trace2("do_it, componmod", lang_geda._componentname, cmd.fullstring());
-			CARD_LIST::const_iterator i = Scope->find_(new_compon->short_label());
-			if (i != Scope->end()) {
-				trace2(" componmod already there.", lang_geda._componentname, cmd.fullstring());
+			try{
+				LANG_GEDA::find_nondevice(new_compon->short_label(), Scope);
 				untested();
-				// i'm here, because the "C" command has type "C" first....
-				// hmm maybe it should look for the symbol first, as it might be there already.
 				delete clone;
-			}else{
-				trace2("CMD_C pushback", hp(Scope), new_compon->long_label());
-				// BUG? global scope
+			}catch(Exception_Cant_Find){
 				CARD_LIST::card_list.push_back(new_compon);
 			}
 
