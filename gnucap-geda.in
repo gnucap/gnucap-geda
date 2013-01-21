@@ -72,6 +72,10 @@ $dot""end" | $gnucap -a $module >/dev/null
 			shift
 			output="$1"
 			;;
+		-a)
+			shift
+			module="$1"
+			;;
 		*)
 			echo unknown argument: $1
 			;;
