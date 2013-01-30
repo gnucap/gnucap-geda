@@ -4,3 +4,4 @@
 - equal pinlabels not handled
 - bad connection error handling/reporting
 - need to ask geda where the schematics are (like symbols)
+- no way to handle spice-sdb style includes case sensitivity issues
