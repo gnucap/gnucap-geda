@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  *------------------------------------------------------------------
- * This is the device 'net' : a connection between components.
+ * This is the device 'net' : a connection between nodes.
  */
 #include "e_compon.h"
 #include "e_node.h"
