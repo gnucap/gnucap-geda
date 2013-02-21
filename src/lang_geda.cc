@@ -35,10 +35,10 @@
 extern "C"{
 # include <libgeda/libgeda.h>
 }
+#undef COMPLEX
 #include "symbol.h"
 #include "d_net.h"
 #include "d_place.h"
-#undef COMPLEX
 /*--------------------------------------------------------------------------*/
 #define DUMMY_PREFIX string("!_")
 #define INT_PREFIX string("x_")

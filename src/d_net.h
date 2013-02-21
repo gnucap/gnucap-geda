@@ -20,8 +20,15 @@
  *------------------------------------------------------------------
  * This is the device 'net' : a connection between nodes.
  */
-#include "e_compon.h"
-#include "e_node.h"
+#ifndef D_NET__H
+#define D_NET__H
+#ifdef COMPLEX
+# error COMPLEX mess
+#endif
+#include <md.h>
+#include <e_compon.h>
+#include <e_node.h>
+#include <u_xprobe.h>
 #ifndef HAVE_UINT_T
 typedef int uint_t;
 #endif
@@ -43,6 +50,7 @@ private:
   void tr_iwant_matrix();
 // void tr_accept();
   double tr_probe_num(const std::string&)const;
+  XPROBE ac_probe_ext(const std::string& x)const;
   void ac_iwant_matrix();
 private:
   bool      param_is_printable(int)const {return false;}
@@ -74,4 +82,5 @@ public:
 };
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
+#endif
 // vim:ts=8:sw=2:et

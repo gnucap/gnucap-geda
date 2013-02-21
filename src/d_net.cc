@@ -81,6 +81,17 @@ double DEV_NET::tr_probe_num(const std::string& x)const
   return COMPONENT::tr_probe_num(x);
 }
 /*--------------------------------------------------------------------------*/
+XPROBE DEV_NET::ac_probe_ext(const std::string& x)const
+{
+	if (Umatch(x, "v ")) {
+		return XPROBE(_n[0].vac());
+	}else if (Umatch(x, "z ")) { incomplete();
+		return XPROBE(.0);
+	}else{itested();
+		return CKT_BASE::ac_probe_ext(x);
+	}
+}
+/*--------------------------------------------------------------------------*/
 namespace {
 DEV_NET p1;
 DISPATCHER<CARD>::INSTALL d1(&device_dispatcher,"net",&p1);

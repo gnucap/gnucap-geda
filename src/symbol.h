@@ -25,6 +25,7 @@
 extern "C"{
 # include <libgeda/libgeda.h>
 }
+#undef COMPLEX
 #include <io_trace.h>
 #include <ap.h>
 
