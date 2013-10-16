@@ -1,7 +1,5 @@
-load ../src/.libs/lang_geda.so
 options picky
 options order=sinkr
-include ../include/analog.v
 
 gschem testbench.sch
 

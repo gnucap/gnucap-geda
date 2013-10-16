@@ -2,38 +2,64 @@
 # (c) 2012-13 Felix Salfelder
 # license: GPLv3+
 
+MODULE = lang_geda.so
 GNUCAP = export GUILE_WARN_DEPRECATED=no LD_LIBRARY_PATH=../src/.libs; $(shell echo gnucap | sed -e '$(transform)')
 GNUCAP_GEDA = export GUILE_WARN_DEPRECATED=no LD_LIBRARY_PATH=../src/.libs; ../gnucap-geda
-REG_TEST = res res_net short rail spice testbench
-MISC_TEST = bogus
-EXTRA_DIST = $(REG_TEST:%=%.ref) \
-             $(REG_TEST:%=%.gc) \
-             $(REG_TEST:%=%.sch) \
-             nets.sch nets.ref spice_foo.sp \
-				 dut.sch \
-             bogus.sch bogus.ref \
-				 gafrc
+EXTRA_DIST = \
+    nets.sch nets.ref spice_foo.sp \
+    dut.sch \
+    bogus.sch bogus.ref \
+    gafrc
 
-# where is this module in the generic case?
-MODULE = lang_geda.so
+TEST_EXTENSIONS = .sh
+AM_TESTS_FD_REDIRECT = 9>&2
+GC_TESTS = res_net.sh short.sh rail.sh spice.sh \
+        testbench.sh res.sh
+TESTS = $(GC_TESTS) nets.sh bogus.sh
+EXTRA_DIST+= $(TESTS:%.sh=%.ref) $(GC_TESTS:%.sh=%.gc)
 
-nets.test: %.test: %.sch
+# these require schematics
+SCHEMATICS = testbench.sch spice.sch rail.sch res_net.sch short.sch res.sch
+$(SCHEMATICS:%.sch=%.out): %.out: $(PWD)/%.sch
+EXTRA_DIST+= $(SCHEMATICS)
+
+# this includes an extra netlist
+spice.out: $(PWD)/spice_foo.sp
+testbench.out: $(PWD)/dut.sch
+
+$(TESTS): %.sh: %.ref
+	@echo "#!/bin/sh" > $@
+	@echo "set -e" >> $@
+	@echo "exec 2>&9" >> $@
+	@echo "diff -rup $< $*.out || exit 1" >> $@
+	@echo "rm $*.out" >> $@
+	@chmod +x $@
+
+nets.out: nets.sch
 	$(GNUCAP_GEDA) -a $(MODULE) $< |grep ^net | wc -l > $@
 
-bogus.test: %.test: %.sch
+$(TESTS:%.sh=%.log): %.log: %.out
+
+bogus.out: $(PWD)/bogus.sch
 	$(GNUCAP_GEDA) -a $(MODULE) $< | grep -v ^v > $@
 
 %.reg: %.test %.ref
 	diff $+
 
+$(PWD)/%.sch: $(abs_srcdir)/%.sch
+	$(LN_S) $< .
+
+$(PWD)/%.sp: $(abs_srcdir)/%.sp
+	$(LN_S) $< .
+
 %.test: %.gc
 	$(GNUCAP) -a ../src/.libs/lang_geda.so $< | grep '^[a-zA-Z0-9]*=' > $@
 
-check: $(REG_TEST:%=%.reg) nets.reg $(MISC_TEST:%=%.reg)
+res_net.out testbench.out: GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
 
-clean: clean-test
+res.out res_net.out testbench.out spice.out rail.out short.out: %.out: %.gc
+	$(GNUCAP) -a $(MODULE) $(GC_INCLUDES) $< | grep '^[a-zA-Z0-9]*=' > $@
 
-clean-test:
-	rm -f $(REG_TEST:%=%.test)
+.PHONY: $(TESTS:%.sh=%.out)
 
-.PHONY: %.reg check
+CLEANFILES = $(TESTS) $(TESTS:%.sh=%.out)

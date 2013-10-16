@@ -1,4 +1,3 @@
-include ../include/analog.v
 options order=f
 
 spice
