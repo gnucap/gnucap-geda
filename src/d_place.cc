@@ -20,6 +20,7 @@
  *------------------------------------------------------------------
  * This is the device 'place' : a schematic node location.
  */
+#include <globals.h>
 #include <e_compon.h>
 #include <e_node.h>
 #include "d_place.h"

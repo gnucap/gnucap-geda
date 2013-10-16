@@ -22,6 +22,7 @@
  * a port connects a net to the pin of a sckt
  * this is meant to make i/o port symbols work.
  */
+#include <globals.h>
 #include <e_compon.h>
 #include <e_node.h>
 #include <u_nodemap.h>

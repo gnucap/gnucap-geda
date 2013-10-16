@@ -21,6 +21,8 @@
  */
 
 #include <l_lib.h>
+#include <l_dispatcher.h>
+#include <globals.h>
 #include <c_comand.h>
 #include <d_dot.h>
 #include <d_coment.h>
@@ -39,6 +41,10 @@ extern "C"{
 #include "symbol.h"
 #include "d_net.h"
 #include "d_place.h"
+/*--------------------------------------------------------------------------*/
+#ifndef USE
+#define USE(a) (void) a;
+#endif
 /*--------------------------------------------------------------------------*/
 #define DUMMY_PREFIX string("!_")
 #define INT_PREFIX string("x_")
@@ -671,7 +677,7 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
 	int index = 0;
 	index = 0;
 	trace1("LANG_GEDA::parse_component setting ports", x->long_label());
-	for (set<GEDA_PIN>::const_iterator i = dev->pinbegin(); i!=dev->pinend(); ++i ){
+	for (std::set<GEDA_PIN>::const_iterator i = dev->pinbegin(); i!=dev->pinend(); ++i ){
 		int cc[2];
 		cc[0] = c_x;
 		cc[1] = c_y;

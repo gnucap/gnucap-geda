@@ -21,6 +21,7 @@
  * collapses nodes. may be overriden by loading another net.
  */
 
+#include <globals.h>
 #include "d_net.h"
 /*--------------------------------------------------------------------------*/
 DEV_NET::DEV_NET(const DEV_NET& p) : COMPONENT(p)

@@ -22,6 +22,13 @@
 #ifndef D_PLACE_H__
 #define D_PLACE_H__
 
+#include <md.h>
+
+#ifndef HAVE_UINT_T
+#define HAVE_UINT_T
+typedef int uint_t;
+#endif
+
 namespace place{
 
 class DEV_PLACE : public COMPONENT {
