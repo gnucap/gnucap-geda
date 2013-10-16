@@ -10,9 +10,9 @@
 # builtin exec and /dev/fd/3 for now.
 
 helptext="convert geda schematics to verilog/spice\n\
-synopsis: $1 [-s|-v|-g] [-d] [-o outfile] file.sch"
+synopsis: $0 [-s|-v|-g] [-d] [-o outfile] file.sch"
 
-[ -z $1 ] && echo -e $helptext
+[ -z $1 ] && echo -e "$helptext"
 
 GUILE_WARN_DEPRECATED=no
 target=verilog
@@ -20,7 +20,8 @@ dot=
 printcmd=no
 output="&1"
 module=lang_geda.so
-gnucap=@gnucap@
+transform=`echo '@program_transform_name@' | sed -e 's/\\$\\$/$/'`
+gnucap=`echo gnucap | sed -e "$transform"`
 
 while [ ! -z $1 ]; do
 

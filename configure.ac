@@ -6,7 +6,7 @@ AC_INIT([gnucap-geda], [0.0.1], [felix@salfelder.org])
 # AC_CONFIG_SRCDIR([lang_geda.cc])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([foreign silent-rules])
 LT_INIT()
 
 # Checks for programs.
@@ -16,17 +16,21 @@ AC_PROG_CXX
 AC_PROG_LIBTOOL
 AC_LANG(C++)
 
-
+AS_IF([ test x$program_suffix = xNONE ],,[_program_suffix=$program_suffix])
 # Checks for libraries.
 
 # Checks for header files.
-GC_CPPFLAGS+=$(gnucap-conf --cppflags)
+GC_CPPFLAGS+=$(gnucap-conf$_program_suffix --cppflags)
+OLD_CPPFLAGS="$CPPFLAGS"
+CPPFLAGS+=" $GC_CPPFLAGS"
+AC_CHECK_HEADER([l_dispatcher.h],,[AC_MSG_ERROR([cannot find gnucap headers])])
+CPPFLAGS="$OLD_CPPFLAGS"
 AC_SUBST([GC_CPPFLAGS])
 
 # Checks for typedefs, structures, and compiler characteristics.
 
 # FIXME: check for gnucap-conf availability
-gnucap_libdir=$(gnucap-conf --libdir)
+gnucap_libdir=$(gnucap-conf$_program_suffix --libdir)
 AC_SUBST([gnucap_libdir])
 
 # Checks for library functions.
