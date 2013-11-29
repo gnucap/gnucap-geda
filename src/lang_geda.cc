@@ -20,6 +20,7 @@
  *
  */
 
+#define ADD_VERSION
 #include <l_lib.h>
 #include <l_dispatcher.h>
 #include <globals.h>
