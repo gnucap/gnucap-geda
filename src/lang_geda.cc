@@ -430,7 +430,10 @@ void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
 			assert(n1);
 			const place::DEV_PLACE* n2 = find_place(x, net->port_value(1));
 			assert(n2);
-			assert(n1->x()!=n2->x() || n1->y()!=n2->y());
+			if (n1->x()==n2->x() && n1->y()==n2->y()) { unreachable();
+				error(bDANGER,"singular net in %s\n", x->long_label().c_str());
+				assert(0);
+			}
 			if (n1->x() == n2->x() && (y0 == y1)){
 				if (in_order( n2->y(), y1, n1->y())){
 					if (n1->x() == x0){
