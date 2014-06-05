@@ -82,7 +82,7 @@ class LANG_GEDA : public LANGUAGE {
 		scm_init_guile(); // urghs why?
 		libgeda_init();
 		pr_current = s_toplevel_new ();
-		g_rc_parse(pr_current, "gschemrc", NULL);
+		g_rc_parse(pr_current, "gschemrc", NULL, NULL);
 		// i_vars_set (pr_current); // why?
 	}
 
