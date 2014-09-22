@@ -41,7 +41,7 @@ nets.out: nets.sch
 $(TESTS:%.sh=%.log): %.log: %.out
 
 bogus.out: $(PWD)/bogus.sch
-	$(GNUCAP_GEDA) -a $(MODULE) $< | grep -v ^v > $@
+	$(GNUCAP_GEDA) -a $(MODULE) $< | grep -v ^\/\/v > $@
 
 %.reg: %.test %.ref
 	diff $+
