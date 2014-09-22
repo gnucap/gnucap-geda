@@ -76,8 +76,8 @@ class DEV_RAIL : public DEV_NET {
 		PARAMETER<double> pinseq;
 		PARAMETER<double> pinnumber;
 		PARAMETER<double> symversion;
-#if defined HAVE_PARA_BASE and defined HAVE_BOOST_ASSIGN
-		static map<string, PARA_BASE DEV_RAIL::*> param_dict;
+#if defined HAVE_PARA_BASE
+		static map<string, PARA_BASE DEV_RAIL::*> _param_dict;
 #endif
 };
 /*--------------------------------------------------------------------------*/
@@ -87,7 +87,7 @@ DISPATCHER<CARD>::INSTALL d1(&device_dispatcher,"rail",&p1);
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 #ifdef HAVE_PARA_BASE
-map<string, PARA_BASE DEV_RAIL::*> DEV_RAIL::param_dict
+map<string, PARA_BASE DEV_RAIL::*> DEV_RAIL::_param_dict
 = boost::assign::map_list_of
 ("basename",  (PARA_BASE DEV_RAIL::*)  (&DEV_RAIL::basename))
 ("net",       (PARA_BASE DEV_RAIL::*)  (&DEV_RAIL::net))
@@ -110,7 +110,7 @@ bool DEV_RAIL::param_is_printable(int i)const{
 void DEV_RAIL::set_param_by_name(string Name, string Value)
 {
 #ifdef HAVE_PARA_BASE
-	PARA_BASE DEV_RAIL::* x = param_dict[Name];
+	PARA_BASE DEV_RAIL::* x = _param_dict[Name];
 	trace3("DEV_RAIL::set_param_by_name", Name, OPT::case_insensitive, x);
 	if(x) {
 		PARA_BASE* p = &(this->*x);

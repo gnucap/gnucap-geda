@@ -80,7 +80,7 @@ class DEV_PORT : public DEV_NET {
 		PARAMETER<double> symversion;
 		PARAMETER<double> pinlabel; // string?!
 #ifdef HAVE_PARA_BASE
-		static map<string, PARA_BASE DEV_PORT::*> param_dict;
+		static map<string, PARA_BASE DEV_PORT::*> _param_dict;
 #endif
 };
 /*--------------------------------------------------------------------------*/
@@ -89,8 +89,8 @@ DEV_PORT p1;
 DISPATCHER<CARD>::INSTALL d1(&device_dispatcher,"bond|port|none|OUTPUT|INPUT|spice-IO",&p1);
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
-#if defined HAVE_PARA_BASE and defined HAVE_BOOST_ASSIGN
-map<string, PARA_BASE DEV_PORT::*> DEV_PORT::param_dict
+#if defined HAVE_PARA_BASE
+map<string, PARA_BASE DEV_PORT::*> DEV_PORT::_param_dict
 = boost::assign::map_list_of
 ("basename",  (PARA_BASE DEV_PORT::*)  (&DEV_PORT::basename))
 ("net",       (PARA_BASE DEV_PORT::*)  (&DEV_PORT::net))
@@ -115,7 +115,7 @@ bool DEV_PORT::param_is_printable(int i)const{
 void DEV_PORT::set_param_by_name(string Name, string Value)
 {
 #ifdef HAVE_PARA_BASE
-	PARA_BASE DEV_PORT::* x = param_dict[Name];
+	PARA_BASE DEV_PORT::* x = _param_dict[Name];
 	trace3("DEV_PORT::set_param_by_name", Name, OPT::case_insensitive, x);
 	if(x) {
 		PARA_BASE* p = &(this->*x);
