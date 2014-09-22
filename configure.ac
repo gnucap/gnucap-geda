@@ -70,7 +70,7 @@ CXXFLAGS+=" -Wall -pedantic"
 gnucap=$(which gnucap)
 AC_SUBST([gnucap])
 
-AC_CONFIG_FILES([Makefile examples/Makefile
+AC_CONFIG_FILES([Makefile tests/Makefile
                  src/Makefile
                  include/Makefile])
 

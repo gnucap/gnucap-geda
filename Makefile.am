@@ -3,6 +3,6 @@
 # license: GPLv3+
 
 ACLOCAL_AMFLAGS = -Im4
-SUBDIRS = src include examples
+SUBDIRS = src include tests
 
 dist_bin_SCRIPTS=gnucap-geda
