@@ -76,9 +76,7 @@ class DEV_RAIL : public DEV_NET {
 		PARAMETER<double> pinseq;
 		PARAMETER<double> pinnumber;
 		PARAMETER<double> symversion;
-#if defined HAVE_PARA_BASE
 		static map<string, PARA_BASE DEV_RAIL::*> _param_dict;
-#endif
 };
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
@@ -86,7 +84,6 @@ DEV_RAIL p1;
 DISPATCHER<CARD>::INSTALL d1(&device_dispatcher,"rail",&p1);
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
-#ifdef HAVE_PARA_BASE
 map<string, PARA_BASE DEV_RAIL::*> DEV_RAIL::_param_dict
 = boost::assign::map_list_of
 ("basename",  (PARA_BASE DEV_RAIL::*)  (&DEV_RAIL::basename))
@@ -94,7 +91,6 @@ map<string, PARA_BASE DEV_RAIL::*> DEV_RAIL::_param_dict
 ("pinseq",    (PARA_BASE DEV_RAIL::*)  (&DEV_RAIL::pinseq))
 ("pinnumber", (PARA_BASE DEV_RAIL::*)  (&DEV_RAIL::pinnumber))
 ("symversion",(PARA_BASE DEV_RAIL::*)  (&DEV_RAIL::symversion));
-#endif
 /*--------------------------------------------------------------------------*/
 bool DEV_RAIL::param_is_printable(int i)const{
 	switch(param_count()-1-i) {
@@ -109,7 +105,6 @@ bool DEV_RAIL::param_is_printable(int i)const{
 /*--------------------------------------------------------------------------*/
 void DEV_RAIL::set_param_by_name(string Name, string Value)
 {
-#ifdef HAVE_PARA_BASE
 	PARA_BASE DEV_RAIL::* x = _param_dict[Name];
 	trace3("DEV_RAIL::set_param_by_name", Name, OPT::case_insensitive, x);
 	if(x) {
@@ -118,9 +113,6 @@ void DEV_RAIL::set_param_by_name(string Name, string Value)
 		return;
 	}
 	throw Exception_No_Match(Name);
-#else
-	incomplete();
-#endif
 }
 /*--------------------------------------------------------------------------*/
 string DEV_RAIL::param_name(int i)const

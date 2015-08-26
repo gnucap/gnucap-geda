@@ -67,7 +67,9 @@ void DEV_NET::tr_begin()
 {
 	for( unsigned i=net_nodes(); --i>0; ){
 		trace2("DEV_NET::tr_begin", _n[0].m_(), _n[1].m_());
+#ifdef HAVE_COLLAPSE
 		assert(_n[0].m_() == _n[i].m_());
+#endif
 	}
 }
 /*--------------------------------------------------------------------------*/

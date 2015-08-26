@@ -79,9 +79,7 @@ class DEV_PORT : public DEV_NET {
 		PARAMETER<double> pinnumber;
 		PARAMETER<double> symversion;
 		PARAMETER<double> pinlabel; // string?!
-#ifdef HAVE_PARA_BASE
 		static map<string, PARA_BASE DEV_PORT::*> _param_dict;
-#endif
 };
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
@@ -89,7 +87,6 @@ DEV_PORT p1;
 DISPATCHER<CARD>::INSTALL d1(&device_dispatcher,"bond|port|none|OUTPUT|INPUT|spice-IO",&p1);
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
-#if defined HAVE_PARA_BASE
 map<string, PARA_BASE DEV_PORT::*> DEV_PORT::_param_dict
 = boost::assign::map_list_of
 ("basename",  (PARA_BASE DEV_PORT::*)  (&DEV_PORT::basename))
@@ -98,7 +95,6 @@ map<string, PARA_BASE DEV_PORT::*> DEV_PORT::_param_dict
 ("pinnumber", (PARA_BASE DEV_PORT::*)  (&DEV_PORT::pinnumber))
 ("symversion",(PARA_BASE DEV_PORT::*)  (&DEV_PORT::symversion))
 ("pinlabel",  (PARA_BASE DEV_PORT::*)  (&DEV_PORT::pinlabel));
-#endif
 /*--------------------------------------------------------------------------*/
 bool DEV_PORT::param_is_printable(int i)const{
 	switch(param_count()-1-i) {
@@ -114,7 +110,6 @@ bool DEV_PORT::param_is_printable(int i)const{
 /*--------------------------------------------------------------------------*/
 void DEV_PORT::set_param_by_name(string Name, string Value)
 {
-#ifdef HAVE_PARA_BASE
 	PARA_BASE DEV_PORT::* x = _param_dict[Name];
 	trace3("DEV_PORT::set_param_by_name", Name, OPT::case_insensitive, x);
 	if(x) {
@@ -123,9 +118,6 @@ void DEV_PORT::set_param_by_name(string Name, string Value)
 		return;
 	}
 	throw Exception_No_Match(Name);
-#else
-	incomplete();
-#endif
 }
 /*--------------------------------------------------------------------------*/
 string DEV_PORT::param_name(int i)const
