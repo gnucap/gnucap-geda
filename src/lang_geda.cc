@@ -527,27 +527,18 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 		x->set_label("net"+::to_string(_netnumber++));
 	}
 
-	const COMPONENT* port = find_place(x, coord[0], coord[1]);
-	string portname;
-	if(!port){
-		portname = "nn_" + ::to_string(_nodenumber++);
-		_placeq.push( portinfo(portname, coord[0], coord[1]) );
-		portname = string(INT_PREFIX) + portname;
-	} else {
-		portname = port->port_value(0);
+	for(unsigned j=0; j<2; ++j){
+		const COMPONENT* port = find_place(x, coord[0+2*j], coord[1+2*j]);
+		string portname;
+		if(!port){
+			portname = "nn_" + ::to_string(_nodenumber++);
+			_placeq.push( portinfo(portname, coord[0+2*j], coord[1+2*j]) );
+			portname = string(INT_PREFIX) + portname;
+		}else{ untested();
+			portname = port->port_value(0);
+		}
+		x->set_port_by_index(j, portname);
 	}
-	x->set_port_by_index(0, portname);
-
-	port = find_place(x, coord[2], coord[3]);
-	if(!port){
-		untested();
-		portname = "nn_" + ::to_string(_nodenumber++);
-		_placeq.push( portinfo(portname, coord[2], coord[3]));
-		portname = string(INT_PREFIX) + portname;
-	} else {
-		portname = port->port_value(0);
-	}
-	x->set_port_by_index(1, portname);
 
 	connect(x, coord[0], coord[1], coord[2], coord[3]);
 
