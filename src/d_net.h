@@ -68,6 +68,7 @@ private:
   bool      print_type_in_spice()const {return false;}
 //		bool do_tr();
   void tr_begin();
+  void tr_load();
 protected:
   int param_count()const  {return COMPONENT::param_count();}
 private:
@@ -79,6 +80,10 @@ private:
   }
 public:
   node_t    _nodes[NODES_PER_BRANCH];
+private:
+#ifndef HAVE_COLLAPSE
+  double _g0, _g1;
+#endif
 };
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
