@@ -32,7 +32,6 @@
 #include <u_lang.h>
 #include <u_nodemap.h>
 #include <fts.h>
-#include <io_trace.h>
 #include <gmpxx.h> // to workaround bug in gmp header about __cplusplus
 #define COMPLEX NOCOMPLEX // COMPLEX already came from md.h
 extern "C"{

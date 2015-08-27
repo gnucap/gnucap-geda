@@ -31,6 +31,8 @@
 #ifdef HAVE_BOOST_ASSIGN
 # include <boost/assign.hpp>
 #endif
+#include "io_trace.h"
+
 #ifndef HAVE_UINT_T
 typedef int uint_t;
 #endif

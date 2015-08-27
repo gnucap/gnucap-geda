@@ -23,6 +23,7 @@
 
 #include <globals.h>
 #include "d_net.h"
+#include "io_trace.h"
 /*--------------------------------------------------------------------------*/
 DEV_NET::DEV_NET(const DEV_NET& p) : COMPONENT(p)
 {
