@@ -896,13 +896,13 @@ CARD_LIST::const_iterator LANG_GEDA::find_card(string name, CARD_LIST* Scope, bo
 }
 /*--------------------------------------------------------------------------*/
 MODEL_SUBCKT* LANG_GEDA::parse_module(CS& cmd, MODEL_SUBCKT* x)
-{
+{ untested();
 	CARD_LIST* scope = x->owner()?x->owner()->scope():x->scope();
 
-	int c_x;
-	int c_y;
+	int c_x=0;
+	int c_y=0;
 	bool mirror;
-	angle_t angle;
+	angle_t angle=a_invalid;
 	string basename;
 	if (!_C) { // parse from cmd...
 		incomplete(); // not possible right now

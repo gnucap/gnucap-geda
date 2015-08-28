@@ -30,7 +30,8 @@ extern "C"{
 #include <ap.h>
 #include <set>
 
-enum angle_t { a_0 = 0,
+enum angle_t { a_invalid = -1,
+               a_0 = 0,
                a_90 = 90,
                a_180 = 180,
                a_270 = 270 };
