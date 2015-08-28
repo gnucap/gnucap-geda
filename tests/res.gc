@@ -1,21 +1,27 @@
+*options trace
+verilog
 module RESISTOR(n p);
 	parameter value=1;
 	resistor #(.r(value)) r(n,p);
 endmodule
 
 spice
-V1 n1 0 5
 R1 n2 0 1
 
+.list
+
+* BUG?! _frozen is broken...
+* .store dc v(nodes)
+
 .verilog
+vsource #(.dc(5)) V1 (.p(n1),.n(0));
+
 gschem res.sch module
 res.sch s1(n1 n2);
+
 list
 
 spice
-.print dc m(nodes) v(nodes) v(s1.R_1.r) i(R1) mp(s1.R_1.r) mn(s1.R_1.r)
-.store dc v(n2) i(R1)
+.print dc v(nodes) v(s1.R_1.r) r(s1.R_1.r) i(R1)
 .dc
-.measure vn2 at(probe="v(n2)")
-.measure iR1 at(probe="i(R1)")
 .end

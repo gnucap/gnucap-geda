@@ -1,3 +1,4 @@
+options debug
 gschem spice.sch module
 
 list

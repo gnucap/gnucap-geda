@@ -1,6 +1,4 @@
-
+//v 20110115 2
 net #() output (.p(x_nn_0),.n(x_nn_1));
 place #(.x(50000),.y(46400)) 50000:46400 (.port(x_nn_0));
 place #(.x(51600),.y(46400)) 51600:46400 (.port(x_nn_1));
-port #(.basename(output-1.sym)) output-1.sym_0 (.int(x_nn_1));
-net #() net1 (.p(x_nn_0),.n(x_nn_1));

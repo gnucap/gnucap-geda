@@ -1,0 +1,7 @@
+doesnotexist.sch:No such file or directory
+doesnotexist.sch foo(n1 n2); 
+^ ? doesnotexist.sch: no match
+resistor #(.r( 5.)) R1 (.p(n1),.n(n0));
+R1 ( n1 n0 )  5.
+#          
+ 0.        

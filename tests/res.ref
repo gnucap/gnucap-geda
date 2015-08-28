@@ -1,2 +1,25 @@
-vn2= 2.499988
-iR1= 2.499988
+.subckt RESISTOR ( n p )
+r ( n p ) value
+.ends RESISTOR
+R1 ( n2 0 )  1.
+module RESISTOR (n,p);
+resistor #(.r(value)) r (.p(n),.n(p));
+endmodule // RESISTOR
+
+resistor #(.r( 1.)) R1 (.p(n2),.n(0));
+//* BUG?! _frozen is broken... 
+//* .store dc v(nodes) 
+vsource #(.dc(5)) V1 (.p(n1),.n(0));
+module res.sch (a,b);
+//v 20110115 2
+//C 49000 44500 1 0 0 passive-1.sym
+port #(.basename(passive-1.sym),.net(a)) a (.int(x_cn_0),.ext(a));
+place #(.x(49000),.y(44600)) 49000:44600 (.port(x_cn_0));
+port #(.basename(passive-1.sym),.net(b)) b (.int(x_cn_1),.ext(b));
+place #(.x(48100),.y(44600)) 48100:44600 (.port(x_cn_1));
+RESISTOR #(.basename(resistor-1.sym),.class(DISCRETE),.pins(2),.value(1)) R_1 (.n(x_cn_1),.p(x_cn_0));
+endmodule // res.sch
+
+res.sch #() s1 (.a(n1),.b(n2));
+#           v(n1)      v(n2)      v(s1.R_1.r) r(s1.R_1.r) i(R1)     
+ 0.         5.         2.5       -2.5        1.         2.5       

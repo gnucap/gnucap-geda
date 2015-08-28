@@ -2,7 +2,7 @@
 # (c) 2012-13 Felix Salfelder
 # license: GPLv3+
 
-MODULE = lang_geda.so
+MODULE = ../src/.libs/lang_geda.so
 GNUCAP = export GUILE_WARN_DEPRECATED=no LD_LIBRARY_PATH=../src/.libs; $(shell echo gnucap | sed -e '$(transform)')
 GNUCAP_GEDA = export GUILE_WARN_DEPRECATED=no LD_LIBRARY_PATH=../src/.libs; ../gnucap-geda
 EXTRA_DIST = \
@@ -14,7 +14,7 @@ EXTRA_DIST = \
 TEST_EXTENSIONS = .sh
 AM_TESTS_FD_REDIRECT = 9>&2
 GC_TESTS = res_net.sh short.sh rail.sh spice.sh \
-        testbench.sh res.sh
+        testbench.sh res.sh notfound.sh convert.sh
 TESTS = $(GC_TESTS) nets.sh bogus.sh
 EXTRA_DIST+= $(TESTS:%.sh=%.ref) $(GC_TESTS:%.sh=%.gc)
 
@@ -31,7 +31,7 @@ $(TESTS): %.sh: %.ref
 	@echo "#!/bin/sh" > $@
 	@echo "set -e" >> $@
 	@echo "exec 2>&9" >> $@
-	@echo "diff -rup $< $*.out || exit 1" >> $@
+	@echo "diff -wrup $< $*.out || exit 1" >> $@
 	@echo "rm $*.out" >> $@
 	@chmod +x $@
 
@@ -41,7 +41,7 @@ nets.out: nets.sch
 $(TESTS:%.sh=%.log): %.log: %.out
 
 bogus.out: $(PWD)/bogus.sch
-	$(GNUCAP_GEDA) -a $(MODULE) $< | grep -v ^\/\/v > $@
+	$(GNUCAP_GEDA) -a $(MODULE) $< > $@
 
 %.reg: %.test %.ref
 	diff $+
@@ -53,12 +53,18 @@ $(PWD)/%.sp: $(abs_srcdir)/%.sp
 	$(LN_S) $< .
 
 %.test: %.gc
-	$(GNUCAP) -a ../src/.libs/lang_geda.so $< | grep '^[a-zA-Z0-9]*=' > $@
+	$(GNUCAP) -a ../src/.libs/lang_geda.so < $< | grep '^[a-zA-Z0-9]*=' > $@
 
 res_net.out testbench.out: GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
 
-res.out res_net.out testbench.out spice.out rail.out short.out: %.out: %.gc
-	$(GNUCAP) -a $(MODULE) $(GC_INCLUDES) $< | grep '^[a-zA-Z0-9]*=' > $@
+res_net.out testbench.out spice.out: %.out: %.gc
+	$(GNUCAP) -a $(MODULE) $(GC_INCLUDES) < $< | grep '^[a-zA-Z0-9]*=' > $@
+
+rail.out short.out res.out convert.out notfound.out: %.out: %.gc
+	$(GNUCAP) -a $(MODULE) $(GC_INCLUDES) < $< | \
+		sed -e '1,/^core-lib version/d' | \
+		sed -e '/^default plugins/d' | \
+		grep -v ^@ > $@
 
 .PHONY: $(TESTS:%.sh=%.out)
 

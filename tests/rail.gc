@@ -1,17 +1,17 @@
-options order=f
+options debug
+options numdgt=2
 
 spice
-V1 n1 0 3
 R1 n2 0 1
 
 .verilog
+vsource #(.dc(3.0001)) V1 (.p(n1),.n(0));
+
 gschem rail.sch module
 rail.sch s1(n1 n2);
 list
 
 spice
 .print dc v(nodes)
-.store dc v(n2)
 .dc
-.measure vn2 at(probe="v(n2)")
 .end
