@@ -204,7 +204,7 @@ std::string* LANG_GEDA::parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel
 	}
 	std::string    _portvalue="_";
 	static unsigned number;
-	try{
+	try{ untested();
 		cmd.get_line("");
 	}catch(Exception_End_Of_Input&){
 		return NULL;
@@ -244,7 +244,7 @@ std::string* LANG_GEDA::parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel
 // FIXME: do symbol_type?
 std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
 		string basename)const
-{
+{ untested();
 	assert(!_C);
 	assert(!_netq.size());
 	assert(!_placeq.size());
@@ -435,7 +435,6 @@ void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
 			assert(n2);
 			if (n1->x()==n2->x() && n1->y()==n2->y()) { unreachable();
 				error(bDANGER,"singular net in %s\n", x->long_label().c_str());
-				assert(0);
 			}
 			if (n1->x() == n2->x() && (y0 == y1)){
 				if (in_order( n2->y(), y1, n1->y())){
@@ -510,7 +509,9 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 		x->set_label("extranet"+::to_string(_netnumber++));
 	} else { // parse
 		parse_net_body=1;
-		assert(cmd.fullstring().c_str()[0] == 'N');
+	   if (cmd.fullstring().c_str()[0] != 'N'){ untested();
+			throw Exception_CS("expecting net declaration", cmd);
+		}
 		unsigned here=cmd.cursor();
 		// x0 y0 x1 y1 color
 		std::string parsedvalue[5];
@@ -565,10 +566,9 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 			if (cmd >> "}") {
 				break;
 			}else{
-				if(cmd>>"T"){
+				if(cmd>>"T"){ untested();
 					cmd>>dump;
-				}
-				else {
+				}else{ untested();
 					std::string _paramname=cmd.ctos("=","",""),_paramvalue;
 					cmd>>"=">>_paramvalue;
 					if (_paramname=="netname" && _paramvalue!="?"){
@@ -602,7 +602,8 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 pair<int,int> componentposition(int* absxy, int* relxy, int angle, bool mirror);
 /*--------------------------------------------------------------------------*/
 void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
-{ // "component" means instance of a subckt
+{ untested();
+	// "component" means instance of a subckt
 	trace4("LANG_GEDA::parse_component", x->long_label(), cmd.fullstring(),
 			hp(x->owner()), hp(x->scope()));
 	assert(x);
@@ -613,7 +614,7 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
 	string dump,basename;
 	std::string type=lang_geda.find_type_in_string(cmd);
 	GEDA_SYMBOL* dev = _C;
-	_C = 0; // to make parse_symbol_file work
+	_C = NULL; // to make parse_symbol_file work
 	if(dev->has_key("device")){
 		assert(type==(*dev)["device"] || type==DUMMY_PREFIX+((*dev)["basename"]));
 	} else{
@@ -725,7 +726,7 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 DEV_COMMENT* LANG_GEDA::parse_comment(CS& cmd, DEV_COMMENT* x)
-{
+{ untested();
 	assert(x);
 	x->set(cmd.fullstring());
 	std::string dump,no_of_lines="";
@@ -752,13 +753,13 @@ DEV_COMMENT* LANG_GEDA::parse_comment(CS& cmd, DEV_COMMENT* x)
 }
 /*--------------------------------------------------------------------------*/
 DEV_DOT* LANG_GEDA::parse_symbol_file( DEV_DOT* x, const GEDA_SYMBOL& sym )const
-{
+{ untested();
 	trace0("LANG_GEDA::parse_symbol_file");
 	return x;
 }
 /*--------------------------------------------------------------------------*/
 DEV_DOT* LANG_GEDA::parse_command(CS& cmd, DEV_DOT* x)
-{
+{ untested();
 	std::string component_x, component_y, mirror, angle, dump, basename;
 	//too late
 	//    cmd >> "C" >> component_x >> " " >> component_y >> " " >> dump
@@ -867,12 +868,13 @@ DEV_DOT* LANG_GEDA::parse_command(CS& cmd, DEV_DOT* x)
 }
 /*--------------------------------------------------------------------------*/
 MODEL_CARD* LANG_GEDA::parse_paramset(CS& cmd, MODEL_CARD* x)
-{
+{ untested();
 	assert(x);
 	return NULL;
 }
 /*--------------------------------------------------------------------------*/
-CARD_LIST::const_iterator LANG_GEDA::find_nondevice(string name, CARD_LIST* Scope) {
+CARD_LIST::const_iterator LANG_GEDA::find_nondevice(string name, CARD_LIST* Scope)
+{
 	return find_card(name, Scope, true);
 }
 /*--------------------------------------------------------------------------*/
@@ -1026,7 +1028,7 @@ COMPONENT* LANG_GEDA::parse_instance(CS& cmd, COMPONENT* x)
 	cmd.reset();
 	parse_type(cmd, x); //parse type will parse the component type and set_dev_type
 	trace2("parse_instance", cmd.fullstring(), x->dev_type());
-	if (x->dev_type()=="net") {
+	if (x->dev_type()=="net") { untested();
 		parse_net(cmd,x);
 	}else if(x->dev_type()=="place"){
 		parse_place(cmd,x);
@@ -1159,20 +1161,19 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 			}
 			if (CARD* c = device_dispatcher[D["device"]]){
 				COMPONENT* d = prechecked_cast<COMPONENT*>(c);
-				if ( d->max_nodes() >= D.pincount()
-						&& d->min_nodes() <= D.pincount()){
-					untested();
+				if ( unsigned(d->max_nodes()) >= D.pincount()
+						&& unsigned(d->min_nodes()) <= D.pincount()){ untested();
 					type = D["device"];
 				}
 			} else if (modelcard) { untested();
 				if (const COMPONENT* d = prechecked_cast<const COMPONENT*>(modelcard))
-					if ( d->max_nodes() >= D.pincount()
-							&& d->min_nodes() <= D.pincount()){
+					if(unsigned(d->max_nodes()) >= D.pincount()
+							&& unsigned(d->min_nodes()) <= D.pincount()){
 						type = D["device"];
 					}
-				if (const MODEL_SUBCKT* d = prechecked_cast<const MODEL_SUBCKT*>(modelcard))
-					if ( d->max_nodes() >= D.pincount()
-							&& d->min_nodes() <= D.pincount()){
+				if(const MODEL_SUBCKT* d = prechecked_cast<const MODEL_SUBCKT*>(modelcard))
+					if(unsigned(d->max_nodes()) >= D.pincount()
+							&& unsigned(d->min_nodes()) <= D.pincount()){
 						type = D["device"];
 					}
 			} else { untested();
@@ -1191,8 +1192,8 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 			trace2("found rail", D["net"], cmd.fullstring() );
 			if (CARD* c = device_dispatcher["rail"]){
 				COMPONENT* d = prechecked_cast<COMPONENT*>(c);
-				if ( d->max_nodes() >= D.pincount()
-						&& d->min_nodes() <= D.pincount()){
+				if(unsigned(d->max_nodes()) >= D.pincount()
+						&& unsigned(d->min_nodes()) <= D.pincount()){
 					type = "rail";
 					(*_C)["device"] = type;
 				}
@@ -1241,13 +1242,13 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
  * created and (TODO)post processing of nets is done
  */
 void LANG_GEDA::parse_top_item(CS& cmd, CARD_LIST* Scope)
-{
+{ untested();
 	parse_item_(cmd, NULL, Scope);
 }
 /*----------------------------------------------------------------------*/
 // check: LANGUAGE::parse_item...
 void LANG_GEDA::parse_item_(CS& cmd, CARD* owner, CARD_LIST* scope)const
-{
+{ untested();
 
 	// .... _gotline means:
 	// - component needs to be instanciated after sckt declaration.
@@ -1257,8 +1258,11 @@ void LANG_GEDA::parse_item_(CS& cmd, CARD* owner, CARD_LIST* scope)const
 		cmd.get_line("gnucap-geda>");
 	} else if (!_placeq.size() && !_netq.size() && !_C ){
 		_gotline = 0;
+	}else if (_C && !_gotline){ untested();
+		_C = NULL;
+		throw(Exception_CS("something wrong", cmd));
+	}else{ untested();
 	}
-
 
 	//problem: if new__instance interprets as command, Scope is lost.
 	trace2("LANG_GEDA::parse_item_", cmd.fullstring(), cmd.tail());
@@ -1272,6 +1276,7 @@ void LANG_GEDA::parse_item_(CS& cmd, CARD* owner, CARD_LIST* scope)const
 // Code for Printing schematic follows
 /*----------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
+#if 0 // not yet
 static void print_type(OMSTREAM& o, const COMPONENT* x)
 {
 	assert(x);
@@ -1283,6 +1288,7 @@ static void print_label(OMSTREAM& o, const COMPONENT* x)
 	assert(x);
 	o << x->short_label();
 }
+#endif
 /*--------------------------------------------------------------------------*/
 static void print_node_xy(OMSTREAM& o,const COMPONENT* x,int _portindex)
 {
@@ -1570,9 +1576,8 @@ void LANG_GEDA::print_command(OMSTREAM& o, const DEV_DOT* x)
 class CMD_GSCHEM : public CMD {
 	public:
 		void do_it(CS& cmd, CARD_LIST* Scope)
-		{
-			string oldlang = OPT::language->name();
-			command("options lang=gschem", Scope);
+		{ untested();
+			LANGUAGE* oldlang = OPT::language;
 			// BUG breaks direct "options lang=gschem", does it?
 			lang_geda._mode=lang_geda.mATTRIBUTE;
 			lang_geda._no_of_lines=0;
@@ -1581,7 +1586,8 @@ class CMD_GSCHEM : public CMD {
 			string filename;
 			cmd >> filename;
 			trace1("gschem", filename);
-			if(filename==""){
+			if(filename==""){ untested();
+				command("options lang=gschem", Scope);
 				return;
 			}
 			bool module = 0;
@@ -1598,16 +1604,16 @@ class CMD_GSCHEM : public CMD {
 					|| (cmd.umatch("source {=}") && ( cmd >> source ) ) ;
 			} while (cmd.more() && !cmd.stuck(&here));
 
-			MODEL_SUBCKT* model = 0;
+			MODEL_SUBCKT* model=NULL;
 			string label = (device=="")? filename : device;
 
-			if( symbol ){
+			if(symbol){ untested();
 				GEDA_SYMBOL sym = GEDA_SYMBOL(lang_geda._symbol[filename]);
 				trace3("symbol", sym.pincount(), filename, lang_geda._symbol[filename].pincount());
 				assert(sym.pincount());
 				if(source!="") sym["source"] = source;
 				if(sym["source"]==""){
-					command("options lang="+oldlang, Scope);
+					OPT::language = oldlang;
 					throw Exception_CS("empty source", cmd);
 				}
 				model = new MODEL_SUBCKT();
@@ -1621,15 +1627,22 @@ class CMD_GSCHEM : public CMD {
 				model = new MODEL_SUBCKT();
 				model->set_label(label);
 				LANG_GEDA::read_file(filename, Scope, model);
+				trace4("done reading module", filename, model->long_label(), model->net_nodes(), model->int_nodes());
+				trace1("...", model->subckt()->nodes()->how_many());
 				//align(model); // might be needed for gnucap .36
+				for(unsigned i=0; i<(unsigned)model->net_nodes(); ++i){
+					trace3("", i, model->port_value(i), model->n_(i).e_());
+				}
 				Scope->push_back(model);
 			} else if(filename!=""){
+				command("options lang=gschem", Scope);
 				LANG_GEDA::read_file(filename, Scope);
 			} else {
 				unreachable();
 			}
 			trace1("done", oldlang);
-			command("options lang="+oldlang, Scope);
+			// command("options lang="+oldlang, Scope);
+			OPT::language = oldlang;
 		}
 	private:
 		// void align(MODEL_SUBCKT* s) const;
@@ -1653,7 +1666,8 @@ void LANG_GEDA::read_spice(string f, CARD_LIST* Scope, MODEL_SUBCKT* owner)
 }
 /*----------------------------------------------------------------------*/
 void LANG_GEDA::read_file(string f, CARD_LIST* Scope, MODEL_SUBCKT* owner)
-{
+{ untested();
+	error(bDEBUG, "reading file "+f+"\n");
 	CS cmd(CS::_INC_FILE, f);
 
 	/// gnucap-uf bug: getline uses OPT::language
@@ -1661,13 +1675,18 @@ void LANG_GEDA::read_file(string f, CARD_LIST* Scope, MODEL_SUBCKT* owner)
 	OPT::language = &lang_geda;
 	///
 
-	try{
-		for(;;){
+	try{ untested();
+		for(;;){ untested();
 			// new__instance. but _gotline hack
 			lang_geda.parse_item_(cmd, owner, Scope);
 		}
 
-	}catch (Exception_End_Of_Input& e){
+	}catch (Exception_CS&){ untested();
+		/// gnucap-uf bug
+		OPT::language = oldlang;
+		///
+		throw;
+	}catch (Exception_End_Of_Input& e){ untested();
 	}
 	/// gnucap-uf bug
 	OPT::language = oldlang;
@@ -1675,11 +1694,12 @@ void LANG_GEDA::read_file(string f, CARD_LIST* Scope, MODEL_SUBCKT* owner)
 }
 /*----------------------------------------------------------------------*/
 DISPATCHER<CMD>::INSTALL
+// FIXME (hoW?): v conflicts with spice vsource
 d8(&command_dispatcher, "gschem|v ", &p8);
 /*----------------------------------------------------------------------*/
 class CMD_C : public CMD {
 	void do_it(CS& cmd, CARD_LIST* Scope)
-	{
+	{ untested();
 		trace1("CMD_C::do_it", hp(Scope));
 		CARD* c = device_dispatcher["symbol"]; // future overrides?
 		if(!c) c = device_dispatcher["subckt"];
@@ -1705,7 +1725,7 @@ class CMD_C : public CMD {
 			// this is not graphical
 			lang_geda._componentname=new_compon->short_label();
 			trace2("do_it, componmod", lang_geda._componentname, cmd.fullstring());
-			try{
+			try{ untested();
 				LANG_GEDA::find_nondevice(new_compon->short_label(), Scope);
 				untested();
 				delete clone;
