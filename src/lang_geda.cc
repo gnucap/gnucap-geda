@@ -41,6 +41,8 @@ extern "C"{
 #include "symbol.h"
 #include "d_net.h"
 #include "d_place.h"
+#include "d_gedasckt.h"
+#include "io_trace.h"
 /*--------------------------------------------------------------------------*/
 #ifndef USE
 #define USE(a) (void) a;
@@ -1616,7 +1618,7 @@ class CMD_GSCHEM : public CMD {
 					OPT::language = oldlang;
 					throw Exception_CS("empty source", cmd);
 				}
-				model = new MODEL_SUBCKT();
+				model = new MODEL_GEDA_SUBCKT(); // BUG: ask dispatcher?
 				sym >> model;
 				model->set_label(label);
 				LANG_GEDA::read_file(source, Scope, model);
@@ -1624,7 +1626,7 @@ class CMD_GSCHEM : public CMD {
 				Scope->push_back(model);
 			}else if( module ) {
 				trace1("reading module", filename);
-				model = new MODEL_SUBCKT();
+				model = new MODEL_GEDA_SUBCKT(); // BUG: ask dispatcher?
 				model->set_label(label);
 				LANG_GEDA::read_file(filename, Scope, model);
 				trace4("done reading module", filename, model->long_label(), model->net_nodes(), model->int_nodes());

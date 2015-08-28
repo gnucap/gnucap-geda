@@ -32,6 +32,8 @@
 #ifndef HAVE_UINT_T
 typedef int uint_t;
 #endif
+
+#undef HAVE_COLLAPSE
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 class DEV_NET : public COMPONENT {
@@ -43,7 +45,7 @@ public:
   explicit DEV_NET(const DEV_NET& p);
   ~DEV_NET(){}
 private:
-  // void precalc_first();
+  void precalc_first();
   void expand();
   // void precalc_last();
 private:
@@ -78,6 +80,7 @@ private:
     static std::string names[]={"p","n"};
     return names[i];
   }
+  PARAMETER<double> _resistance;
 public:
   node_t    _nodes[NODES_PER_BRANCH];
 private:

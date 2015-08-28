@@ -157,13 +157,16 @@ void DEV_PORT::set_port_by_index(uint_t i, string& name){
 		return;
 	}
 	DEV_NET::set_port_by_index(i, name);
+
+	string portname = name;
+	if(pinlabel.has_hard_value()){
+		portname = pinlabel.string();
+	}else if(net.has_hard_value()){
+		portname = net.string();
+	}
+
+	// register port during model building
 	if(MODEL_SUBCKT* o = dynamic_cast<MODEL_SUBCKT*>(owner())){
-		string portname = name;
-		if(pinlabel.has_hard_value()){
-			portname = pinlabel.string();
-		}else if(net.has_hard_value()){
-			portname = net.string();
-		}
 		unsigned portpos = o->net_nodes();
 		CARD_LIST empty;
 
@@ -176,9 +179,23 @@ void DEV_PORT::set_port_by_index(uint_t i, string& name){
 		}
 
 		trace3("DEV_PORT::set_port_by_index", portpos, portname, pinseq);
-		o->set_port_by_index(portpos, portname);
-		DEV_NET::set_port_by_index(1, portname);
+
+		bool done=false;
+		for (uint_t i=0; i<o->net_nodes(); ++i) {
+			if (portname == o->port_value(i)) { untested();
+				o->set_port_by_index(i, portname);
+				done = true;
+				break;
+			}else{
+			}
+		}
+		if(!done){ untested();
+			// new port
+			o->set_port_by_index(portpos, portname);
+		}
+
 	}
+	DEV_NET::set_port_by_index(1, portname);
 }
 /*---------------------------------------------------------------------------*/
 // collapse happens after the parents map_sckt_nodes.

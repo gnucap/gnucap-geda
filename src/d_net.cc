@@ -24,7 +24,10 @@
 #include <globals.h>
 #include <u_sim_data.h>
 #include "d_net.h"
+#include "d_gedasckt.h"
 #include "io_trace.h"
+
+#undef HAVE_COLLAPSE
 /*--------------------------------------------------------------------------*/
 DEV_NET::DEV_NET(const DEV_NET& p) : COMPONENT(p)
 {
@@ -41,7 +44,7 @@ DEV_NET::DEV_NET(const DEV_NET& p) : COMPONENT(p)
 /*--------------------------------------------------------------------------*/
 void DEV_NET::tr_iwant_matrix()
 {
-	trace4("DEV_NET::tr_iwant_matrix", long_label(), _n[OUT1].n_(), _n[OUT2].n_(), net_nodes());
+	trace4("DEV_NET::tr_iwant_matrix", long_label(), _n[0].m_(), _n[1].m_(), net_nodes());
 	for( unsigned i=net_nodes(); --i>0; ){
 		trace1("DEV_NET::tr_iwant_matrix", i);
 		assert(_n[i].m_() != INVALID_NODE);
@@ -57,10 +60,28 @@ void DEV_NET::tr_iwant_matrix()
 /*--------------------------------------------------------------------------*/
 void DEV_NET::ac_iwant_matrix() {}
 /*--------------------------------------------------------------------------*/
+void DEV_NET::precalc_first()
+{
+	trace2("DEV_NET::precalc_first", long_label(), net_nodes());
+	const CARD_LIST* par_scope = scope();
+	assert(par_scope);
+	COMPONENT::precalc_first();
+	e_val(&_resistance, 0., par_scope);
+
+	if(_resistance!=0.){ incomplete();
+
+	}else if(DEV_GEDA_SUBCKT* o=dynamic_cast<DEV_GEDA_SUBCKT*>(owner())){ untested();
+		for( unsigned i=net_nodes(); --i>0; ){
+			trace2("DEV_NET::precalc_first nets", _n[0].e_(), _n[i].e_());
+			o->collapse_nodes(_n[0].n_(), _n[i].n_());
+		}
+	}
+}
+/*--------------------------------------------------------------------------*/
 void DEV_NET::expand()
 { untested();
 #ifdef HAVE_COLLAPSE
-	for( unsigned i=net_nodes(); --i>0; ){
+	for( unsigned i=net_nodes(); --i>0; ){ incomplete();
 		trace2("DEV_NET::expand collapse", i, long_label());
 		_n[0].collapse(this, _n[i]);
 	}
@@ -69,8 +90,10 @@ void DEV_NET::expand()
 /*--------------------------------------------------------------------------*/
 void DEV_NET::tr_begin()
 { untested();
+	trace3("DEV_NET::tr_begin", long_label(), _n[0].m_(), _n[1].m_());
+	trace3("DEV_NET::tr_begin", long_label(), _n[0].t_(), _n[1].t_());
+	// trace3("DEV_NET::tr_begin", long_label(), _n[0].e_(), _n[1].e_());
 	for( unsigned i=net_nodes(); --i>0; ){
-		trace2("DEV_NET::tr_begin", _n[0].m_(), _n[1].m_());
 #ifdef HAVE_COLLAPSE
 		assert(_n[0].m_() == _n[i].m_());
 #endif
