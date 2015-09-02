@@ -1,3 +1,5 @@
+subckt: already installed, replacing
+stashing as subckt:0
 .subckt RESISTOR ( n p )
 r ( n p ) value
 .ends RESISTOR
@@ -11,7 +13,7 @@ resistor #(.r( 1.)) R1 (.p(n2),.n(0));
 //* .store dc v(nodes) 
 vsource #(.dc(5)) V1 (.p(n1),.n(0));
 module res.sch (a,b);
-//v 20110115 2
+//v 20130925 2
 //C 49000 44500 1 0 0 passive-1.sym
 port #(.basename(passive-1.sym),.net(a)) a (.int(x_cn_0),.ext(a));
 place #(.x(49000),.y(44600)) 49000:44600 (.port(x_cn_0));

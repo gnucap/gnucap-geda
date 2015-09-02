@@ -1,3 +1,5 @@
+subckt: already installed, replacing
+stashing as subckt:0
 doesnotexist.sch:No such file or directory
 doesnotexist.sch foo(n1 n2); 
 ^ ? doesnotexist.sch: no match

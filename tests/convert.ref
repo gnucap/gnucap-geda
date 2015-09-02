@@ -1,11 +1,13 @@
+subckt: already installed, replacing
+stashing as subckt:0
 resistor #(.r( 1.)) R1 (.p(n2),.n(n0));
 resistor #(.r( 1.)) R1 (.p(n0),.n(0));
 module !_resistor-1.sym (1,2);
 endmodule // !_resistor-1.sym
 
 module res_net.sch (a,b);
-//v 20110115 2
-//C 49800 44500 1 0 0 passive-1.sym
+//v 20110115 2 
+//C 49800 44500 1 0 0 passive-1.sym 
 port #(.basename(passive-1.sym),.net(a)) a (.int(x_cn_0),.ext(a));
 place #(.x(49800),.y(44600)) 49800:44600 (.port(x_cn_0));
 port #(.basename(passive-1.sym),.net(b)) b (.int(x_cn_1),.ext(b));

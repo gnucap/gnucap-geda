@@ -14,7 +14,8 @@ EXTRA_DIST = \
 TEST_EXTENSIONS = .sh
 AM_TESTS_FD_REDIRECT = 9>&2
 GC_TESTS = res_net.sh short.sh rail.sh spice.sh \
-        testbench.sh res.sh notfound.sh convert.sh
+        testbench.sh res.sh notfound.sh convert.sh \
+        verilog.sh
 TESTS = $(GC_TESTS) nets.sh bogus.sh
 EXTRA_DIST+= $(TESTS:%.sh=%.ref) $(GC_TESTS:%.sh=%.gc)
 
@@ -57,14 +58,27 @@ $(PWD)/%.sp: $(abs_srcdir)/%.sp
 
 res_net.out testbench.out: GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
 
-res_net.out testbench.out spice.out: %.out: %.gc
+res_net.out spice.out: %.out: %.gc
 	$(GNUCAP) -a $(MODULE) $(GC_INCLUDES) < $< | grep '^[a-zA-Z0-9]*=' > $@
 
-rail.out short.out res.out convert.out notfound.out: %.out: %.gc
+EXTRA_SED_ARG =
+EXTRA_DIFF_ARG =
+
+verilog.out rail.out short.out res.out convert.out notfound.out: %.out: %.gc
 	$(GNUCAP) -a $(MODULE) $(GC_INCLUDES) < $< | \
 		sed -e '1,/^core-lib version/d' | \
 		sed -e '/^default plugins/d' | \
+		sed -e '/^parameter /d' $(EXTRA_SED_ARG)| \
 		grep -v ^@ > $@
+
+testbench.out: EXTRA_SED_ARG=-e '/^parameter /d'
+
+testbench.out: %.out: %.gc
+	$(GNUCAP) -a $(MODULE) $(GC_INCLUDES) < $< | \
+		sed -e '1,/^core-lib version/d' | \
+		sed -e '/^default plugins/d' $(EXTRA_SED_ARG) | \
+		grep -v ^@ > $@
+
 
 .PHONY: $(TESTS:%.sh=%.out)
 

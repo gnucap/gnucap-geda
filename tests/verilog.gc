@@ -1,0 +1,20 @@
+verilog
+
+module test (a,b);
+port #(.basename(passive-1.sym),.net(a)) a (.int(x_cn_0),.ext(a));
+place #(.x(48500),.y(44600)) 48500:44600 (.port(x_cn_0));
+port #(.basename(passive-1.sym),.net(b)) b (.int(x_cn_1),.ext(b));
+place #(.x(48100),.y(44600)) 48100:44600 (.port(x_cn_1));
+resistor #(.r(1)) r0 (.p(x_cn_0),.n(x_cn_1));
+endmodule // short.sch
+
+test #() t1(0,1);
+vsource #(.dc(2)) v1(1,0);
+
+list
+* nodelist
+
+spice
+.print dc v(nodes) i(v1) i(t1.r0)
+.dc
+.end
