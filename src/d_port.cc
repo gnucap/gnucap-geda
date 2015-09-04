@@ -175,21 +175,20 @@ void DEV_PORT::set_port_by_index(uint_t i, string& name){
 			portpos = atoi(pinseq.string().c_str())-1;
 		} else {
 			// rely on pinlabel?
-			untested();
 		}
 
 		trace3("DEV_PORT::set_port_by_index", portpos, portname, pinseq);
 
 		bool done=false;
 		for (uint_t i=0; i<o->net_nodes(); ++i) {
-			if (portname == o->port_value(i)) { untested();
+			if (portname == o->port_value(i)) {
 				o->set_port_by_index(i, portname);
 				done = true;
 				break;
 			}else{
 			}
 		}
-		if(!done){ untested();
+		if(!done){
 			// new port
 			o->set_port_by_index(portpos, portname);
 		}

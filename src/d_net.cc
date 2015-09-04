@@ -70,7 +70,7 @@ void DEV_NET::precalc_first()
 
 	if(_resistance!=0.){ incomplete();
 
-	}else if(DEV_GEDA_SUBCKT* o=dynamic_cast<DEV_GEDA_SUBCKT*>(owner())){ untested();
+	}else if(DEV_GEDA_SUBCKT* o=dynamic_cast<DEV_GEDA_SUBCKT*>(owner())){
 		for( unsigned i=net_nodes(); --i>0; ){
 			trace2("DEV_NET::precalc_first nets", _n[0].e_(), _n[i].e_());
 			o->collapse_nodes(_n[0].n_(), _n[i].n_());
@@ -79,7 +79,7 @@ void DEV_NET::precalc_first()
 }
 /*--------------------------------------------------------------------------*/
 void DEV_NET::expand()
-{ untested();
+{
 #ifdef HAVE_COLLAPSE
 	for( unsigned i=net_nodes(); --i>0; ){ incomplete();
 		trace2("DEV_NET::expand collapse", i, long_label());
@@ -89,7 +89,7 @@ void DEV_NET::expand()
 }
 /*--------------------------------------------------------------------------*/
 void DEV_NET::tr_begin()
-{ untested();
+{
 	trace3("DEV_NET::tr_begin", long_label(), _n[0].m_(), _n[1].m_());
 	trace3("DEV_NET::tr_begin", long_label(), _n[0].t_(), _n[1].t_());
 	// trace3("DEV_NET::tr_begin", long_label(), _n[0].e_(), _n[1].e_());
@@ -106,11 +106,11 @@ void DEV_NET::tr_begin()
 }
 /*--------------------------------------------------------------------------*/
 void DEV_NET::tr_load()
-{ untested();
+{
 #ifndef HAVE_COLLAPSE
   double d = _g0 - _g1;
   _g1 = _g0;
-  if (d != 0.) { untested();
+  if (d != 0.) {
     _sim->_aa.load_symmetric(_n[0].m_(), _n[1].m_(), d);
   }else{ untested();
   }

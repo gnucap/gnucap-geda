@@ -33,13 +33,13 @@ static DISPATCHER<CARD>::INSTALL
 //  d1(&device_dispatcher, "X|dev_subckt", &p1),
   d2(&device_dispatcher, "symbol|subckt", &p2);
 /*--------------------------------------------------------------------------*/
-MODEL_GEDA_SUBCKT::MODEL_GEDA_SUBCKT() : MODEL_SUBCKT() {untested();}
+MODEL_GEDA_SUBCKT::MODEL_GEDA_SUBCKT() : MODEL_SUBCKT() {}
 /*--------------------------------------------------------------------------*/
 MODEL_GEDA_SUBCKT::MODEL_GEDA_SUBCKT(MODEL_GEDA_SUBCKT const& p) :
-	MODEL_SUBCKT(p) {untested();}
+	MODEL_SUBCKT(p) {}
 /*--------------------------------------------------------------------------*/
 CARD* MODEL_GEDA_SUBCKT::clone_instance()const
-{ untested();
+{
  DEV_GEDA_SUBCKT* new_instance = dynamic_cast<DEV_GEDA_SUBCKT*>(p1.clone());
  new_instance->set_parent(this);
  return new_instance;
@@ -65,7 +65,7 @@ void MODEL_GEDA_SUBCKT::set_port_by_index(uint_t num, std::string& ext_name)
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 DEV_GEDA_SUBCKT::DEV_GEDA_SUBCKT(DEV_GEDA_SUBCKT const& p) :
-	DEV_SUBCKT(p), _map(NULL) {untested();}
+	DEV_SUBCKT(p), _map(NULL) {}
 /*--------------------------------------------------------------------------*/
 void DEV_GEDA_SUBCKT::set_parent(const MODEL_GEDA_SUBCKT* p)
 {
@@ -101,9 +101,9 @@ void DEV_GEDA_SUBCKT::apply_map(unsigned* map)
 //           0 1 2 3 2 5
 void DEV_GEDA_SUBCKT::orbit_number(unsigned* map, unsigned len, unsigned* port)
 {
-	for(unsigned i=0; i<len; ++i) { itested();
+	for(unsigned i=0; i<len; ++i) {
 		unsigned j=i;
-		while(map[j]>i){ itested();
+		while(map[j]>i){
 			unsigned tmp = map[j];
 			map[j] = i;
 			j = tmp;
@@ -111,7 +111,7 @@ void DEV_GEDA_SUBCKT::orbit_number(unsigned* map, unsigned len, unsigned* port)
 			if (port[j] == (unsigned)INVALID_NODE){
 			}else if(port[i] == (unsigned)INVALID_NODE){
 				port[i] = port[j];
-			}else{ untested();
+			}else{
 				delete _map; // FIXME: use proper container.
 				_map = NULL;
 				throw Exception(long_label() + ": cannot connect ports \"" +
@@ -125,7 +125,7 @@ void DEV_GEDA_SUBCKT::orbit_number(unsigned* map, unsigned len, unsigned* port)
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
-{ untested();
+{
 	assert(model);
 	assert(model->subckt());
 	assert(model->subckt()->nodes());
@@ -199,7 +199,7 @@ void DEV_GEDA_SUBCKT::collapse_nodes(const NODE* a, const NODE* b)
 
 	if(_map){
 		std::swap(_map[i], _map[j]);
-	}else{untested();
+	}else{
 	}
 }
 /*--------------------------------------------------------------------------*/
@@ -216,7 +216,7 @@ void DEV_GEDA_SUBCKT::expand()
 		}else{ untested();
 			_parent = prechecked_cast<const MODEL_SUBCKT*>(model);
 		}
-	}else{ untested();
+	}else{
 		assert(find_looking_out(c->modelname()) == _parent);
 	}
 
