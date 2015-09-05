@@ -1,101 +1,124 @@
-'
+Half Adder
+^ ? Half: no match
+Full Adder
+^ ? Full: no match
+Half and Full Adders
+^ ? Half: no match
+adders.sch
+^ ? adders.sch: no match
+1
+^ ? 1: no match
+1
+^ ? 1: no match
+1
+^ ? 1: no match
+Ales Hvezda
+^ ? Ales: no match
 //v 20031231 1
-place #(.x(28100),.y(28500))  (.port(node_4089));
-place #(.x(26800),.y(28700))  (.port(node_457));
-place #(.x(26800),.y(28300))  (.port(node_4498));
-!_7408-1.sym #(.basename(7408-1.sym)) U101 (.Y_out(node_4089),.A_in(node_457),.B_in(node_4498));
-place #(.x(26800),.y(30300))  (.port(node_268));
-place #(.x(26800),.y(29900))  (.port(node_1054));
-place #(.x(28100),.y(30100))  (.port(node_6152));
-!_7486-1.sym #(.basename(7486-1.sym),.slot(1)) U100 (.A_in(node_268),.B_in(node_1054),.Y_out(node_6152));
-place #(.x(26300),.y(28700))  (.port(node6054));
-place #(.x(26300),.y(30300))  (.port(node7859));
-place #(.x(25900),.y(28300))  (.port(node5240));
-place #(.x(25900),.y(29900))  (.port(node4700));
-place #(.x(29600),.y(30100))  (.port(node5626));
-net #() S_H (.p(node5626),.n(node_6152));
-net #() net340 (.p(node4700),.n(node5240));
-net #() net5776 (.p(node_4498),.n(node5240));
-net #() net3993 (.p(node6054),.n(node7859));
-net #() net407 (.p(node_457),.n(node6054));
-place #(.x(29600),.y(28500))  (.port(node1201));
-net #() C_H (.p(node1201),.n(node_4089));
+//C 26800 28000 1 0 0 7408-1.sym
+module !_7408-1.sym (A,B,Y);
+endmodule // !_7408-1.sym
+
+7408 #(.basename(7408-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc08.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(1),.slotdef(4:12)) U101 (.A(x_cn_0),.B(x_cn_1),.Y(x_cn_2));
+place #(.x(26800),.y(28700)) 26800:28700 (.port(x_cn_0));
+place #(.x(26800),.y(28300)) 26800:28300 (.port(x_cn_1));
+place #(.x(28100),.y(28500)) 28100:28500 (.port(x_cn_2));
+module !_7486-1.sym (A,B,Y);
+endmodule // !_7486-1.sym
+
+7486 #(.basename(7486-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc86.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(1),.slotdef(4:12)) U100 (.A(x_cn_3),.B(x_cn_4),.Y(x_cn_5));
+place #(.x(26800),.y(30300)) 26800:30300 (.port(x_cn_3));
+place #(.x(26800),.y(29900)) 26800:29900 (.port(x_cn_4));
+place #(.x(28100),.y(30100)) 28100:30100 (.port(x_cn_5));
+net #() net0 (.p(x_cn_0),.n(x_nn_6));
+place #(.x(26300),.y(28700)) 26300:28700 (.port(x_nn_6));
+net #() net1 (.p(x_nn_6),.n(x_nn_7));
+place #(.x(26300),.y(30300)) 26300:30300 (.port(x_nn_7));
+net #() net2 (.p(x_cn_1),.n(x_nn_8));
+place #(.x(25900),.y(28300)) 25900:28300 (.port(x_nn_8));
+net #() net3 (.p(x_nn_9),.n(x_nn_8));
+place #(.x(25900),.y(29900)) 25900:29900 (.port(x_nn_9));
+net #() S_H (.p(x_nn_10),.n(x_cn_5));
+place #(.x(29600),.y(30100)) 29600:30100 (.port(x_nn_10));
+net #() C_H (.p(x_nn_11),.n(x_cn_2));
+place #(.x(29600),.y(28500)) 29600:28500 (.port(x_nn_11));
 //T 26400 27300 9 20 1 0 0 0 1
-//Half Adder
-place #(.x(23600),.y(25900))  (.port(node_7219));
-place #(.x(23600),.y(25500))  (.port(node_3284));
-place #(.x(24900),.y(25700))  (.port(node_5517));
-!_7486-1.sym #(.basename(7486-1.sym),.slot(2)) U100 (.A_in(node_7219),.B_in(node_3284),.Y_out(node_5517));
-place #(.x(29800),.y(24000))  (.port(node_2782));
-place #(.x(28500),.y(24200))  (.port(node_4499));
-place #(.x(28500),.y(23800))  (.port(node_2048));
-!_7408-1.sym #(.basename(7408-1.sym),.slot(3)) U101 (.Y_out(node_2782),.A_in(node_4499),.B_in(node_2048));
-place #(.x(28500),.y(25700))  (.port(node_3594));
-place #(.x(28500),.y(25300))  (.port(node_4087));
-place #(.x(29800),.y(25500))  (.port(node_5208));
-!_7486-1.sym #(.basename(7486-1.sym),.slot(3)) U100 (.A_in(node_3594),.B_in(node_4087),.Y_out(node_5208));
-place #(.x(27000),.y(25300))  (.port(node7536));
-place #(.x(27000),.y(23800))  (.port(node662));
-place #(.x(27000),.y(22900))  (.port(node5419));
-place #(.x(28000),.y(24200))  (.port(node8245));
-place #(.x(28000),.y(25700))  (.port(node7665));
-place #(.x(23600),.y(24200))  (.port(node8880));
-place #(.x(23100),.y(24200))  (.port(node1658));
-place #(.x(22800),.y(23800))  (.port(node1008));
-place #(.x(23600),.y(23800))  (.port(node3251));
-place #(.x(25800),.y(24000))  (.port(node5708));
-place #(.x(24900),.y(24000))  (.port(node5767));
-place #(.x(25800),.y(23300))  (.port(node8300));
-place #(.x(23100),.y(25900))  (.port(node6050));
-place #(.x(22800),.y(25500))  (.port(node2486));
-place #(.x(33900),.y(25500))  (.port(node2435));
-net #() S_H (.p(node_5208),.n(node2435));
-net #() net1584 (.p(node1008),.n(node2486));
-net #() net6969 (.p(node1658),.n(node6050));
-net #() net8831 (.p(node5708),.n(node8300));
-net #() net3205 (.p(node5708),.n(node5767));
-net #() net2864 (.p(node1008),.n(node3251));
-net #() net8653 (.p(node8880),.n(node1658));
-net #() net2826 (.p(node8245),.n(node7665));
-net #() net5160 (.p(node_4499),.n(node8245));
-net #() net7977 (.p(node7536),.n(node5419));
-net #() net4962 (.p(node662),.n(node_2048));
-net #() net3021 (.p(node_4087),.n(node7536));
-place #(.x(32700),.y(23800))  (.port(node8778));
-place #(.x(33900),.y(23800))  (.port(node6523));
-net #() C_H (.p(node8778),.n(node6523));
+7486 #(.basename(7486-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc86.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(2),.slotdef(4:12)) U100 (.A(x_cn_12),.B(x_cn_13),.Y(x_cn_14));
+place #(.x(23600),.y(25900)) 23600:25900 (.port(x_cn_12));
+place #(.x(23600),.y(25500)) 23600:25500 (.port(x_cn_13));
+place #(.x(24900),.y(25700)) 24900:25700 (.port(x_cn_14));
+7408 #(.basename(7408-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc08.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(3),.slotdef(4:12)) U101 (.A(x_cn_15),.B(x_cn_16),.Y(x_cn_17));
+place #(.x(28500),.y(24200)) 28500:24200 (.port(x_cn_15));
+place #(.x(28500),.y(23800)) 28500:23800 (.port(x_cn_16));
+place #(.x(29800),.y(24000)) 29800:24000 (.port(x_cn_17));
+7486 #(.basename(7486-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc86.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(3),.slotdef(4:12)) U100 (.A(x_cn_18),.B(x_cn_19),.Y(x_cn_20));
+place #(.x(28500),.y(25700)) 28500:25700 (.port(x_cn_18));
+place #(.x(28500),.y(25300)) 28500:25300 (.port(x_cn_19));
+place #(.x(29800),.y(25500)) 29800:25500 (.port(x_cn_20));
+net #() net6 (.p(x_cn_19),.n(x_nn_21));
+place #(.x(27000),.y(25300)) 27000:25300 (.port(x_nn_21));
+net #() net7 (.p(x_nn_22),.n(x_cn_16));
+place #(.x(27000),.y(23800)) 27000:23800 (.port(x_nn_22));
+net #() net8 (.p(x_nn_21),.n(x_nn_23));
+place #(.x(27000),.y(22900)) 27000:22900 (.port(x_nn_23));
+net #() extranet9 (.p(x_nn_21),.n(x_nn_22));
+net #() net10 (.p(x_cn_15),.n(x_nn_24));
+place #(.x(28000),.y(24200)) 28000:24200 (.port(x_nn_24));
+net #() net11 (.p(x_nn_24),.n(x_nn_25));
+place #(.x(28000),.y(25700)) 28000:25700 (.port(x_nn_25));
+net #() net12 (.p(x_nn_26),.n(x_nn_27));
+place #(.x(23600),.y(24200)) 23600:24200 (.port(x_nn_26));
+place #(.x(23100),.y(24200)) 23100:24200 (.port(x_nn_27));
+net #() net13 (.p(x_nn_28),.n(x_nn_29));
+place #(.x(22800),.y(23800)) 22800:23800 (.port(x_nn_28));
+place #(.x(23600),.y(23800)) 23600:23800 (.port(x_nn_29));
+net #() net14 (.p(x_nn_30),.n(x_nn_31));
+place #(.x(25800),.y(24000)) 25800:24000 (.port(x_nn_30));
+place #(.x(24900),.y(24000)) 24900:24000 (.port(x_nn_31));
+net #() net15 (.p(x_nn_30),.n(x_nn_32));
+place #(.x(25800),.y(23300)) 25800:23300 (.port(x_nn_32));
+net #() net16 (.p(x_nn_27),.n(x_nn_33));
+place #(.x(23100),.y(25900)) 23100:25900 (.port(x_nn_33));
+net #() net17 (.p(x_nn_28),.n(x_nn_34));
+place #(.x(22800),.y(25500)) 22800:25500 (.port(x_nn_34));
+net #() S_H (.p(x_cn_20),.n(x_nn_35));
+place #(.x(33900),.y(25500)) 33900:25500 (.port(x_nn_35));
+net #() C_H (.p(x_nn_36),.n(x_nn_37));
+place #(.x(32700),.y(23800)) 32700:23800 (.port(x_nn_36));
+place #(.x(33900),.y(23800)) 33900:23800 (.port(x_nn_37));
 //T 26500 21900 9 20 1 0 0 0 1
-//Full Adder
-place #(.x(31000),.y(23300))  (.port(node8151));
-place #(.x(31000),.y(23600))  (.port(node1057));
-!_7408-1.sym #(.basename(7408-1.sym),.slot(2)) U101 (.Y_out(node5767),.A_in(node8880),.B_in(node3251));
-net #() net411 (.p(node8151),.n(node1057));
-net #() net6094 (.p(node8300),.n(node8151));
+net #() net20 (.p(x_nn_32),.n(x_nn_38));
+place #(.x(31000),.y(23300)) 31000:23300 (.port(x_nn_38));
+net #() net21 (.p(x_nn_38),.n(x_nn_39));
+place #(.x(31000),.y(23600)) 31000:23600 (.port(x_nn_39));
+7408 #(.basename(7408-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc08.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(2),.slotdef(4:12)) U101 (.A(x_nn_26),.B(x_nn_29),.Y(x_nn_31));
+net #() net22 (.p(x_cn_18),.n(x_cn_14));
+net #() extranet23 (.p(x_cn_18),.n(x_nn_25));
 //T 33100 17700 9 20 1 0 0 0 1
-net #() net8813 (.p(node_3594),.n(node_5517));
-//Half and Full Adders
 //T 32000 17100 9 10 1 0 0 0 1
-//adders.sch
 //T 32500 16800 9 10 1 0 0 0 1
-//1
 //T 34100 16800 9 10 1 0 0 0 1
-//1
 //T 36100 17100 9 10 1 0 0 0 1
-//1
 //T 36100 16800 9 10 1 0 0 0 1
-//Ales Hvezda
-place #(.x(31400),.y(24000))  (.port(node_4741));
-place #(.x(31400),.y(23600))  (.port(node_2828));
-!_7432-1.sym #(.basename(7432-1.sym),.slot(1)) U102 (.A_in(node_4741),.B_in(node_2828),.Y_out(node8778));
-place #(.x(21500),.y(25500))  (.port(node7991));
-net #() Y_H (.p(node_3284),.n(node7991));
-net #() net2986 (.p(node_2782),.n(node_4741));
-net #() net326 (.p(node_2828),.n(node1057));
-place #(.x(21500),.y(25900))  (.port(node7238));
-net #() X_H (.p(node_7219),.n(node7238));
-place #(.x(21500),.y(22900))  (.port(node856));
-net #() Z_H (.p(node5419),.n(node856));
-place #(.x(24700),.y(29900))  (.port(node5604));
-net #() Y_H (.p(node_1054),.n(node5604));
-place #(.x(24700),.y(30300))  (.port(node307));
-net #() X_H (.p(node_268),.n(node307));
+module !_7432-1.sym (A,B,Y);
+endmodule // !_7432-1.sym
+
+7432 #(.basename(7432-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc32.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(1),.slotdef(4:12)) U102 (.A(x_cn_40),.B(x_cn_41),.Y(x_nn_36));
+place #(.x(31400),.y(24000)) 31400:24000 (.port(x_cn_40));
+place #(.x(31400),.y(23600)) 31400:23600 (.port(x_cn_41));
+net #() net24 (.p(x_cn_41),.n(x_nn_39));
+net #() net25 (.p(x_cn_17),.n(x_cn_40));
+net #() Y_H (.p(x_cn_13),.n(x_nn_42));
+place #(.x(21500),.y(25500)) 21500:25500 (.port(x_nn_42));
+net #() extranet27 (.p(x_cn_13),.n(x_nn_34));
+net #() X_H (.p(x_cn_12),.n(x_nn_43));
+place #(.x(21500),.y(25900)) 21500:25900 (.port(x_nn_43));
+net #() extranet29 (.p(x_cn_12),.n(x_nn_33));
+net #() Z_H (.p(x_nn_23),.n(x_nn_44));
+place #(.x(21500),.y(22900)) 21500:22900 (.port(x_nn_44));
+net #() Y_H (.p(x_cn_4),.n(x_nn_45));
+place #(.x(24700),.y(29900)) 24700:29900 (.port(x_nn_45));
+net #() extranet32 (.p(x_cn_4),.n(x_nn_9));
+net #() X_H (.p(x_cn_3),.n(x_nn_46));
+place #(.x(24700),.y(30300)) 24700:30300 (.port(x_nn_46));
+net #() extranet34 (.p(x_cn_3),.n(x_nn_7));

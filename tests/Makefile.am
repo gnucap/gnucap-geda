@@ -13,9 +13,23 @@ EXTRA_DIST = \
 
 TEST_EXTENSIONS = .sh
 AM_TESTS_FD_REDIRECT = 9>&2
+EG_TESTS = eg1.sh \
+           eg15.sh \
+           eg2.sh \
+           eg25.sh \
+           eg26.sh \
+           eg3.sh \
+           eg34.sh \
+           eg4.sh \
+           eg42.sh \
+           eg43.sh \
+           eg5.sh
+
 GC_TESTS = res_net.sh short.sh rail.sh spice.sh \
         testbench.sh res.sh notfound.sh convert.sh
-TESTS = $(GC_TESTS) nets.sh bogus.sh
+TESTS = $(EG_TESTS) \
+        $(GC_TESTS) \
+        nets.sh bogus.sh
 EXTRA_DIST+= $(TESTS:%.sh=%.ref) $(GC_TESTS:%.sh=%.gc)
 
 # these require schematics
@@ -27,13 +41,21 @@ EXTRA_DIST+= $(SCHEMATICS)
 spice.out: $(PWD)/spice_foo.sp
 testbench.out: $(PWD)/dut.sch
 
-$(TESTS): %.sh: %.ref
+$(GC_TESTS) $(EG_TESTS): %.sh: %.ref
 	@echo "#!/bin/sh" > $@
 	@echo "set -e" >> $@
 	@echo "exec 2>&9" >> $@
 	@echo "diff -wrup $< $*.out || exit 1" >> $@
 	@echo "rm $*.out" >> $@
 	@chmod +x $@
+
+# BUG: srcdir hardwired.
+$(EG_TESTS:%.sh=%.gc): %.gc:
+	echo gschem > $@
+	echo include $(srcdir)/$*.sch >> $@
+	echo verilog >> $@
+	echo list >> $@
+	echo end >> $@
 
 nets.out: nets.sch
 	$(GNUCAP_GEDA) -a $(MODULE) $< |grep ^net | wc -l > $@
@@ -60,11 +82,16 @@ res_net.out testbench.out: GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
 res_net.out testbench.out spice.out: %.out: %.gc
 	$(GNUCAP) -a $(MODULE) $(GC_INCLUDES) < $< | grep '^[a-zA-Z0-9]*=' > $@
 
-rail.out short.out res.out convert.out notfound.out: %.out: %.gc
+$(EG_TESTS:%.sh=%.out) rail.out short.out res.out convert.out notfound.out: %.out: %.gc
 	$(GNUCAP) -a $(MODULE) $(GC_INCLUDES) < $< | \
 		sed -e '1,/^core-lib version/d' | \
-		sed -e '/^default plugins/d' | \
+		sed -e '/^default plugins/d' $(EXTRA_SED_ARGS) | \
 		grep -v ^@ > $@
+
+$(EG_TESTS:%.sh=%.out): EXTRA_SED_ARGS=-e '/^parameter /d'
+
+eg_tests: $(EG_TESTS:%.sh=%.log)
+gc_tests: $(GC_TESTS:%.sh=%.log)
 
 .PHONY: $(TESTS:%.sh=%.out)
 
