@@ -16,7 +16,7 @@ R1 n2 0 1
 .verilog
 vsource #(.dc(5)) V1 (.p(n1),.n(0));
 
-gschem res.sch module
+geda res.sch module
 res.sch s1(n1 n2);
 
 list

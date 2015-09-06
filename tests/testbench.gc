@@ -1,6 +1,6 @@
 options picky
 
-gschem testbench.sch
+geda testbench.sch
 
 verilog
 list

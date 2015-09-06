@@ -4,7 +4,7 @@ spice
 R1 n1 n0 5
 
 .verilog
-gschem doesnotexist.sch module
+geda doesnotexist.sch module
 
 doesnotexist.sch foo(n1 n2);
 

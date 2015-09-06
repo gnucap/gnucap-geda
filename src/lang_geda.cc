@@ -59,7 +59,7 @@ using std::pair;
 namespace geda{
 /*--------------------------------------------------------------------------*/
 class LANG_GEDA : public LANGUAGE {
-	friend class CMD_GSCHEM;
+	friend class CMD_GEDA;
 	friend class CMD_C;
 	TOPLEVEL* pr_current;
 
@@ -154,9 +154,19 @@ class LANG_GEDA : public LANGUAGE {
 	// put fake models here?
 	// static CARD_LIST _symbols;
 }lang_geda;
-
 DISPATCHER<LANGUAGE>::INSTALL
 d(&language_dispatcher, lang_geda.name(), &lang_geda);
+/*----------------------------------------------------------------------*/
+/*----------------------------------------------------------------------*/
+class CMD_GSCHEM : public CMD { //
+public:
+  void do_it(CS&, CARD_LIST* Scope)
+  { untested();
+    command("options lang=gschem", Scope);
+  }
+} p9;
+DISPATCHER<CMD>::INSTALL d9(&command_dispatcher, "gschem", &p9);
+/*----------------------------------------------------------------------*/
 /*----------------------------------------------------------------------*/
 GEDA_SYMBOL_MAP LANG_GEDA::_symbol;
 /*----------------------------------------------------------------------*/
@@ -1552,7 +1562,7 @@ void LANG_GEDA::print_command(OMSTREAM& o, const DEV_DOT* x)
 }
 /*----------------------------------------------------------------------*/
 /*----------------------------------------------------------------------*/
-class CMD_GSCHEM : public CMD {
+class CMD_GEDA : public CMD {
 	public:
 		void do_it(CS& cmd, CARD_LIST* Scope)
 		{
@@ -1674,7 +1684,7 @@ void LANG_GEDA::read_file(string f, CARD_LIST* Scope, MODEL_SUBCKT* owner)
 /*----------------------------------------------------------------------*/
 DISPATCHER<CMD>::INSTALL
 // FIXME (hoW?): v conflicts with spice vsource
-d8(&command_dispatcher, "gschem|v ", &p8);
+d8(&command_dispatcher, "geda|v ", &p8);
 /*----------------------------------------------------------------------*/
 class CMD_C : public CMD {
 	void do_it(CS& cmd, CARD_LIST* Scope)

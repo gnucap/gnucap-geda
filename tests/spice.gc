@@ -1,5 +1,5 @@
 options debug
-gschem spice.sch module
+geda spice.sch module
 
 list
 spice

@@ -14,7 +14,7 @@ R1 n2 0 1
 
 vsource #(.dc(3.0001)) V1 (.p(n1),.n(0));
 
-gschem rail.sch module
+geda rail.sch module
 rail.sch s1(n1 n2);
 list
 
