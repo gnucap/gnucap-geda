@@ -46,6 +46,7 @@ class DEV_RAIL : public DEV_NET {
 		~DEV_RAIL(){}
 	private:
 		string param_name(int i)const;
+		string param_name(int i, int j)const;
 		void set_param_by_name(string Name, string Value);
 		bool param_is_printable(int i)const;
 		string param_value(int i)const;
@@ -125,6 +126,15 @@ string DEV_RAIL::param_name(int i)const
 		case 3: return("pinnumber");
 		case 4: return("symversion");
 		default: return "";
+	}
+}
+/*--------------------------------------------------------------------------*/
+std::string DEV_RAIL::param_name(int i, int j)const
+{untested();
+	if (j == 0) {itested();
+		return param_name(i);
+	}else{ incomplete();
+		return "";
 	}
 }
 /*--------------------------------------------------------------------------*/

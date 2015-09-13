@@ -55,7 +55,7 @@ class DEV_PLACE : public COMPONENT {
 		std::string param_name(int) const;
 		std::string param_name(int, int) const;
 		void set_param_by_name(std::string, std::string);
-		void set_param_by_index(int, std::string, int);
+		void set_param_by_index(int, std::string&, int);
 		std::string param_value(int) const;
 	private:
 		char id_letter()const {return 'P';}
