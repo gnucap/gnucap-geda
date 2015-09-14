@@ -47,6 +47,7 @@ class DEV_PORT : public DEV_NET {
 		~DEV_PORT(){}
 	private:
 		string param_name(int i)const;
+		string param_name(int, int)const;
 		void set_param_by_name(string Name, string Value);
 		bool param_is_printable(int i)const;
 		string param_value(int i)const;
@@ -132,6 +133,15 @@ string DEV_PORT::param_name(int i)const
 		case 4: return("symversion");
 		case 5: return("pinlabel");
 		default: return COMPONENT::param_name(i);
+	}
+}
+/*--------------------------------------------------------------------------*/
+std::string DEV_PORT::param_name(int i, int j)const
+{untested();
+	if (j == 0) {itested();
+		return param_name(i);
+	}else{ incomplete();
+		return "";
 	}
 }
 /*--------------------------------------------------------------------------*/

@@ -246,7 +246,7 @@ std::string* LANG_GEDA::parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel
 // FIXME: do symbol_type?
 std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
 		string basename)const
-{
+{ untested();
 	assert(!_C);
 	assert(!_netq.size());
 	assert(!_placeq.size());
@@ -254,7 +254,7 @@ std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
 	COMPONENT* c = dynamic_cast<COMPONENT*>(x);
 	MODEL_SUBCKT* m = dynamic_cast<MODEL_SUBCKT*>(x);
 	const CLibSymbol* symbol = s_clib_get_symbol_by_name(basename.c_str());
-	if(!symbol){
+	if(!symbol){ untested();
 		throw(Exception_Cant_Find("parsing gedanetlist", basename ));
 	}
 	std::string filename(s_clib_symbol_get_filename(symbol));
@@ -611,7 +611,7 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
 	std::string type=lang_geda.find_type_in_string(cmd);
 	GEDA_SYMBOL* dev = _C;
 	_C = NULL; // to make parse_symbol_file work
-	if(dev->has_key("device")){
+	if(dev->has_key("device")){ untested();
 		assert(type==(*dev)["device"] || type==DUMMY_PREFIX+((*dev)["basename"]));
 	}else{ untested();
 	}
@@ -780,7 +780,7 @@ DEV_DOT* LANG_GEDA::parse_command(CS& cmd, DEV_DOT* x)
 		//std::vector<std::string*> coord = parse_symbol_file( x, basename );
 		parse_symbol_file( x, *_C );
 		graphical = !_C->pincount();
-	}else{
+	}else{ untested();
 		cmd.reset();
 		CMD::cmdproc(cmd, scope);
 		delete x;
@@ -1402,48 +1402,48 @@ static void print_net(OMSTREAM& o, const COMPONENT* x)
  * }
  */
 void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
-{
+{ untested();
 	assert(x);
-	trace0("LANG_GEDA::print_component");
 	std::string _x,_y,_angle,_mirror;
 	o << "gC";
-	std::string _basename=x->param_value(x->param_count()-1);
+	std::string basename=x->param_value(x->param_count()-1);
+	trace2("LANG_GEDA::print_component", x->long_label(), basename);
 	//go through the symbol file and get the relative pin positions
-	std::vector<std::string*> coordinates=parse_symbol_file(NULL, _basename);
+	std::vector<std::string*> coordinates=parse_symbol_file(NULL, basename);
 	std::vector<std::string*> abscoord;
-	for(unsigned ii=0; ii<coordinates.size(); ++ii){
+	for(unsigned ii=0; ii<coordinates.size(); ++ii){ untested();
 		abscoord.push_back(find_place_string(x,x->port_value(ii)));
 	}
 	std::string angle[4]={"0","90","180","270"};
 	std::string xy="";
 	bool gottheanglemirror=false;
-	for(int ii=0; ii<4 ; ++ii){
-		if(not gottheanglemirror){
+	for(int ii=0; ii<4 ; ++ii){ untested();
+		if(not gottheanglemirror){ untested();
 			_mirror="0";
 			_angle=angle[ii];
 			xy="";
 			gottheanglemirror=true;
-			for(unsigned pinind=0; pinind<coordinates.size(); ++pinind){
+			for(unsigned pinind=0; pinind<coordinates.size(); ++pinind){ untested();
 				int a[2];
 				int c[2];
 				a[0] = atoi(abscoord[pinind][0].c_str());
 				a[1] = atoi(abscoord[pinind][1].c_str());
 				c[0] = atoi(coordinates[pinind][0].c_str());
 				c[1] = atoi(coordinates[pinind][1].c_str());
-				if (xy==""){
+				if (xy==""){ untested();
 					xy = componentposition_string(a, c, 90*ii, _mirror=="1");
-				}else if(xy != componentposition_string(a, c, 90*ii, _mirror=="1")){
+				}else if(xy != componentposition_string(a, c, 90*ii, _mirror=="1")){ untested();
 					gottheanglemirror=false;
 					break;
 				}
 			}
-			if (gottheanglemirror) {
-				o << xy << " " << "1" << " " << _angle << " " << _mirror << " " << _basename<< "\n";
-			} else {
+			if (gottheanglemirror) { untested();
+				o << xy << " " << "1" << " " << _angle << " " << _mirror << " " << basename<< "\n";
+			}else{ untested();
 				_mirror="1";
 				xy="";
 				gottheanglemirror=true;
-				for(unsigned pinind=0; pinind<coordinates.size(); ++pinind){
+				for(unsigned pinind=0; pinind<coordinates.size(); ++pinind){ untested();
 					int a[2];
 					int c[2];
 					a[0] = atoi(abscoord[pinind][0].c_str());
@@ -1457,15 +1457,15 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
 						break;
 					}
 				}
-				if (gottheanglemirror) {
-					o << xy << " " << "1" << " " << _angle << " " << _mirror << " " << _basename<< "\n";
+				if (gottheanglemirror) { untested();
+					o << xy << " " << "1" << " " << _angle << " " << _mirror << " " << basename<< "\n";
 				}
 			}
 		}
 	}
 	//map those with the absolute positions of nodes and place the device
 	//such that it is in between the nodes.
-	//std::vector<std::string*> coord = parse_symbol_file(static_cast<COMPONENT*>(x) , _basename);
+	//std::vector<std::string*> coord = parse_symbol_file(static_cast<COMPONENT*>(x) , basename);
 
 	//Got the x and y
 	//To print angle mirror etc, to get from the intelligent positioning
@@ -1475,16 +1475,16 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
 	bool _parameters=false;
 	bool _label=false;
 	bool _devtype=false;
-	if(x->short_label()!=""){
+	if(x->short_label()!=""){ untested();
 		_label=true;
 	}
-	if(x->param_count()>6){
+	if(x->param_count()>6){ untested();
 		_parameters=true;
 	}
-	if(x->dev_type()!="" && x->dev_type().substr(0,DUMMY_PREFIX.length())!=DUMMY_PREFIX){
+	if(x->dev_type()!="" && x->dev_type().substr(0,DUMMY_PREFIX.length())!=DUMMY_PREFIX){ untested();
 		_devtype=true;
 	}
-	if (_label or _parameters or _devtype){
+	if (_label or _parameters or _devtype){ untested();
 		o << "{\n";
 		if(_devtype){
 			o << "T "<< xy << " 5 10 0 1 0 0 1\n";
@@ -1527,21 +1527,20 @@ void LANG_GEDA::print_module(OMSTREAM& o, const MODEL_SUBCKT* x)
 /*--------------------------------------------------------------------------*/
 void LANG_GEDA::print_instance(OMSTREAM& o, const COMPONENT* x)
 {
-	trace0("Got into print_instance in geda!");
+	trace1("LANG_GEDA::print_instance", x->long_label());
 	// print_type(o, x);
 	// print_label(o, x);
-	if(x->dev_type()=="net"){
+	if(x->dev_type()=="net"){ untested();
 		print_net(o, x);
-	}
-	else if(x->dev_type()=="place"){
-	}else{
+	}else if(x->dev_type()=="place"){ untested();
+	}else{ untested();
 		//Component
 		print_component(o ,x);
 	}
 }
 /*--------------------------------------------------------------------------*/
 void LANG_GEDA::print_comment(OMSTREAM& o, const DEV_COMMENT* x)
-{
+{ untested();
 	assert(x);
 	o << x->comment() << '\n';
 }

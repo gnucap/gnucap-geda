@@ -1,0 +1,197 @@
+Jeremy Gillick
+^ ? Jeremy: no match
+Multi-Color LED
+^ ? Multi-Color: no match
+Right Servo
+^ ? Right: no match
+Left Servo
+^ ? Left: no match
+Eye
+^ ? Eye: no match
+//v 20071231 1
+//T 50300 40700 9 20 1 0 0 0 1
+//Ganzbot 2008
+//T 54100 40200 9 20 1 0 0 0 1
+module !_resistor-1.sym (1,2);
+endmodule // !_resistor-1.sym
+
+RESISTOR #(.basename(resistor-1.sym),.class(DISCRETE),.pins(2)) 270 (.1(x_cn_0),.2(x_cn_1));
+place #(.x(53500),.y(45200)) 53500:45200 (.port(x_cn_0));
+place #(.x(54400),.y(45200)) 54400:45200 (.port(x_cn_1));
+RESISTOR #(.basename(resistor-1.sym),.class(DISCRETE),.pins(2)) 270 (.1(x_cn_2),.2(x_cn_3));
+place #(.x(53500),.y(43700)) 53500:43700 (.port(x_cn_2));
+place #(.x(54400),.y(43700)) 54400:43700 (.port(x_cn_3));
+RESISTOR #(.basename(resistor-1.sym),.class(DISCRETE),.pins(2)) 270 (.1(x_cn_4),.2(x_cn_5));
+place #(.x(53500),.y(42200)) 53500:42200 (.port(x_cn_4));
+place #(.x(54400),.y(42200)) 54400:42200 (.port(x_cn_5));
+port #(.basename(in-1.sym)) Pin (.int(x_cn_6));
+place #(.x(55500),.y(47600)) 55500:47600 (.port(x_cn_6));
+port #(.basename(in-1.sym)) Pin (.int(x_cn_7));
+place #(.x(55500),.y(46600)) 55500:46600 (.port(x_cn_7));
+port #(.basename(in-1.sym)) Pin (.int(x_cn_8));
+place #(.x(55500),.y(45200)) 55500:45200 (.port(x_cn_8));
+port #(.basename(in-1.sym)) Pin (.int(x_cn_9));
+place #(.x(55500),.y(43700)) 55500:43700 (.port(x_cn_9));
+port #(.basename(in-1.sym)) Pin (.int(x_cn_10));
+place #(.x(55500),.y(42200)) 55500:42200 (.port(x_cn_10));
+module !_2N2222-1.sym (3,1,2);
+endmodule // !_2N2222-1.sym
+
+2N2222 #(.basename(2N2222-1.sym)) Q1 (.3(x_cn_13),.1(x_cn_11),.2(x_cn_12));
+place #(.x(50000),.y(45200)) 50000:45200 (.port(x_cn_11));
+place #(.x(49400),.y(44700)) 49400:44700 (.port(x_cn_12));
+place #(.x(49400),.y(45700)) 49400:45700 (.port(x_cn_13));
+2N2222 #(.basename(2N2222-1.sym)) Q1 (.3(x_cn_16),.1(x_cn_14),.2(x_cn_15));
+place #(.x(50000),.y(43700)) 50000:43700 (.port(x_cn_14));
+place #(.x(49400),.y(43200)) 49400:43200 (.port(x_cn_15));
+place #(.x(49400),.y(44200)) 49400:44200 (.port(x_cn_16));
+2N2222 #(.basename(2N2222-1.sym)) Q1 (.3(x_cn_19),.1(x_cn_17),.2(x_cn_18));
+place #(.x(50000),.y(42200)) 50000:42200 (.port(x_cn_17));
+place #(.x(49400),.y(41700)) 49400:41700 (.port(x_cn_18));
+place #(.x(49400),.y(42700)) 49400:42700 (.port(x_cn_19));
+net #() net0 (.p(x_nn_20),.n(x_cn_13));
+place #(.x(42000),.y(45700)) 42000:45700 (.port(x_nn_20));
+port #(.basename(in-1.sym)) +5v (.int(x_cn_21));
+place #(.x(41000),.y(50000)) 41000:50000 (.port(x_cn_21));
+module !_led-3.sym (CATHODE,ANODE);
+endmodule // !_led-3.sym
+
+LED #(.basename(led-3.sym),.description(Generic),.numslots(0)) D1 (.CATHODE(x_cn_23),.ANODE(x_cn_22));
+place #(.x(48200),.y(44700)) 48200:44700 (.port(x_cn_22));
+place #(.x(47300),.y(44700)) 47300:44700 (.port(x_cn_23));
+LED #(.basename(led-3.sym),.description(Generic),.numslots(0)) D2 (.CATHODE(x_cn_25),.ANODE(x_cn_24));
+place #(.x(48200),.y(43200)) 48200:43200 (.port(x_cn_24));
+place #(.x(47300),.y(43200)) 47300:43200 (.port(x_cn_25));
+LED #(.basename(led-3.sym),.description(Generic),.numslots(0)) D3 (.CATHODE(x_cn_27),.ANODE(x_cn_26));
+place #(.x(48200),.y(41700)) 48200:41700 (.port(x_cn_26));
+place #(.x(47300),.y(41700)) 47300:41700 (.port(x_cn_27));
+net #() net1 (.p(x_cn_12),.n(x_cn_22));
+net #() net2 (.p(x_cn_15),.n(x_cn_24));
+net #() net3 (.p(x_cn_18),.n(x_cn_26));
+net #() net4 (.p(x_cn_23),.n(x_cn_27));
+net #() extranet5 (.p(x_cn_23),.n(x_cn_25));
+net #() net6 (.p(x_cn_23),.n(x_nn_28));
+place #(.x(47000),.y(44700)) 47000:44700 (.port(x_nn_28));
+net #() net7 (.p(x_nn_28),.n(x_nn_29));
+place #(.x(47000),.y(45200)) 47000:45200 (.port(x_nn_29));
+RESISTOR #(.basename(resistor-1.sym),.class(DISCRETE),.pins(2)) 270 (.1(x_cn_30),.2(x_cn_31));
+place #(.x(45900),.y(45200)) 45900:45200 (.port(x_cn_30));
+place #(.x(46800),.y(45200)) 46800:45200 (.port(x_cn_31));
+port #(.basename(in-1.sym)) Ground (.int(x_cn_32));
+place #(.x(41000),.y(49200)) 41000:49200 (.port(x_cn_32));
+net #() net8 (.p(x_nn_33),.n(x_cn_16));
+place #(.x(48600),.y(44200)) 48600:44200 (.port(x_nn_33));
+net #() net9 (.p(x_nn_34),.n(x_nn_35));
+place #(.x(48600),.y(42700)) 48600:42700 (.port(x_nn_34));
+place #(.x(48600),.y(45700)) 48600:45700 (.port(x_nn_35));
+net #() extranet10 (.p(x_nn_35),.n(x_nn_20));
+net #() extranet11 (.p(x_nn_34),.n(x_nn_33));
+net #() net12 (.p(x_cn_19),.n(x_nn_34));
+net #() net13 (.p(x_cn_30),.n(x_nn_36));
+place #(.x(41000),.y(45200)) 41000:45200 (.port(x_nn_36));
+net #() net14 (.p(x_nn_36),.n(x_cn_32));
+port #(.basename(in-1.sym)) Pin (.int(x_cn_37));
+place #(.x(55500),.y(49200)) 55500:49200 (.port(x_cn_37));
+port #(.basename(in-1.sym)) Pin (.int(x_cn_38));
+place #(.x(55500),.y(49900)) 55500:49900 (.port(x_cn_38));
+net #() net15 (.p(x_nn_20),.n(x_nn_39));
+place #(.x(42000),.y(50000)) 42000:50000 (.port(x_nn_39));
+net #() net16 (.p(x_cn_1),.n(x_cn_8));
+net #() net17 (.p(x_cn_9),.n(x_cn_3));
+net #() net18 (.p(x_cn_10),.n(x_cn_5));
+LED #(.basename(led-3.sym),.description(Generic),.numslots(0)) Red (.CATHODE(x_cn_41),.ANODE(x_cn_40));
+place #(.x(48700),.y(47600)) 48700:47600 (.port(x_cn_40));
+place #(.x(49600),.y(47600)) 49600:47600 (.port(x_cn_41));
+LED #(.basename(led-3.sym),.description(Generic),.numslots(0)) Blue (.CATHODE(x_cn_43),.ANODE(x_cn_42));
+place #(.x(48700),.y(46900)) 48700:46900 (.port(x_cn_42));
+place #(.x(49600),.y(46900)) 49600:46900 (.port(x_cn_43));
+net #() net19 (.p(x_cn_40),.n(x_cn_42));
+net #() net20 (.p(x_nn_44),.n(x_nn_45));
+place #(.x(47000),.y(47200)) 47000:47200 (.port(x_nn_44));
+place #(.x(46400),.y(47200)) 46400:47200 (.port(x_nn_45));
+net #() net21 (.p(x_nn_45),.n(x_nn_46));
+place #(.x(46400),.y(50000)) 46400:50000 (.port(x_nn_46));
+//B 48500 46400 1300 1800 3 0 0 0 -1 -1 0 -1 -1 -1 -1 -1
+//T 48500 48300 9 10 1 0 0 0 1
+2N2222 #(.basename(2N2222-1.sym)) Q? (.3(x_cn_49),.1(x_cn_47),.2(x_cn_48));
+place #(.x(50700),.y(46000)) 50700:46000 (.port(x_cn_47));
+place #(.x(50200),.y(46600)) 50200:46600 (.port(x_cn_48));
+place #(.x(51200),.y(46600)) 51200:46600 (.port(x_cn_49));
+2N2222 #(.basename(2N2222-1.sym)) Q? (.3(x_cn_52),.1(x_cn_50),.2(x_cn_51));
+place #(.x(50700),.y(47300)) 50700:47300 (.port(x_cn_50));
+place #(.x(50200),.y(47900)) 50200:47900 (.port(x_cn_51));
+place #(.x(51200),.y(47900)) 51200:47900 (.port(x_cn_52));
+net #() net22 (.p(x_nn_53),.n(x_cn_7));
+place #(.x(55400),.y(46600)) 55400:46600 (.port(x_nn_53));
+net #() net23 (.p(x_nn_53),.n(x_nn_54));
+place #(.x(55400),.y(46000)) 55400:46000 (.port(x_nn_54));
+net #() net24 (.p(x_nn_55),.n(x_cn_47));
+place #(.x(53500),.y(46000)) 53500:46000 (.port(x_nn_55));
+net #() net25 (.p(x_cn_6),.n(x_nn_56));
+place #(.x(55400),.y(47600)) 55400:47600 (.port(x_nn_56));
+net #() net26 (.p(x_nn_56),.n(x_nn_57));
+place #(.x(55400),.y(47300)) 55400:47300 (.port(x_nn_57));
+net #() net27 (.p(x_nn_58),.n(x_cn_50));
+place #(.x(53500),.y(47300)) 53500:47300 (.port(x_nn_58));
+net #() net28 (.p(x_cn_51),.n(x_nn_59));
+place #(.x(50000),.y(47900)) 50000:47900 (.port(x_nn_59));
+net #() net29 (.p(x_nn_59),.n(x_nn_60));
+place #(.x(50000),.y(47600)) 50000:47600 (.port(x_nn_60));
+net #() net30 (.p(x_nn_60),.n(x_cn_41));
+net #() net31 (.p(x_cn_48),.n(x_nn_61));
+place #(.x(50200),.y(46900)) 50200:46900 (.port(x_nn_61));
+net #() net32 (.p(x_nn_61),.n(x_cn_43));
+net #() net33 (.p(x_cn_49),.n(x_nn_62));
+place #(.x(51700),.y(46600)) 51700:46600 (.port(x_nn_62));
+net #() net34 (.p(x_nn_62),.n(x_nn_63));
+place #(.x(51700),.y(48600)) 51700:48600 (.port(x_nn_63));
+net #() net35 (.p(x_nn_63),.n(x_nn_64));
+place #(.x(41000),.y(48600)) 41000:48600 (.port(x_nn_64));
+net #() extranet36 (.p(x_nn_64),.n(x_nn_36));
+net #() net37 (.p(x_cn_52),.n(x_nn_65));
+place #(.x(51700),.y(47900)) 51700:47900 (.port(x_nn_65));
+net #() extranet38 (.p(x_nn_65),.n(x_nn_62));
+net #() net39 (.p(x_cn_4),.n(x_cn_17));
+net #() net40 (.p(x_cn_14),.n(x_cn_2));
+net #() net41 (.p(x_cn_0),.n(x_cn_11));
+net #() net42 (.p(x_cn_32),.n(x_nn_66));
+place #(.x(53400),.y(49200)) 53400:49200 (.port(x_nn_66));
+net #() net43 (.p(x_cn_21),.n(x_nn_67));
+place #(.x(52700),.y(50000)) 52700:50000 (.port(x_nn_67));
+net #() extranet44 (.p(x_cn_21),.n(x_nn_39));
+net #() extranet45 (.p(x_cn_21),.n(x_nn_46));
+net #() extranet46 (.p(x_cn_21),.n(x_nn_39));
+module !_header3-1.sym (1,2,3);
+endmodule // !_header3-1.sym
+
+HEADER3 #(.basename(header3-1.sym),.class(IO),.pins(3)) J? (.1(x_cn_68),.2(x_cn_69),.3(x_nn_66));
+place #(.x(54200),.y(49200)) 54200:49200 (.port(x_cn_68));
+place #(.x(53800),.y(49200)) 53800:49200 (.port(x_cn_69));
+HEADER3 #(.basename(header3-1.sym),.class(IO),.pins(3)) J? (.1(x_cn_70),.2(x_cn_71),.3(x_cn_72));
+place #(.x(54200),.y(49900)) 54200:49900 (.port(x_cn_70));
+place #(.x(53800),.y(49900)) 53800:49900 (.port(x_cn_71));
+place #(.x(53400),.y(49900)) 53400:49900 (.port(x_cn_72));
+net #() net47 (.p(x_cn_38),.n(x_cn_70));
+net #() net48 (.p(x_cn_37),.n(x_cn_68));
+net #() net49 (.p(x_cn_71),.n(x_cn_69));
+net #() net50 (.p(x_nn_66),.n(x_cn_72));
+net #() net51 (.p(x_nn_73),.n(x_nn_74));
+place #(.x(53800),.y(49600)) 53800:49600 (.port(x_nn_73));
+place #(.x(52700),.y(49600)) 52700:49600 (.port(x_nn_74));
+net #() extranet52 (.p(x_nn_73),.n(x_cn_71));
+net #() net53 (.p(x_nn_74),.n(x_nn_67));
+//T 53300 50700 9 10 1 0 0 0 1
+//T 53400 48200 9 10 1 0 0 0 1
+RESISTOR #(.basename(resistor-1.sym),.class(DISCRETE),.pins(2)) 270 (.1(x_nn_55),.2(x_cn_75));
+place #(.x(54400),.y(46000)) 54400:46000 (.port(x_cn_75));
+RESISTOR #(.basename(resistor-1.sym),.class(DISCRETE),.pins(2)) 270 (.1(x_nn_58),.2(x_cn_76));
+place #(.x(54400),.y(47300)) 54400:47300 (.port(x_cn_76));
+net #() net54 (.p(x_cn_76),.n(x_nn_57));
+net #() net55 (.p(x_cn_75),.n(x_nn_54));
+RESISTOR #(.basename(resistor-1.sym),.class(DISCRETE),.pins(2)) 270 (.1(x_nn_44),.2(x_cn_77));
+place #(.x(47900),.y(47200)) 47900:47200 (.port(x_cn_77));
+net #() net56 (.p(x_cn_77),.n(x_nn_78));
+place #(.x(48700),.y(47200)) 48700:47200 (.port(x_nn_78));
+net #() extranet57 (.p(x_nn_78),.n(x_cn_40));
+net #() net58 (.p(x_cn_31),.n(x_nn_29));
+//T 49000 46200 9 10 1 0 0 0 1

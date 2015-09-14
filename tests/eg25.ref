@@ -1,0 +1,266 @@
+gschem_buffers.sch
+^ ? gschem_buffers.sch: no match
+1
+^ ? 1: no match
+1
+^ ? 1: no match
+1.0
+^ ? 1.0: no match
+Peter Clifton
+^ ? Peter: no match
+Paste buffers
+^ ? Paste: no match
+Schematic page
+^ ? Schematic: no match
+Place buffer
+^ ? Place: no match
+words here
+^ ? words: no match
+Text entry
+^ ? Text: no match
+Component
+^ ? Component: no match
+Library
+^ ? Library: no match
+new
+^ ? new: no match
+deep copy
+^ ? deep: no match
+deep copy
+^ ? deep: no match
+new
+^ ? new: no match
+deep copy
+^ ? deep: no match
+move
+^ ? move: no match
+1  Copy
+^ ? 1: no match
+2  Copy Multiple
+^ ? 2: no match
+3  Move (incl. dragging)
+^ ? 3: no match
+4  Copy (to) Buffer
+^ ? 4: no match
+5  Paste (from) Buffer
+^ ? 5: no match
+6  Place component
+^ ? 6: no match
+7  Place text
+^ ? 7: no match
+8 Delete
+^ ? 8: no match
+deep copy
+^ ? deep: no match
+1,5,7
+^ ? 1: no match
+2,6
+^ ? 2: no match
+5
+^ ? 5: no match
+6
+^ ? 6: no match
+7
+^ ? 7: no match
+4
+^ ? 4: no match
+1,2
+^ ? 1: no match
+NB: Can always free objects in the place buffer
+^ ? NB:: no match
+All but "move" have a trivial cancel operation
+^ ? All: no match
+Can rotate / mirror the place buffer as it does not
+^ ? Can: no match
+reference any schematic page or paste-buffer objects
+^ ? reference: no match
+except inside the "move" action
+^ ? except: no match
+Delete
+^ ? Delete: no match
+items
+^ ? items: no match
+8
+^ ? 8: no match
+3
+^ ? 3: no match
+shallow copy
+^ ? shallow: no match
+shallow free
+^ ? shallow: no match
+3
+^ ? 3: no match
+//v 20081221 2
+//T 56300 40900 9 20 1 0 0 0 1
+//gschem place buffers
+//T 56300 40600 9 10 1 0 0 0 1
+//T 56300 40300 9 10 1 0 0 0 1
+//T 57800 40300 9 10 1 0 0 0 1
+//T 60300 40600 9 10 1 0 0 0 1
+//T 60300 40300 9 10 1 0 0 0 1
+//B 42000 49400 4200 3600 3 0 0 0 -1 -1 0 -1 -1 -1 -1 -1
+//L 41700 49900 41700 53400 3 0 0 0 -1 -1
+//L 41700 53400 45900 53400 3 0 0 0 -1 -1
+//L 45900 53000 45900 53400 3 0 0 0 -1 -1
+//L 45600 53400 45600 53800 3 0 0 0 -1 -1
+//L 41400 53800 45600 53800 3 0 0 0 -1 -1
+//L 41400 50300 41400 53800 3 0 0 0 -1 -1
+//L 41100 50700 41100 54200 3 0 0 0 -1 -1
+//L 45300 53800 45300 54200 3 0 0 0 -1 -1
+//L 41100 54200 45300 54200 3 0 0 0 -1 -1
+//L 41100 51100 40800 51100 3 0 0 0 -1 -1
+//L 40800 51100 40800 54600 3 0 0 0 -1 -1
+//L 45000 54200 45000 54600 3 0 0 0 -1 -1
+//L 40800 54600 45000 54600 3 0 0 0 -1 -1
+//L 41400 50700 41100 50700 3 0 0 0 -1 -1
+//L 41700 50300 41400 50300 3 0 0 0 -1 -1
+//L 42000 49900 41700 49900 3 0 0 0 -1 -1
+//T 42200 52600 9 20 1 0 0 0 1
+//B 47600 46500 6000 4800 3 0 0 0 -1 -1 0 -1 -1 -1 -1 -1
+//T 47900 50700 9 20 1 0 0 0 1
+//B 56700 48700 4200 3600 3 0 0 0 -1 -1 0 -1 -1 -1 -1 -1
+//T 57000 51700 9 20 1 0 0 0 1
+//B 57400 42200 4500 3000 3 0 0 0 -1 -1 0 -1 -1 -1 -1 -1
+//B 57700 42500 3900 1300 3 0 0 0 -1 -1 0 -1 -1 -1 -1 -1
+//T 57900 43500 9 10 1 0 0 0 1
+//T 57700 44600 9 20 1 0 0 0 1
+//L 52200 43000 52200 44500 3 0 0 0 -1 -1
+//L 55200 44500 55200 43000 3 0 0 0 -1 -1
+//A 53696 44499 1497 0 180 3 0 0 0 -1 -1
+//A 53704 43001 1494 180 180 3 0 0 0 -1 -1
+//A 53696 44501 1496 180 180 3 0 0 0 -1 -1
+//T 52800 44100 9 20 1 0 0 0 2
+module !_lm741-1.sym (?????,unknown_pin_2,unknown_pin_3,unknown_pin_4,?????,unknown_pin_6,unknown_pin_7);
+endmodule // !_lm741-1.sym
+
+LM741 #(.basename(lm741-1.sym)) U? (.?????(?????),.unknown_pin_2(x_cn_0),.unknown_pin_3(x_cn_1),.unknown_pin_4(x_cn_2),.?????(?????),.unknown_pin_6(x_cn_3),.unknown_pin_7(x_cn_4));
+place #(.x(53300),.y(41900)) 53300:41900 (.port(x_cn_0));
+place #(.x(53300),.y(42300)) 53300:42300 (.port(x_cn_1));
+place #(.x(53800),.y(41700)) 53800:41700 (.port(x_cn_2));
+place #(.x(54300),.y(42100)) 54300:42100 (.port(x_cn_3));
+place #(.x(53800),.y(42500)) 53800:42500 (.port(x_cn_4));
+//T 58400 46600 9 20 1 0 0 0 1
+module !_7400-1.sym (A,B,Y);
+endmodule // !_7400-1.sym
+
+7400 #(.basename(7400-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc00.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(1),.slotdef(4:12)) U1 (.A(x_cn_5),.B(x_cn_6),.Y(x_cn_7));
+place #(.x(49800),.y(49300)) 49800:49300 (.port(x_cn_5));
+place #(.x(49800),.y(48900)) 49800:48900 (.port(x_cn_6));
+place #(.x(51100),.y(49100)) 51100:49100 (.port(x_cn_7));
+7400 #(.basename(7400-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc00.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(1),.slotdef(4:12)) U2 (.A(x_cn_8),.B(x_cn_9),.Y(x_cn_10));
+place #(.x(49800),.y(48200)) 49800:48200 (.port(x_cn_8));
+place #(.x(49800),.y(47800)) 49800:47800 (.port(x_cn_9));
+place #(.x(51100),.y(48000)) 51100:48000 (.port(x_cn_10));
+net #() net0 (.p(x_cn_6),.n(x_nn_11));
+place #(.x(49600),.y(48900)) 49600:48900 (.port(x_nn_11));
+net #() net1 (.p(x_nn_11),.n(x_nn_12));
+place #(.x(49600),.y(48600)) 49600:48600 (.port(x_nn_12));
+net #() net2 (.p(x_nn_12),.n(x_nn_13));
+place #(.x(51300),.y(48600)) 51300:48600 (.port(x_nn_13));
+net #() net3 (.p(x_nn_13),.n(x_nn_14));
+place #(.x(51300),.y(48000)) 51300:48000 (.port(x_nn_14));
+net #() net4 (.p(x_cn_7),.n(x_nn_15));
+place #(.x(51100),.y(48500)) 51100:48500 (.port(x_nn_15));
+net #() net5 (.p(x_nn_15),.n(x_nn_16));
+place #(.x(49800),.y(48500)) 49800:48500 (.port(x_nn_16));
+net #() net6 (.p(x_nn_16),.n(x_cn_8));
+net #() net7 (.p(x_cn_9),.n(x_nn_17));
+place #(.x(49300),.y(47800)) 49300:47800 (.port(x_nn_17));
+net #() net8 (.p(x_cn_5),.n(x_nn_18));
+place #(.x(49300),.y(49300)) 49300:49300 (.port(x_nn_18));
+net #() net9 (.p(x_cn_7),.n(x_nn_19));
+place #(.x(51900),.y(49100)) 51900:49100 (.port(x_nn_19));
+net #() net10 (.p(x_cn_10),.n(x_nn_20));
+place #(.x(51900),.y(48000)) 51900:48000 (.port(x_nn_20));
+net #() extranet11 (.p(x_cn_10),.n(x_nn_14));
+7400 #(.basename(7400-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc00.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(1),.slotdef(4:12)) U1 (.A(x_cn_21),.B(x_cn_22),.Y(x_cn_23));
+place #(.x(43400),.y(51700)) 43400:51700 (.port(x_cn_21));
+place #(.x(43400),.y(51300)) 43400:51300 (.port(x_cn_22));
+place #(.x(44700),.y(51500)) 44700:51500 (.port(x_cn_23));
+7400 #(.basename(7400-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc00.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(1),.slotdef(4:12)) U2 (.A(x_cn_24),.B(x_cn_25),.Y(x_cn_26));
+place #(.x(43400),.y(50600)) 43400:50600 (.port(x_cn_24));
+place #(.x(43400),.y(50200)) 43400:50200 (.port(x_cn_25));
+place #(.x(44700),.y(50400)) 44700:50400 (.port(x_cn_26));
+net #() net12 (.p(x_cn_22),.n(x_nn_27));
+place #(.x(43200),.y(51300)) 43200:51300 (.port(x_nn_27));
+net #() net13 (.p(x_nn_27),.n(x_nn_28));
+place #(.x(43200),.y(51000)) 43200:51000 (.port(x_nn_28));
+net #() net14 (.p(x_nn_28),.n(x_nn_29));
+place #(.x(44900),.y(51000)) 44900:51000 (.port(x_nn_29));
+net #() net15 (.p(x_nn_29),.n(x_nn_30));
+place #(.x(44900),.y(50400)) 44900:50400 (.port(x_nn_30));
+net #() net16 (.p(x_cn_23),.n(x_nn_31));
+place #(.x(44700),.y(50900)) 44700:50900 (.port(x_nn_31));
+net #() net17 (.p(x_nn_31),.n(x_nn_32));
+place #(.x(43400),.y(50900)) 43400:50900 (.port(x_nn_32));
+net #() net18 (.p(x_nn_32),.n(x_cn_24));
+net #() net19 (.p(x_cn_25),.n(x_nn_33));
+place #(.x(42900),.y(50200)) 42900:50200 (.port(x_nn_33));
+net #() net20 (.p(x_cn_21),.n(x_nn_34));
+place #(.x(42900),.y(51700)) 42900:51700 (.port(x_nn_34));
+net #() net21 (.p(x_cn_23),.n(x_nn_35));
+place #(.x(45500),.y(51500)) 45500:51500 (.port(x_nn_35));
+net #() net22 (.p(x_cn_26),.n(x_nn_36));
+place #(.x(45500),.y(50400)) 45500:50400 (.port(x_nn_36));
+net #() extranet23 (.p(x_cn_26),.n(x_nn_30));
+//A 47707 50297 2996 193 102 3 0 0 0 -1 -1
+//L 44700 49800 44700 49500 3 0 0 0 -1 -1
+//L 44700 49800 44900 49600 3 0 0 0 -1 -1
+//A 50098 39887 13440 56 56 3 0 0 0 -1 -1
+//L 57400 51000 57700 51000 3 0 0 0 -1 -1
+//L 57700 51000 57500 51200 3 0 0 0 -1 -1
+//L 54100 42500 57500 49300 3 0 0 0 -1 -1
+//L 59700 43500 58900 49200 3 0 0 0 -1 -1
+//L 57500 49300 57200 49100 3 0 0 0 -1 -1
+//L 57500 49300 57500 48900 3 0 0 0 -1 -1
+//L 58900 49200 58800 48900 3 0 0 0 -1 -1
+//L 58900 49200 59100 48900 3 0 0 0 -1 -1
+//L 53000 49400 57200 49400 3 0 0 0 -1 -1
+//L 57200 50700 53000 50700 3 0 0 0 -1 -1
+//L 57200 49400 56900 49500 3 0 0 0 -1 -1
+//L 57200 49400 56900 49300 3 0 0 0 -1 -1
+//L 53000 50700 53300 50800 3 0 0 0 -1 -1
+//L 53000 50700 53300 50600 3 0 0 0 -1 -1
+//T 49700 53600 9 20 1 0 0 0 1
+//T 45800 48200 9 20 1 0 0 0 1
+//T 55400 46700 9 20 1 0 0 0 1
+//T 54600 50800 9 20 1 0 0 0 1
+//T 54600 51200 9 20 1 0 0 0 1
+//T 41700 41800 9 20 1 0 0 0 8
+//T 54400 49600 9 20 1 0 0 0 1
+//T 54500 51200 9 20 1 0 0 6 1
+//T 54500 50800 9 20 1 0 0 6 1
+//T 49300 53600 9 20 1 0 0 0 1
+//T 55400 47100 9 20 1 0 0 0 1
+//T 58400 47000 9 20 1 0 0 0 1
+//T 45800 48600 9 20 1 0 0 0 1
+//T 54300 49600 9 20 1 0 0 6 1
+//T 53300 53800 9 20 1 0 0 0 5
+//A 48504 43001 1494 180 180 3 0 0 0 -1 -1
+//L 47000 43000 47000 44600 3 0 0 0 -1 -1
+//L 50000 43000 50000 44700 3 0 0 0 -1 -1
+//A 48496 44701 1496 180 180 3 0 0 0 -1 -1
+//A 48496 44699 1497 0 180 3 0 0 0 -1 -1
+//L 47300 43600 47300 42500 3 0 0 0 -1 -1
+//L 47500 43300 47500 42200 3 0 0 0 -1 -1
+//L 47800 43100 47800 42000 3 0 0 0 -1 -1
+//L 48200 42900 48200 41800 3 0 0 0 -1 -1
+//L 48600 42900 48600 41800 3 0 0 0 -1 -1
+//L 49000 43000 49000 41900 3 0 0 0 -1 -1
+//L 49400 43200 49400 42100 3 0 0 0 -1 -1
+//L 49700 43500 49700 42400 3 0 0 0 -1 -1
+//B 47900 44900 1200 200 3 0 0 0 -1 -1 0 -1 -1 -1 -1 -1
+//L 47900 44900 47900 44700 3 0 0 0 -1 -1
+//L 49100 44900 49100 44700 3 0 0 0 -1 -1
+//L 53900 44600 53700 44700 3 0 0 0 -1 -1
+//T 48000 43800 9 20 1 0 0 0 2
+//L 50300 47400 48900 45500 3 0 0 0 -1 -1
+//L 48900 45500 48900 45700 3 0 0 0 -1 -1
+//L 48900 45500 49100 45500 3 0 0 0 -1 -1
+//T 49700 46100 9 20 1 0 0 0 1
+//T 49700 45700 9 20 1 0 0 0 1
+//A 48496 44601 1496 180 180 3 0 0 0 -1 -1
+//T 54300 49000 9 20 1 0 0 6 1
+//T 54400 49000 9 20 1 0 0 0 1
+//T 54600 50300 9 20 1 0 0 0 1
+//T 54500 50300 9 20 1 0 0 6 1
