@@ -47,7 +47,9 @@ private: // from DEV_SUBCKT
   uint_t	max_nodes()const	{return PORTS_PER_SUBCKT;}
   uint_t	min_nodes()const	{return 0;}
   uint_t	matrix_nodes()const	{return 0;}
+public: //HACK
   uint_t	net_nodes()const	{return _net_nodes;}
+private:
 //  CARD*	clone_instance()const;
   void		precalc_first();
   bool		makes_own_scope()const  {itested(); return false;}

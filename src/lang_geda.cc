@@ -143,8 +143,8 @@ class LANG_GEDA : public LANGUAGE {
 	pair<int,int> find_place_(const CARD* x, std::string name)const;
 	string* find_place_string(const CARD* x, std::string name)const;
 	void connect(CARD *x, int x0, int y0, int x1, int y1)const;
-	static void read_file(string, CARD_LIST* Scope, MODEL_SUBCKT* owner=0);
-	static void read_spice(string, CARD_LIST* Scope, MODEL_SUBCKT* owner=0);
+	static void read_file(string, CARD_LIST* Scope, BASE_SUBCKT* owner=0);
+	static void read_spice(string, CARD_LIST* Scope, BASE_SUBCKT* owner=0);
 	static CARD_LIST::const_iterator find_nondevice(string name, CARD_LIST* Scope=0);
 	static CARD_LIST::const_iterator find_card(string name, CARD_LIST* Scope=0, bool model=0);
 
@@ -1593,7 +1593,7 @@ class CMD_GEDA : public CMD {
 					|| (cmd.umatch("source {=}") && ( cmd >> source ) ) ;
 			} while (cmd.more() && !cmd.stuck(&here));
 
-			MODEL_SUBCKT* model=NULL;
+			BASE_SUBCKT* model=NULL;
 			string label = (device=="")? filename : device;
 
 			if(symbol){ untested();

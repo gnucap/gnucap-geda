@@ -27,6 +27,7 @@
 #include <e_node.h>
 #include <u_nodemap.h>
 #include <d_subckt.h>
+#include "d_gedasckt.h"
 #include "d_net.h"
 #ifdef HAVE_BOOST_ASSIGN
 # include <boost/assign.hpp>
@@ -176,7 +177,7 @@ void DEV_PORT::set_port_by_index(uint_t i, string& name){
 	}
 
 	// register port during model building
-	if(BASE_SUBCKT* o = dynamic_cast<BASE_SUBCKT*>(owner())){
+	if(MODEL_GEDA_SUBCKT* o = dynamic_cast<MODEL_GEDA_SUBCKT*>(owner())){
 		unsigned portpos = o->net_nodes();
 		CARD_LIST empty;
 
@@ -203,6 +204,10 @@ void DEV_PORT::set_port_by_index(uint_t i, string& name){
 			o->set_port_by_index(portpos, portname);
 		}
 
+	}else if(BASE_SUBCKT* o = dynamic_cast<BASE_SUBCKT*>(owner())){
+		(void) o;
+		// using incompatible sckt type?
+		untested(); incomplete();
 	}
 	DEV_NET::set_port_by_index(1, portname);
 }
