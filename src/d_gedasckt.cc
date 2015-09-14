@@ -27,22 +27,29 @@
 #include <u_nodemap.h>
 #include "io_trace.h"
 /*--------------------------------------------------------------------------*/
+static COMMON_SUBCKT Default_SUBCKT(CC_STATIC);
 static DEV_GEDA_SUBCKT p1;
 static MODEL_GEDA_SUBCKT p2;
 static DISPATCHER<CARD>::INSTALL
 //  d1(&device_dispatcher, "X|dev_subckt", &p1),
   d2(&device_dispatcher, "symbol|subckt", &p2);
 /*--------------------------------------------------------------------------*/
-MODEL_GEDA_SUBCKT::MODEL_GEDA_SUBCKT() : MODEL_SUBCKT() {}
+MODEL_GEDA_SUBCKT::MODEL_GEDA_SUBCKT() : DEV_GEDA_SUBCKT()
+{
+	new_subckt();
+}
 /*--------------------------------------------------------------------------*/
 MODEL_GEDA_SUBCKT::MODEL_GEDA_SUBCKT(MODEL_GEDA_SUBCKT const& p) :
-	MODEL_SUBCKT(p) {}
+	DEV_GEDA_SUBCKT(p)
+{
+	new_subckt();
+}
 /*--------------------------------------------------------------------------*/
 CARD* MODEL_GEDA_SUBCKT::clone_instance()const
-{
- DEV_GEDA_SUBCKT* new_instance = dynamic_cast<DEV_GEDA_SUBCKT*>(p1.clone());
- new_instance->set_parent(this);
- return new_instance;
+{ untested();
+	DEV_GEDA_SUBCKT* new_instance = dynamic_cast<DEV_GEDA_SUBCKT*>(p1.clone());
+	new_instance->set_parent(this);
+	return new_instance;
 }
 /*--------------------------------------------------------------------------*/
 void MODEL_GEDA_SUBCKT::set_port_by_index(uint_t num, std::string& ext_name)
@@ -64,16 +71,30 @@ void MODEL_GEDA_SUBCKT::set_port_by_index(uint_t num, std::string& ext_name)
 }
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
+DEV_GEDA_SUBCKT::DEV_GEDA_SUBCKT() :
+	BASE_SUBCKT(), _map(NULL), _parent(NULL)
+{
+	attach_common(&Default_SUBCKT);
+	_n = _nodes;
+}
+/*--------------------------------------------------------------------------*/
 DEV_GEDA_SUBCKT::DEV_GEDA_SUBCKT(DEV_GEDA_SUBCKT const& p) :
-	DEV_SUBCKT(p), _map(NULL) {}
+	BASE_SUBCKT(p), _map(NULL), _parent(p._parent)
+{
+  for (uint_t ii = 0; ii < max_nodes(); ++ii) {
+    _nodes[ii] = p._nodes[ii];
+  }
+  _n = _nodes;
+  assert(!subckt());
+}
 /*--------------------------------------------------------------------------*/
 void DEV_GEDA_SUBCKT::set_parent(const MODEL_GEDA_SUBCKT* p)
-{
+{ untested();
 	_parent = p;
 }
 /*--------------------------------------------------------------------------*/
 void DEV_GEDA_SUBCKT::apply_map(unsigned* map)
-{
+{ untested();
 	CARD_LIST* cl = subckt();
 	assert(cl);
 
@@ -84,7 +105,9 @@ void DEV_GEDA_SUBCKT::apply_map(unsigned* map)
 
 	for (CARD_LIST::iterator ci = cl->begin(); ci != cl->end(); ++ci) {
 		if ((**ci).is_device()) {
+			trace1("apply", (*ci)->long_label());
 			for (uint_t ii=0;  ii<(**ci).net_nodes(); ++ii) {
+				trace2("apply", ii, (**ci).n_(ii).e_());
 				(**ci).n_(ii).map_subckt_node((uint_t*)map, this); //  _ttt = map[e_()];
 			}
 		}else{
@@ -123,9 +146,20 @@ void DEV_GEDA_SUBCKT::orbit_number(unsigned* map, unsigned len, unsigned* port)
 	}
 }
 /*--------------------------------------------------------------------------*/
+std::string DEV_GEDA_SUBCKT::port_name(uint_t i)const {itested();
+	if (_parent) {itested();
+		if (i<_parent->net_nodes()){ untested();
+			return _parent->port_value(i);
+		}else{ untested();
+			return "";
+		}
+	}else{itested();
+		return "";
+	}
+}
 /*--------------------------------------------------------------------------*/
 void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
-{
+{ untested();
 	assert(model);
 	assert(model->subckt());
 	assert(model->subckt()->nodes());
@@ -203,6 +237,20 @@ void DEV_GEDA_SUBCKT::collapse_nodes(const NODE* a, const NODE* b)
 	}
 }
 /*--------------------------------------------------------------------------*/
+void DEV_GEDA_SUBCKT::precalc_first()
+{
+  BASE_SUBCKT::precalc_first();
+
+  if (subckt()) { untested();
+    COMMON_SUBCKT* c = prechecked_cast<COMMON_SUBCKT*>(mutable_common());
+    assert(c);
+    subckt()->attach_params(&(c->_params), scope());
+    subckt()->precalc_first();
+  }else{ untested();
+  }
+  assert(!is_constant()); /* because I have more work to do */
+}
+/*--------------------------------------------------------------------------*/
 void DEV_GEDA_SUBCKT::expand()
 {
 	trace1("DEV_GEDA_SUBCKT::expand", long_label());
@@ -211,10 +259,10 @@ void DEV_GEDA_SUBCKT::expand()
 	assert(c);
 	if (!_parent) { untested();
 		const CARD* model = find_looking_out(c->modelname());
-		if(!dynamic_cast<const MODEL_SUBCKT*>(model)) {
+		if(!dynamic_cast<const BASE_SUBCKT*>(model)) {
 			throw Exception_Type_Mismatch(long_label(), c->modelname(), "subckt");
 		}else{ untested();
-			_parent = prechecked_cast<const MODEL_SUBCKT*>(model);
+			_parent = prechecked_cast<const MODEL_GEDA_SUBCKT*>(model);
 		}
 	}else{
 		assert(find_looking_out(c->modelname()) == _parent);
@@ -254,10 +302,54 @@ void DEV_GEDA_SUBCKT::expand()
 	_map = NULL;
 }
 /*--------------------------------------------------------------------------*/
-void DEV_GEDA_SUBCKT::set_port_by_index(uint_t num, std::string& ext_name)
+void DEV_GEDA_SUBCKT::precalc_last()
 {
+  BASE_SUBCKT::precalc_last();
+
+  COMMON_SUBCKT* c = prechecked_cast<COMMON_SUBCKT*>(mutable_common());
+  assert(c);
+  subckt()->attach_params(&(c->_params), scope());
+  subckt()->precalc_last();
+
+  assert(!is_constant()); /* because I have more work to do */
+}
+/*--------------------------------------------------------------------------*/
+void DEV_GEDA_SUBCKT::set_port_by_index(uint_t num, std::string& ext_name)
+{ untested();
   trace3("DEV_GEDA_SUBCKT::set_port_by_index", long_label(), num, ext_name);
   COMPONENT::set_port_by_index(num, ext_name);
   trace2("DEV_GEDA_SUBCKT::set_port_by_index", hp(this), _n[num].t_());
+}
+/*--------------------------------------------------------------------------*/
+double DEV_GEDA_SUBCKT::tr_probe_num(const std::string& x)const
+{itested();
+  if (Umatch(x, "p ")) {untested();
+    double power = 0.;
+    assert(subckt());
+    for (CARD_LIST::const_iterator
+	   ci = subckt()->begin(); ci != subckt()->end(); ++ci) {untested();
+      power += CARD::probe(*ci,"P");
+    }
+    return power;
+  }else if (Umatch(x, "pd ")) {untested();
+    double power = 0.;
+    assert(subckt());
+    for (CARD_LIST::const_iterator
+	   ci = subckt()->begin(); ci != subckt()->end(); ++ci) {untested();
+      power += CARD::probe(*ci,"PD");
+    }
+    return power;
+  }else if (Umatch(x, "ps ")) {untested();
+    double power = 0.;
+    assert(subckt());
+    for (CARD_LIST::const_iterator
+	   ci = subckt()->begin(); ci != subckt()->end(); ++ci) {untested();
+      power += CARD::probe(*ci,"PS");
+    }
+    return power;
+  }else{itested();
+    return COMPONENT::tr_probe_num(x);
+  }
+  /*NOTREACHED*/
 }
 /*--------------------------------------------------------------------------*/

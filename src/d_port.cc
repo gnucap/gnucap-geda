@@ -47,7 +47,7 @@ class DEV_PORT : public DEV_NET {
 		~DEV_PORT(){}
 	private:
 		string param_name(int i)const;
-		string param_name(int, int)const;
+		string param_name(int i, int j)const;
 		void set_param_by_name(string Name, string Value);
 		bool param_is_printable(int i)const;
 		string param_value(int i)const;
@@ -176,7 +176,7 @@ void DEV_PORT::set_port_by_index(uint_t i, string& name){
 	}
 
 	// register port during model building
-	if(MODEL_SUBCKT* o = dynamic_cast<MODEL_SUBCKT*>(owner())){
+	if(BASE_SUBCKT* o = dynamic_cast<BASE_SUBCKT*>(owner())){
 		unsigned portpos = o->net_nodes();
 		CARD_LIST empty;
 
