@@ -434,15 +434,17 @@ void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
 				continue;
 			}
 
-
+			std::string pv0 = net->port_value(0);
+			std::string pv1 = net->port_value(1);
 			// connect end points to existing nets
 			// (this will take ages.)
-			const place::DEV_PLACE* n1 = find_place(x, net->port_value(0));
+			const place::DEV_PLACE* n1 = find_place(x, pv0);
 			assert(n1);
-			const place::DEV_PLACE* n2 = find_place(x, net->port_value(1));
+			const place::DEV_PLACE* n2 = find_place(x, pv1);
 			assert(n2);
 			if (n1->x()==n2->x() && n1->y()==n2->y()) { unreachable();
-				error(bDANGER,"singular net in %s\n", x->long_label().c_str());
+				error(bDANGER,"singular net in %s, %s-%s\n", x->long_label().c_str(),
+						pv0.c_str(), pv1.c_str());
 			}
 			if (n1->x() == n2->x() && (y0 == y1)){
 				if (in_order( n2->y(), y1, n1->y())){
