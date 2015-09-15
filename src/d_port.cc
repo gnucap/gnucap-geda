@@ -159,25 +159,28 @@ string DEV_PORT::param_value(int i)const
 	}
 }
 /*--------------------------------------------------------------------------*/
-void DEV_PORT::set_port_by_index(uint_t i, string& name){
-	if(i){
+void DEV_PORT::set_port_by_index(uint_t i, string& name)
+{
+	if(i){ untested();
 		trace2("DEV_PORT::set_port_by_index", i, name);
 		// reachable when parsing non-gschem netlist
 		// containing ports with 2 connections.
 		incomplete();
 		return;
+	}else{ untested();
 	}
+
 	DEV_NET::set_port_by_index(i, name);
 
 	string portname = name;
-	if(pinlabel.has_hard_value()){
+	if(pinlabel.has_hard_value()){ untested();
 		portname = pinlabel.string();
-	}else if(net.has_hard_value()){
+	}else if(net.has_hard_value()){ untested();
 		portname = net.string();
 	}
 
 	// register port during model building
-	if(MODEL_GEDA_SUBCKT* o = dynamic_cast<MODEL_GEDA_SUBCKT*>(owner())){
+	if(DEV_GEDA_SUBCKT* o = dynamic_cast<DEV_GEDA_SUBCKT*>(owner())){ untested();
 		unsigned portpos = o->net_nodes();
 		CARD_LIST empty;
 
@@ -204,12 +207,19 @@ void DEV_PORT::set_port_by_index(uint_t i, string& name){
 			o->set_port_by_index(portpos, portname);
 		}
 
-	}else if(BASE_SUBCKT* o = dynamic_cast<BASE_SUBCKT*>(owner())){
+		// DEV_NET::set_port_by_index(1, portname);
+		DEV_NET::set_port_by_index(1, portname);
+
+	}else if(MODEL_GEDA_SUBCKT* o = dynamic_cast<MODEL_GEDA_SUBCKT*>(owner())){ untested();
+		USE(o);
+	}else if(BASE_SUBCKT* o = dynamic_cast<BASE_SUBCKT*>(owner())){ untested();
 		(void) o;
 		// using incompatible sckt type?
 		untested(); incomplete();
+	}else if(owner()){ unreachable();
+	}else{ untested();
+		// DEV_NET::set_port_by_index(1, portname);
 	}
-	DEV_NET::set_port_by_index(1, portname);
 }
 /*---------------------------------------------------------------------------*/
 // collapse happens after the parents map_sckt_nodes.
