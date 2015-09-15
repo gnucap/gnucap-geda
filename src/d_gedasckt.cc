@@ -35,14 +35,19 @@ static DISPATCHER<CARD>::INSTALL
   d2(&device_dispatcher, "symbol|subckt", &p2);
 /*--------------------------------------------------------------------------*/
 MODEL_GEDA_SUBCKT::MODEL_GEDA_SUBCKT() : DEV_GEDA_SUBCKT()
-{
+{ untested();
 	new_subckt();
 }
 /*--------------------------------------------------------------------------*/
 MODEL_GEDA_SUBCKT::MODEL_GEDA_SUBCKT(MODEL_GEDA_SUBCKT const& p) :
 	DEV_GEDA_SUBCKT(p)
-{
+{ untested();
 	new_subckt();
+}
+/*--------------------------------------------------------------------------*/
+MODEL_GEDA_SUBCKT::~MODEL_GEDA_SUBCKT()
+{ untested();
+	trace3("destroying model", long_label(), hp(this), hp(common()));
 }
 /*--------------------------------------------------------------------------*/
 CARD* MODEL_GEDA_SUBCKT::clone_instance()const
@@ -73,19 +78,28 @@ void MODEL_GEDA_SUBCKT::set_port_by_index(uint_t num, std::string& ext_name)
 /*--------------------------------------------------------------------------*/
 DEV_GEDA_SUBCKT::DEV_GEDA_SUBCKT() :
 	BASE_SUBCKT(), _map(NULL), _parent(NULL)
-{
+{ untested();
+	attach_common(&Default_SUBCKT);
+	detach_common();
 	attach_common(&Default_SUBCKT);
 	_n = _nodes;
+	trace2("new", long_label(), hp(this));
 }
 /*--------------------------------------------------------------------------*/
 DEV_GEDA_SUBCKT::DEV_GEDA_SUBCKT(DEV_GEDA_SUBCKT const& p) :
 	BASE_SUBCKT(p), _map(NULL), _parent(p._parent)
-{
+{ untested();
   for (uint_t ii = 0; ii < max_nodes(); ++ii) {
     _nodes[ii] = p._nodes[ii];
   }
   _n = _nodes;
   assert(!subckt());
+  trace2("copy", long_label(), hp(this));
+}
+/*--------------------------------------------------------------------------*/
+DEV_GEDA_SUBCKT::~DEV_GEDA_SUBCKT()
+{ untested();
+	trace3("destroying", long_label(), hp(this), hp(common()));
 }
 /*--------------------------------------------------------------------------*/
 void DEV_GEDA_SUBCKT::set_parent(const MODEL_GEDA_SUBCKT* p)

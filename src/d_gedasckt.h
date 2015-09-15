@@ -38,7 +38,7 @@ private:
   explicit	DEV_GEDA_SUBCKT(const DEV_GEDA_SUBCKT&);
 public:
   explicit	DEV_GEDA_SUBCKT();
-		~DEV_GEDA_SUBCKT() {}
+		~DEV_GEDA_SUBCKT();
 private: // from DEV_SUBCKT
   char		id_letter()const	{return 'X';}
   bool		print_type_in_spice()const {return true;}
@@ -93,7 +93,7 @@ private:
   explicit	MODEL_GEDA_SUBCKT(const MODEL_GEDA_SUBCKT&p);
 public:
   explicit	MODEL_GEDA_SUBCKT();
-		~MODEL_GEDA_SUBCKT() {}
+		~MODEL_GEDA_SUBCKT();
 public: // override virtual
   char id_letter()const	{untested();return '\0';}
   CARD* clone_instance()const;

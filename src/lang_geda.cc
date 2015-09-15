@@ -1614,14 +1614,27 @@ class CMD_GEDA : public CMD {
 				model = new MODEL_GEDA_SUBCKT(); // BUG: ask dispatcher?
 				sym >> model;
 				model->set_label(label);
-				LANG_GEDA::read_file(source, Scope, model);
+				try{ untested();
+					LANG_GEDA::read_file(source, Scope, model);
+				}catch(...){ untested();
+					delete (MODEL_GEDA_SUBCKT*) model;
+					throw;
+				}
 				//align(model); // might be needed for gnucap .36
 				Scope->push_back(model);
-			}else if( module ) {
+			}else if(module) { untested();
 				trace1("reading module", filename);
+				untested();
 				model = new MODEL_GEDA_SUBCKT(); // BUG: ask dispatcher?
+				untested();
 				model->set_label(label);
-				LANG_GEDA::read_file(filename, Scope, model);
+				untested();
+				try{ untested();
+					LANG_GEDA::read_file(filename, Scope, model);
+				}catch(...){ untested();
+					delete (MODEL_GEDA_SUBCKT*) model;
+					throw;
+				}
 				trace3("done reading module", filename, model->long_label(), model->int_nodes());
 				trace1("...", model->subckt()->nodes()->how_many());
 				//align(model); // might be needed for gnucap .36
@@ -1661,7 +1674,7 @@ void LANG_GEDA::read_spice(string f, CARD_LIST* Scope, MODEL_SUBCKT* owner)
 }
 /*----------------------------------------------------------------------*/
 void LANG_GEDA::read_file(string f, CARD_LIST* Scope, MODEL_SUBCKT* owner)
-{
+{ untested();
 	error(bDEBUG, "reading file "+f+"\n");
 	CS cmd(CS::_INC_FILE, f);
 
@@ -1670,8 +1683,8 @@ void LANG_GEDA::read_file(string f, CARD_LIST* Scope, MODEL_SUBCKT* owner)
 	OPT::language = &lang_geda;
 	///
 
-	try{
-		for(;;){
+	try{ untested();
+		for(;;){ untested();
 			// new__instance. but _gotline hack
 			lang_geda.parse_item_(cmd, owner, Scope);
 		}
