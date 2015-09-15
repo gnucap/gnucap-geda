@@ -1249,13 +1249,14 @@ void LANG_GEDA::parse_item_(CS& cmd, CARD* owner, CARD_LIST* scope)const
 	// - component needs to be instanciated after sckt declaration.
 	// - parser found nonbrace when trying to parse body
 	trace4("LANG_GEDA::parse_item_", _gotline, _placeq.size(), _netq.size(), hp(_C));
-	if(!_gotline && !_placeq.size() && !_netq.size() && !_C ){
-		cmd.get_line("gnucap-geda>");
-	} else if (!_placeq.size() && !_netq.size() && !_C ){
-		_gotline = 0;
-	}else if (_C && !_gotline){
+	if(_C && !_gotline){
 		_C = NULL;
 		throw(Exception_CS("something wrong", cmd));
+	}else if(_C){
+	}else if(!_gotline && !_placeq.size() && !_netq.size()){
+		cmd.get_line("gnucap-geda>");
+	}else if(!_placeq.size() && !_netq.size()){
+		_gotline = 0;
 	}else{
 	}
 
