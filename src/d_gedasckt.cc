@@ -35,23 +35,23 @@ static DISPATCHER<CARD>::INSTALL
   d2(&device_dispatcher, "symbol|subckt", &p2);
 /*--------------------------------------------------------------------------*/
 MODEL_GEDA_SUBCKT::MODEL_GEDA_SUBCKT() : DEV_GEDA_SUBCKT()
-{ untested();
+{
 	new_subckt();
 }
 /*--------------------------------------------------------------------------*/
 MODEL_GEDA_SUBCKT::MODEL_GEDA_SUBCKT(MODEL_GEDA_SUBCKT const& p) :
 	DEV_GEDA_SUBCKT(p)
-{ untested();
+{
 	new_subckt();
 }
 /*--------------------------------------------------------------------------*/
 MODEL_GEDA_SUBCKT::~MODEL_GEDA_SUBCKT()
-{ untested();
+{
 	trace3("destroying model", long_label(), hp(this), hp(common()));
 }
 /*--------------------------------------------------------------------------*/
 CARD* MODEL_GEDA_SUBCKT::clone_instance()const
-{ untested();
+{
 	DEV_GEDA_SUBCKT* new_instance = dynamic_cast<DEV_GEDA_SUBCKT*>(p1.clone());
 	new_instance->set_parent(this);
 	return new_instance;
@@ -78,7 +78,7 @@ void MODEL_GEDA_SUBCKT::set_port_by_index(uint_t num, std::string& ext_name)
 /*--------------------------------------------------------------------------*/
 DEV_GEDA_SUBCKT::DEV_GEDA_SUBCKT() :
 	BASE_SUBCKT(), _map(NULL), _parent(NULL)
-{ untested();
+{
 	attach_common(&Default_SUBCKT);
 	detach_common();
 	attach_common(&Default_SUBCKT);
@@ -88,7 +88,7 @@ DEV_GEDA_SUBCKT::DEV_GEDA_SUBCKT() :
 /*--------------------------------------------------------------------------*/
 DEV_GEDA_SUBCKT::DEV_GEDA_SUBCKT(DEV_GEDA_SUBCKT const& p) :
 	BASE_SUBCKT(p), _map(NULL), _parent(p._parent)
-{ untested();
+{
   for (uint_t ii = 0; ii < max_nodes(); ++ii) {
     _nodes[ii] = p._nodes[ii];
   }
@@ -98,17 +98,17 @@ DEV_GEDA_SUBCKT::DEV_GEDA_SUBCKT(DEV_GEDA_SUBCKT const& p) :
 }
 /*--------------------------------------------------------------------------*/
 DEV_GEDA_SUBCKT::~DEV_GEDA_SUBCKT()
-{ untested();
+{
 	trace3("destroying", long_label(), hp(this), hp(common()));
 }
 /*--------------------------------------------------------------------------*/
 void DEV_GEDA_SUBCKT::set_parent(const MODEL_GEDA_SUBCKT* p)
-{ untested();
+{
 	_parent = p;
 }
 /*--------------------------------------------------------------------------*/
 void DEV_GEDA_SUBCKT::apply_map(unsigned* map)
-{ untested();
+{
 	CARD_LIST* cl = subckt();
 	assert(cl);
 
@@ -117,13 +117,13 @@ void DEV_GEDA_SUBCKT::apply_map(unsigned* map)
 		trace4("preapply", long_label(), i, _map[i], is_device());
 	}
 
-	for (CARD_LIST::iterator ci = cl->begin(); ci != cl->end(); ++ci) { untested();
-		if ((**ci).is_device()) { untested();
-			for (uint_t ii=0;  ii<(**ci).net_nodes(); ++ii) { untested();
+	for (CARD_LIST::iterator ci = cl->begin(); ci != cl->end(); ++ci) {
+		if ((**ci).is_device()) {
+			for (uint_t ii=0;  ii<(**ci).net_nodes(); ++ii) {
 				trace2("apply", (*ci)->long_label(), ii); //  (**ci).n_(ii).e_());
 				(**ci).n_(ii).map_subckt_node((uint_t*)map, this); //  _ttt = map[e_()];
 			}
-		}else{ untested();
+		}else{
 //			assert(dynamic_cast<MODEL_CARD*>(*ci));
 		}
 	}
@@ -160,11 +160,11 @@ void DEV_GEDA_SUBCKT::orbit_number(unsigned* map, unsigned len, unsigned* port)
 	}
 }
 /*--------------------------------------------------------------------------*/
-std::string DEV_GEDA_SUBCKT::port_name(uint_t i)const {itested();
-	if (_parent) {itested();
-		if (i<_parent->net_nodes()){ untested();
+std::string DEV_GEDA_SUBCKT::port_name(uint_t i)const {
+	if (_parent) {
+		if (i<_parent->net_nodes()){
 			return _parent->port_value(i);
-		}else{ untested();
+		}else{
 			return "";
 		}
 	}else{itested();
@@ -173,7 +173,7 @@ std::string DEV_GEDA_SUBCKT::port_name(uint_t i)const {itested();
 }
 /*--------------------------------------------------------------------------*/
 void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
-{ untested();
+{
 	assert(model);
 	assert(model->subckt());
 	assert(model->subckt()->nodes());
@@ -218,7 +218,7 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 				}else if(_map[i]<=seek){ untested();
 					trace3("internal, exists", i, _map[i], seek);
 					_map[i] = _map[_map[i]];
-				}else{ untested();
+				}else{
 					trace3("internal, new", i, _map[i], seek);
 					seek = _map[i];
 					_map[i] = CKT_BASE::_sim->newnode_subckt();
@@ -255,12 +255,12 @@ void DEV_GEDA_SUBCKT::precalc_first()
 {
   BASE_SUBCKT::precalc_first();
 
-  if (subckt()) { untested();
+  if (subckt()) {
     COMMON_SUBCKT* c = prechecked_cast<COMMON_SUBCKT*>(mutable_common());
     assert(c);
     subckt()->attach_params(&(c->_params), scope());
     subckt()->precalc_first();
-  }else{ untested();
+  }else{
   }
   assert(!is_constant()); /* because I have more work to do */
 }
@@ -329,7 +329,7 @@ void DEV_GEDA_SUBCKT::precalc_last()
 }
 /*--------------------------------------------------------------------------*/
 void DEV_GEDA_SUBCKT::set_port_by_index(uint_t num, std::string& ext_name)
-{ untested();
+{
   trace3("DEV_GEDA_SUBCKT::set_port_by_index", long_label(), num, ext_name);
   COMPONENT::set_port_by_index(num, ext_name);
   trace2("DEV_GEDA_SUBCKT::set_port_by_index", hp(this), _n[num].t_());

@@ -165,7 +165,7 @@ d(&language_dispatcher, lang_geda.name(), &lang_geda);
 class CMD_GSCHEM : public CMD { //
 public:
   void do_it(CS&, CARD_LIST* Scope)
-  { untested();
+  {
     command("options lang=gschem", Scope);
   }
 } p9;
@@ -260,7 +260,7 @@ std::string* LANG_GEDA::parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel
 // FIXME: do symbol_type?
 std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
 		string basename)const
-{ untested();
+{
 	assert(!_C);
 	assert(!_netq.size());
 	assert(!_placeq.size());
@@ -430,7 +430,7 @@ void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
 	for(CARD_LIST::const_iterator ci = scope->begin(); ci != scope->end(); ++ci) {
 		if(const DEV_NET* net=dynamic_cast<DEV_NET*>(*ci)){
 			// exclude external ports and rails (HACK)
-			if((*ci)->net_nodes()<2){ untested();
+			if((*ci)->net_nodes()<2){
 				continue;
 			}else if((net->port_value(0)+"AA").substr(0, INT_PREFIX.length()) != INT_PREFIX) { untested();
 				continue;
@@ -627,7 +627,7 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
 	std::string type=lang_geda.find_type_in_string(cmd);
 	GEDA_SYMBOL* dev = _C;
 	_C = NULL; // to make parse_symbol_file work
-	if(dev->has_key("device")){ untested();
+	if(dev->has_key("device")){
 		assert(type==(*dev)["device"] || type==DUMMY_PREFIX+((*dev)["basename"]));
 	}else{ untested();
 	}
@@ -652,7 +652,7 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
 
 	try{
 		x->set_param_by_name("basename", basename);
-	} catch(Exception_No_Match){ untested();
+	} catch(Exception_No_Match){
 	}
 	// set parameters
 
@@ -700,21 +700,21 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
 		//new__instance(cmd,NULL,Scope); //cmd : can create. Scope? how to get Scope? Yes!
 		const COMPONENT* port = find_place(x, newx, newy);
 		string portname = "incomplete";
-		if (!port){ untested();
+		if (!port){
 			portname = "cn_" + ::to_string(_nodenumber++);
 			_placeq.push( portinfo(portname, newx, newy) );
 			portname = string(INT_PREFIX) + portname;
-		} else { untested();
+		} else {
 			portname = port->port_value(0);
 		}
 		// port_by_name?!
-		try{ untested();
+		try{
 			string p=i->label();
 			trace3("LANG_GEDA::parse_component setting port", p, portname, hp(x));
 			x->set_port_by_name(p, portname);
 			assert(p==i->label());
-		}catch(Exception_No_Match){ untested();
-			try{ untested();
+		}catch(Exception_No_Match){
+			try{
 				trace2("LANG_GEDA::parse_component by index", i->pinseq(), portname);
 				x->set_port_by_index(i->pinseq()-1, portname);
 			}catch(Exception_Too_Many){ untested();
@@ -1134,7 +1134,7 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 		trace2("find_type_in_string C", hp(_C), D["device"]);
 
 		if (!D.pincount()){
-			if ( D.has_key("device") ){ untested();
+			if ( D.has_key("device") ){
 				if ((*_C)["device"] == "directive")
 					incomplete();
 				// return "some command"
@@ -1622,16 +1622,13 @@ class CMD_GEDA : public CMD {
 				}
 				//align(model); // might be needed for gnucap .36
 				Scope->push_back(model);
-			}else if(module) { untested();
+			}else if(module) {
 				trace1("reading module", filename);
-				untested();
 				model = new MODEL_GEDA_SUBCKT(); // BUG: ask dispatcher?
-				untested();
 				model->set_label(label);
-				untested();
-				try{ untested();
+				try{
 					LANG_GEDA::read_file(filename, Scope, model);
-				}catch(...){ untested();
+				}catch(...){
 					delete (MODEL_GEDA_SUBCKT*) model;
 					throw;
 				}
@@ -1674,7 +1671,7 @@ void LANG_GEDA::read_spice(string f, CARD_LIST* Scope, MODEL_SUBCKT* owner)
 }
 /*----------------------------------------------------------------------*/
 void LANG_GEDA::read_file(string f, CARD_LIST* Scope, MODEL_SUBCKT* owner)
-{ untested();
+{
 	error(bDEBUG, "reading file "+f+"\n");
 	CS cmd(CS::_INC_FILE, f);
 
@@ -1683,8 +1680,8 @@ void LANG_GEDA::read_file(string f, CARD_LIST* Scope, MODEL_SUBCKT* owner)
 	OPT::language = &lang_geda;
 	///
 
-	try{ untested();
-		for(;;){ untested();
+	try{
+		for(;;){
 			// new__instance. but _gotline hack
 			lang_geda.parse_item_(cmd, owner, Scope);
 		}

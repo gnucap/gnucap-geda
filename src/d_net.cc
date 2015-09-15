@@ -43,14 +43,14 @@ DEV_NET::DEV_NET(const DEV_NET& p) : COMPONENT(p)
 }
 /*--------------------------------------------------------------------------*/
 void DEV_NET::tr_iwant_matrix()
-{ untested();
+{
 	trace4("DEV_NET::tr_iwant_matrix", long_label(), _n[0].m_(), _n[1].m_(), net_nodes());
 	for( unsigned i=net_nodes(); --i>0; ){
 		trace1("DEV_NET::tr_iwant_matrix", i);
 		assert(_n[i].m_() != INVALID_NODE);
 	}
-	if(net_nodes()<2){ untested();
-	}else if(net_nodes()==2){ untested();
+	if(net_nodes()<2){
+	}else if(net_nodes()==2){
 		_sim->_aa.iwant(_n[0].m_(),_n[1].m_());
 		_sim->_lu.iwant(_n[0].m_(),_n[1].m_());
 	}else{ incomplete();
@@ -111,7 +111,7 @@ void DEV_NET::tr_begin()
 /*--------------------------------------------------------------------------*/
 void DEV_NET::tr_load()
 {
-	if(net_nodes()==1){ untested();
+	if(net_nodes()==1){
 		// hmm should not get here...?
 		return;
 	}
