@@ -24,12 +24,24 @@ EG_TESTS = eg1.sh \
            eg42.sh \
            eg43.sh \
            eg5.sh
+ER_TESTS = eg1_recon.sh \
+           eg15_recon.sh \
+           eg2_recon.sh \
+           eg25_recon.sh \
+           eg26_recon.sh \
+           eg3_recon.sh \
+           eg34_recon.sh \
+           eg4_recon.sh \
+           eg42_recon.sh \
+           eg43_recon.sh \
+           eg5_recon.sh
 
 GC_TESTS = res_net.sh short.sh rail.sh spice.sh \
         testbench.sh res.sh notfound.sh convert.sh \
         verilog.sh verilog_place.sh
 CUSTOM_TESTS = nets.sh bogus.sh
 TESTS = $(EG_TESTS) \
+        $(ER_TESTS) \
         $(GC_TESTS) \
         $(CUSTOM_TESTS)
 EXTRA_DIST+= $(TESTS:%.sh=%.ref) $(GC_TESTS:%.sh=%.gc)
@@ -43,7 +55,7 @@ EXTRA_DIST+= $(SCHEMATICS)
 spice.out: $(PWD)/spice_foo.sp
 testbench.out: $(PWD)/dut.sch
 
-$(GC_TESTS) $(EG_TESTS) $(CUSTOM_TESTS): %.sh: %.ref
+$(ER_TESTS) $(GC_TESTS) $(EG_TESTS) $(CUSTOM_TESTS): %.sh: %.ref
 	@echo "#!/bin/sh" > $@
 	@echo "set -e" >> $@
 	@echo "exec 2>&9" >> $@
@@ -59,6 +71,13 @@ $(EG_TESTS:%.sh=%.gc): %.gc:
 	echo gschem >> $@
 	echo include $(srcdir)/$*.sch >> $@
 	echo verilog >> $@
+	echo list >> $@
+	echo end >> $@
+
+$(ER_TESTS:%.sh=%.gc): %_recon.gc: %.out
+	echo verilog > $@
+	echo include $*.out >> $@
+	echo gschem >> $@
 	echo list >> $@
 	echo end >> $@
 
@@ -100,7 +119,10 @@ $(GC_TESTS:%.sh=%.out): %.out: %.gc
 
 testbench.out: EXTRA_SED_ARG=-e '/^parameter /d'
 
-$(EG_TESTS:%.sh=%.out): %.out: %.gc
+# $(EG_TESTS:%.sh=%_recon.out): GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
+$(EG_TESTS:%.sh=%.out): GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
+
+$(EG_TESTS:%.sh=%.out) $(EG_TESTS:%.sh=%_recon.out): %.out: %.gc
 	$(GNUCAP) -a $(MODULE) $(GC_INCLUDES) < $< | \
 		sed -e '1,/^core-lib version/d' | \
 		sed -e '1,/^stashing as/d' | \
@@ -110,6 +132,7 @@ $(EG_TESTS:%.sh=%.out): %.out: %.gc
 $(EG_TESTS:%.sh=%.out): EXTRA_SED_ARGS=-e '/^parameter /d'
 
 eg_tests: $(EG_TESTS:%.sh=%.log)
+er_tests: $(ER_TESTS:%.sh=%.log)
 gc_tests: $(GC_TESTS:%.sh=%.log)
 
 .PHONY: $(TESTS:%.sh=%.out)
