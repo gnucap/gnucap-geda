@@ -48,6 +48,10 @@ extern "C"{
 #define USE(a) (void) a;
 #endif
 /*--------------------------------------------------------------------------*/
+#ifndef MODEL_SUBCKT
+#define MODEL_SUBCKT BASE_SUBCKT
+#endif
+/*--------------------------------------------------------------------------*/
 #define DUMMY_PREFIX string("!_")
 #define INT_PREFIX string("x_")
 /*--------------------------------------------------------------------------*/
@@ -244,7 +248,7 @@ std::string* LANG_GEDA::parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel
 			}
 		}
 	}
-	if(ismodel and x){
+	if(ismodel and x){ untested();
 		string portname = "np_" + _portvalue+::to_string(number++);
 		x->set_port_by_index(index, portname);
 		return NULL;
@@ -696,24 +700,24 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
 		//new__instance(cmd,NULL,Scope); //cmd : can create. Scope? how to get Scope? Yes!
 		const COMPONENT* port = find_place(x, newx, newy);
 		string portname = "incomplete";
-		if (!port){
+		if (!port){ untested();
 			portname = "cn_" + ::to_string(_nodenumber++);
 			_placeq.push( portinfo(portname, newx, newy) );
 			portname = string(INT_PREFIX) + portname;
-		} else {
+		} else { untested();
 			portname = port->port_value(0);
 		}
 		// port_by_name?!
-		try{
+		try{ untested();
 			string p=i->label();
-			trace3("LANG_GEDA::parse_component setting port", i->label(), portname, hp(x));
+			trace3("LANG_GEDA::parse_component setting port", p, portname, hp(x));
 			x->set_port_by_name(p, portname);
 			assert(p==i->label());
-		}catch(Exception_No_Match){
-			try{
+		}catch(Exception_No_Match){ untested();
+			try{ untested();
 				trace2("LANG_GEDA::parse_component by index", i->pinseq(), portname);
 				x->set_port_by_index(i->pinseq()-1, portname);
-			}catch(Exception_Too_Many){
+			}catch(Exception_Too_Many){ untested();
 				// we have checked for pincount!
 				unreachable();
 			}
@@ -1618,12 +1622,12 @@ class CMD_GEDA : public CMD {
 				model = new MODEL_GEDA_SUBCKT(); // BUG: ask dispatcher?
 				model->set_label(label);
 				LANG_GEDA::read_file(filename, Scope, model);
-				trace4("done reading module", filename, model->long_label(), model->net_nodes(), model->int_nodes());
+				trace3("done reading module", filename, model->long_label(), model->int_nodes());
 				trace1("...", model->subckt()->nodes()->how_many());
 				//align(model); // might be needed for gnucap .36
-				for(unsigned i=0; i<(unsigned)model->net_nodes(); ++i){
-					trace3("", i, model->port_value(i), model->n_(i).e_());
-				}
+// 				for(unsigned i=0; i<(unsigned)model->net_nodes(); ++i){
+// 					trace3("", i, model->port_value(i), model->n_(i).e_());
+// 				}
 				Scope->push_back(model);
 			} else if(filename!=""){
 				command("options lang=gschem", Scope);

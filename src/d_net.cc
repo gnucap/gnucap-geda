@@ -43,22 +43,24 @@ DEV_NET::DEV_NET(const DEV_NET& p) : COMPONENT(p)
 }
 /*--------------------------------------------------------------------------*/
 void DEV_NET::tr_iwant_matrix()
-{
+{ untested();
 	trace4("DEV_NET::tr_iwant_matrix", long_label(), _n[0].m_(), _n[1].m_(), net_nodes());
 	for( unsigned i=net_nodes(); --i>0; ){
 		trace1("DEV_NET::tr_iwant_matrix", i);
 		assert(_n[i].m_() != INVALID_NODE);
 	}
-#ifndef HAVE_COLLAPSE
-  _sim->_aa.iwant(_n[0].m_(),_n[1].m_());
-  _sim->_lu.iwant(_n[0].m_(),_n[1].m_());
-#endif
+	if(net_nodes()<2){ untested();
+	}else if(net_nodes()==2){ untested();
+		_sim->_aa.iwant(_n[0].m_(),_n[1].m_());
+		_sim->_lu.iwant(_n[0].m_(),_n[1].m_());
+	}else{ incomplete();
+	}
 
 	//_sim->_aa.iwant(_n[OUT1].m_(),_n[OUT2].m_());
 	//_sim->_lu.iwant(_n[OUT1].m_(),_n[OUT2].m_());
 }
 /*--------------------------------------------------------------------------*/
-void DEV_NET::ac_iwant_matrix() {}
+void DEV_NET::ac_iwant_matrix() {incomplete();}
 /*--------------------------------------------------------------------------*/
 void DEV_NET::precalc_first()
 {
@@ -98,23 +100,27 @@ void DEV_NET::tr_begin()
 		assert(_n[0].m_() == _n[i].m_());
 #endif
 	}
-#ifndef HAVE_COLLAPSE
+
 	_g0 = 1./OPT::shortckt;
 	_g1 = 0;
-	q_load();
-#endif
+// 	if(net_nodes()>1){ untested();
+// 		q_load();
+// 	}else{untested();
+// 	}
 }
 /*--------------------------------------------------------------------------*/
 void DEV_NET::tr_load()
 {
-#ifndef HAVE_COLLAPSE
+	if(net_nodes()==1){ untested();
+		// hmm should not get here...?
+		return;
+	}
   double d = _g0 - _g1;
   _g1 = _g0;
   if (d != 0.) {
     _sim->_aa.load_symmetric(_n[0].m_(), _n[1].m_(), d);
   }else{ untested();
   }
-#endif
 }
 /*--------------------------------------------------------------------------*/
 double DEV_NET::tr_probe_num(const std::string& x)const

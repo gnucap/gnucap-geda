@@ -62,6 +62,7 @@ private:
 
   std::string port_name(uint_t i)const;
   CARD*	clone()const		{return new DEV_GEDA_SUBCKT(*this);}
+public:
   void set_port_by_index(uint_t num, std::string& ext_name);
 private: // node stuff
   void map_subckt_nodes(const CARD* model);
@@ -103,7 +104,7 @@ public: // override virtual
   CARD_LIST*	   scope()		{assert(subckt()); return subckt();}
   const CARD_LIST* scope()const		{assert(subckt()); return subckt();}
 private: // no-ops for prototype
-  bool is_device()const	{return false;}
+  bool is_device()const	{untested(); return false;}
   void precalc_first(){untested();}
   void expand(){untested();}
   void precalc_last(){untested();}

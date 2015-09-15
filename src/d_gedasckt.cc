@@ -100,20 +100,20 @@ void DEV_GEDA_SUBCKT::apply_map(unsigned* map)
 
 	unsigned num_nodes_in_subckt = _parent->subckt()->nodes()->how_many();
 	for(unsigned i=0; i<=num_nodes_in_subckt; ++i){
-		trace3("preapply", long_label(), i, _map[i]);
+		trace4("preapply", long_label(), i, _map[i], is_device());
 	}
 
-	for (CARD_LIST::iterator ci = cl->begin(); ci != cl->end(); ++ci) {
-		if ((**ci).is_device()) {
-			trace1("apply", (*ci)->long_label());
-			for (uint_t ii=0;  ii<(**ci).net_nodes(); ++ii) {
-				trace2("apply", ii, (**ci).n_(ii).e_());
+	for (CARD_LIST::iterator ci = cl->begin(); ci != cl->end(); ++ci) { untested();
+		if ((**ci).is_device()) { untested();
+			for (uint_t ii=0;  ii<(**ci).net_nodes(); ++ii) { untested();
+				trace2("apply", (*ci)->long_label(), ii); //  (**ci).n_(ii).e_());
 				(**ci).n_(ii).map_subckt_node((uint_t*)map, this); //  _ttt = map[e_()];
 			}
-		}else{
+		}else{ untested();
 //			assert(dynamic_cast<MODEL_CARD*>(*ci));
 		}
 	}
+	trace1("apply_map done", long_label());
 }
 /*--------------------------------------------------------------------------*/
 // map is a permutation
