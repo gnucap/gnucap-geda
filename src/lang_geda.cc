@@ -1303,47 +1303,44 @@ pair<int,int> componentposition(int* absxy, int* delxy, int angle, bool mirror)
 {
 	int newx = absxy[0];
 	int newy = absxy[1];
-	//if(mirror=="0")
 	if(!mirror){
 		switch(angle){untested();
 			case 0:
-				newx -= delxy[0];
-				newy -= delxy[1];
+				newx -= delxy[0]; // -1  0
+				newy -= delxy[1]; //  0 -1
 				break;
 			case 90:
-				newx += delxy[1];
-				newy -= delxy[0];
+				newx += delxy[1]; //  0  1
+				newy -= delxy[0]; // -1  0
 				break;
 			case 180:
-				newx += delxy[0];
-				newy += delxy[1];
+				newx += delxy[0]; //  1  0
+				newy += delxy[1]; //  0  1
 				break;
 			case 270:
-				newx -= delxy[1];
-				newy += delxy[0];
+				newx -= delxy[1]; //  0 -1
+				newy += delxy[0]; //  1  0
 				break;
 		}
-	} else if(mirror){
+	}else{
 		switch(angle){untested();
 			case 0:
-				newx += delxy[0];
-				newy -= delxy[1];
+				newx += delxy[0]; //  1  0
+				newy -= delxy[1]; //  0 -1
 				break;
 			case 90:
-				newx += delxy[1];
-				newy += delxy[0];
+				newx += delxy[1]; //  0  1
+				newy += delxy[0]; //  1  0
 				break;
 			case 180: untested();
-				newx -= delxy[0];
-				newy += delxy[1];
+				newx -= delxy[0]; // -1  0
+				newy += delxy[1]; //  0  1
 				break;
 			case 270:
-				newx -= delxy[1];
-				newy -= delxy[0];
+				newx -= delxy[1]; //  0 -1
+				newy -= delxy[0]; // -1  0
 				break;
 		}
-	}else{ untested();
-		//not correct mirror!
 	}
 	return pair<int,int>(newx,newy);
 }
