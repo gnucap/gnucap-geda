@@ -1,9 +1,3 @@
-x_cn_1 is already a node: x_cn_0
-x_cn_2 is already a node: x_cn_1
-x_cn_3 is already a node: x_cn_2
-x_cn_4 is already a node: x_cn_3
-x_cn_5 is already a node: x_cn_4
-x_cn_6 is already a node: x_cn_5
 Hacker's Power Supply
 ^ ? Hacker's: no match
 Licensed under GPL
@@ -34,7 +28,7 @@ Transformer specification
 module !_transformer-5.sym (coil_connection,coil_connection,coil_connection,coil_connection,coil_connection,coil_connection,coil_connection);
 endmodule // !_transformer-5.sym
 
-TRANSFORMER #(.basename(transformer-5.sym),.comment(The),.numslots(0)) T? (.coil_connection(x_cn_6),.coil_connection(?????),.coil_connection(?????),.coil_connection(?????),.coil_connection(?????),.coil_connection(?????),.coil_connection(?????));
+TRANSFORMER #(.basename(transformer-5.sym),.comment(The),.numslots(0)) T? (.coil_connection(x_cn_6));
 place #(.x(39200),.y(55400)) 39200:55400 (.port(x_cn_0));
 place #(.x(39200),.y(54200)) 39200:54200 (.port(x_cn_1));
 place #(.x(40700),.y(56000)) 40700:56000 (.port(x_cn_2));

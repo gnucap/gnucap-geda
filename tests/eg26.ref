@@ -1,16 +1,9 @@
-x_cn_16 is already a node: x_cn_15
-x_cn_17 is already a node: x_cn_16
-x_cn_18 is already a node: x_cn_17
-x_cn_19 is already a node: x_cn_18
-x_cn_20 is already a node: x_cn_19
-x_cn_21 is already a node: x_cn_20
-x_cn_22 is already a node: x_cn_21
-Write Enable
+Write Enable 
 ^ ? Write: no match
-SRAM Cell
+SRAM Cell 
 ^ ? SRAM: no match
-//v 20081231 1
-//C 45300 44000 1 0 0 DB25-2.sym
+//v 20081231 1 
+//C 45300 44000 1 0 0 DB25-2.sym 
 module !_DB25-2.sym (SLCT,GND,PE,GND,BUSY,GND,/ACK,GND,DATA7,GND,DATA6,GND,DATA5,GND,DATA4,GND,DATA3,/SLCTIN,DATA2,/INIT,DATA1,/ERROR,DATA0,/AUTOF,/STROBE);
 endmodule // !_DB25-2.sym
 
@@ -116,10 +109,10 @@ net #() net25 (.p(x_nn_58),.n(x_nn_59));
 place #(.x(47900),.y(48000)) 47900:48000 (.port(x_nn_59));
 net #() extranet26 (.p(x_nn_59),.n(x_cn_30));
 net #() extranet27 (.p(x_nn_59),.n(x_nn_41));
-//B 49300 44900 1100 1200 3 0 0 0 -1 -1 0 -1 -1 -1 -1 -1
-//T 49300 44700 9 10 1 0 0 0 1
-//B 47300 47100 2900 2000 3 0 0 0 -1 -1 0 -1 -1 -1 -1 -1
-//T 49200 49200 9 10 1 0 0 0 1
+//B 49300 44900 1100 1200 3 0 0 0 -1 -1 0 -1 -1 -1 -1 -1 
+//T 49300 44700 9 10 1 0 0 0 1 
+//B 47300 47100 2900 2000 3 0 0 0 -1 -1 0 -1 -1 -1 -1 -1 
+//T 49200 49200 9 10 1 0 0 0 1 
 net #() net28 (.p(x_nn_60),.n(x_nn_61));
 place #(.x(48700),.y(46000)) 48700:46000 (.port(x_nn_60));
 place #(.x(49900),.y(46000)) 49900:46000 (.port(x_nn_61));

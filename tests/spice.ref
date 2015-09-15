@@ -1,1 +1,27 @@
+subckt: already installed, replacing
+stashing as subckt:0
+reading file spice.sch
+.subckt foo ( 1 2 )
+* a spice module, testing spice-sdb style "file" attribute 
+.subckt foo ( a b )
+.model foores r ( rsh=1 narrow=NA( 0.) defw=1 tc1=1.9 tc2=2.43u tnom=NA( NA))
+Rfoo ( a b ) foores(L=1k)
+.ends foo
+Xfoo ( 1 2 )  foo 
+.ends foo
+.subckt spice.sch ( b a )
+*v 20110115 2
+*C 45800 46300 1 0 0 resistor-1.sym
+foo0 ( x_cn_0 x_cn_1 )  foo  basename=resistor-1.sym class=DISCRETE file=spice_foo.sp pins=2
+45800:46400 ( x_cn_0 )  place  x=45800 y=46400
+46700:46400 ( x_cn_1 )  place  x=46700 y=46400
+net0 ( x_cn_0 x_nn_2 )  net 
+45300:46400 ( x_nn_2 )  place  x=45300 y=46400
+net1 ( x_cn_1 x_nn_3 )  net 
+47600:46400 ( x_nn_3 )  place  x=47600 y=46400
+b ( x_nn_3 b )  port  basename=io-1.sym net=b
+a ( x_nn_2 a )  port  basename=io-1.sym net=a
+.ends spice.sch
+#           v(1)       v(2)       r(Xfoo.foo0.Xfoo.Rfoo)
+ 0.         5.         2.5        1.K       
 v2= 2.5

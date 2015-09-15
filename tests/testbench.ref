@@ -76,6 +76,6 @@ place #(.x(48800),.y(45200)) 48800:45200 (.port(x_nn_15));
 place #(.x(48800),.y(46300)) 48800:46300 (.port(x_nn_16));
 rail #(.basename(gnd-1.sym),.net(0)) 0 (.pin(x_nn_15),.rail(0));
 DUT #(.basename(resistor-2.sym),.source(dut.sch)) dut1 (.1(x_nn_16),.2(x_nn_14));
-port #(.basename(spice-subcircuit-IO-1.sym),.pinlabel(a)) a (.int(x_nn_6),.ext(a));
-#           v(a)       v(a)       i(V1.v)   
- 0.         1.         1.        -0.002     
+port #(.basename(spice-subcircuit-IO-1.sym),.pinlabel(a)) a (.int(x_nn_6));
+#           v(a)       i(V1.v)   
+ 0.         1.        -0.002     

@@ -27,10 +27,11 @@ EG_TESTS = eg1.sh \
 
 GC_TESTS = res_net.sh short.sh rail.sh spice.sh \
         testbench.sh res.sh notfound.sh convert.sh \
-        verilog.sh
+        verilog.sh verilog_place.sh
+CUSTOM_TESTS = nets.sh bogus.sh
 TESTS = $(EG_TESTS) \
         $(GC_TESTS) \
-        nets.sh bogus.sh
+        $(CUSTOM_TESTS)
 EXTRA_DIST+= $(TESTS:%.sh=%.ref) $(GC_TESTS:%.sh=%.gc)
 
 # these require schematics
@@ -42,7 +43,7 @@ EXTRA_DIST+= $(SCHEMATICS)
 spice.out: $(PWD)/spice_foo.sp
 testbench.out: $(PWD)/dut.sch
 
-$(GC_TESTS) $(EG_TESTS): %.sh: %.ref
+$(GC_TESTS) $(EG_TESTS) $(CUSTOM_TESTS): %.sh: %.ref
 	@echo "#!/bin/sh" > $@
 	@echo "set -e" >> $@
 	@echo "exec 2>&9" >> $@
@@ -50,13 +51,20 @@ $(GC_TESTS) $(EG_TESTS): %.sh: %.ref
 	@echo "rm $*.out" >> $@
 	@chmod +x $@
 
+EXTRA_CMD=
+
 # BUG: srcdir hardwired.
 $(EG_TESTS:%.sh=%.gc): %.gc:
-	echo gschem > $@
+	echo $(EXTRA_CMD) > $@
+	echo gschem >> $@
 	echo include $(srcdir)/$*.sch >> $@
 	echo verilog >> $@
 	echo list >> $@
 	echo end >> $@
+
+# gnucap-uf warns about pinlable collision.
+eg34.gc: EXTRA_CMD=options nowarn
+eg26.gc: EXTRA_CMD=options nowarn
 
 nets.out: nets.sch
 	$(GNUCAP_GEDA) -a $(MODULE) $< |grep ^net | wc -l > $@
@@ -80,13 +88,10 @@ $(PWD)/%.sp: $(abs_srcdir)/%.sp
 
 res_net.out testbench.out: GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
 
-res_net.out spice.out: %.out: %.gc
-	$(GNUCAP) -a $(MODULE) $(GC_INCLUDES) < $< | grep '^[a-zA-Z0-9]*=' > $@
-
 EXTRA_SED_ARG =
 EXTRA_DIFF_ARG =
 
-verilog.out rail.out short.out res.out convert.out notfound.out: %.out: %.gc
+$(GC_TESTS:%.sh=%.out): %.out: %.gc
 	$(GNUCAP) -a $(MODULE) $(GC_INCLUDES) < $< | \
 		sed -e '1,/^core-lib version/d' | \
 		sed -e '/^default plugins/d' | \
@@ -95,15 +100,10 @@ verilog.out rail.out short.out res.out convert.out notfound.out: %.out: %.gc
 
 testbench.out: EXTRA_SED_ARG=-e '/^parameter /d'
 
-testbench.out: %.out: %.gc
+$(EG_TESTS:%.sh=%.out): %.out: %.gc
 	$(GNUCAP) -a $(MODULE) $(GC_INCLUDES) < $< | \
 		sed -e '1,/^core-lib version/d' | \
-		sed -e '/^default plugins/d' $(EXTRA_SED_ARG) | \
-		grep -v ^@ > $@
-
-$(EG_TESTS:%.sh=%.out) rail.out short.out res.out convert.out notfound.out: %.out: %.gc
-	$(GNUCAP) -a $(MODULE) $(GC_INCLUDES) < $< | \
-		sed -e '1,/^core-lib version/d' | \
+		sed -e '1,/^stashing as/d' | \
 		sed -e '/^default plugins/d' $(EXTRA_SED_ARGS) | \
 		grep -v ^@ > $@
 
