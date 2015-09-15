@@ -1,10 +1,10 @@
 subckt: already installed, replacing
 stashing as subckt:0
-// This File is part of gnucap-geda 
-// (C) 2012 Felix Salfelder 
-// GPLv3 or later 
-// mapping geda-symbols to actual devices 
-// "analog" section 
+// This File is part of gnucap-geda
+// (C) 2012 Felix Salfelder
+// GPLv3 or later
+// mapping geda-symbols to actual devices
+// "analog" section
 module CAPACITOR (n,p);
 capacitor #(.c(value)) c (.p(n),.n(p));
 endmodule // CAPACITOR
@@ -21,12 +21,12 @@ module VOLTAGE_SOURCE (p,n);
 vsource #(.dc(value)) v (.p(p),.n(n));
 endmodule // VOLTAGE_SOURCE
 
-vsource #( DC  5.) V1 (.p(n1),.n(n0));
+vsource #(.dc(5.)) V1 (.p(n1),.n(n0));
 resistor #(.r( 1.)) R1 (.p(n2),.n(n0));
 resistor #(.r( 1.)) R1 (.p(n0),.n(0));
 module res_net.sch (a,b);
-//v 20110115 2 
-//C 49800 44500 1 0 0 passive-1.sym 
+//v 20110115 2
+//C 49800 44500 1 0 0 passive-1.sym
 port #(.basename(passive-1.sym),.net(a)) a (.int(x_cn_0),.ext(a));
 place #(.x(49800),.y(44600)) 49800:44600 (.port(x_cn_0));
 port #(.basename(passive-1.sym),.net(b)) b (.int(x_cn_1),.ext(b));
