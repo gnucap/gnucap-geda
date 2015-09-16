@@ -1,31 +1,9 @@
-Half Adder
-^ ? Half: no match
-Full Adder
-^ ? Full: no match
-Half and Full Adders
-^ ? Half: no match
-adders.sch
-^ ? adders.sch: no match
-1
-^ ? 1: no match
-1
-^ ? 1: no match
-1
-^ ? 1: no match
-Ales Hvezda
-^ ? Ales: no match
 //v 20031231 1
-//C 26800 28000 1 0 0 7408-1.sym
-module !_7408-1.sym (A,B,Y);
-endmodule // !_7408-1.sym
-
+//comment (incomplete) title-C.sym
 7408 #(.basename(7408-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc08.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(1),.slotdef(4:12)) U101 (.A(x_cn_0),.B(x_cn_1),.Y(x_cn_2));
 place #(.x(26800),.y(28700)) 26800:28700 (.port(x_cn_0));
 place #(.x(26800),.y(28300)) 26800:28300 (.port(x_cn_1));
 place #(.x(28100),.y(28500)) 28100:28500 (.port(x_cn_2));
-module !_7486-1.sym (A,B,Y);
-endmodule // !_7486-1.sym
-
 7486 #(.basename(7486-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc86.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(1),.slotdef(4:12)) U100 (.A(x_cn_3),.B(x_cn_4),.Y(x_cn_5));
 place #(.x(26800),.y(30300)) 26800:30300 (.port(x_cn_3));
 place #(.x(26800),.y(29900)) 26800:29900 (.port(x_cn_4));
@@ -100,9 +78,6 @@ net #() extranet23 (.p(x_cn_18),.n(x_nn_25));
 //T 34100 16800 9 10 1 0 0 0 1
 //T 36100 17100 9 10 1 0 0 0 1
 //T 36100 16800 9 10 1 0 0 0 1
-module !_7432-1.sym (A,B,Y);
-endmodule // !_7432-1.sym
-
 7432 #(.basename(7432-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc32.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(1),.slotdef(4:12)) U102 (.A(x_cn_40),.B(x_cn_41),.Y(x_nn_36));
 place #(.x(31400),.y(24000)) 31400:24000 (.port(x_cn_40));
 place #(.x(31400),.y(23600)) 31400:23600 (.port(x_cn_41));

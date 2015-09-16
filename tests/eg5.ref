@@ -1,20 +1,7 @@
-Jeremy Gillick
-^ ? Jeremy: no match
-Multi-Color LED
-^ ? Multi-Color: no match
-Right Servo
-^ ? Right: no match
-Left Servo
-^ ? Left: no match
-Eye
-^ ? Eye: no match
 //v 20071231 1
+//comment (incomplete) title-B.sym
 //T 50300 40700 9 20 1 0 0 0 1
-//Ganzbot 2008
 //T 54100 40200 9 20 1 0 0 0 1
-module !_resistor-1.sym (1,2);
-endmodule // !_resistor-1.sym
-
 RESISTOR #(.basename(resistor-1.sym),.class(DISCRETE),.pins(2)) 270 (.1(x_cn_0),.2(x_cn_1));
 place #(.x(53500),.y(45200)) 53500:45200 (.port(x_cn_0));
 place #(.x(54400),.y(45200)) 54400:45200 (.port(x_cn_1));
@@ -53,9 +40,6 @@ net #() net0 (.p(x_nn_20),.n(x_cn_13));
 place #(.x(42000),.y(45700)) 42000:45700 (.port(x_nn_20));
 port #(.basename(in-1.sym)) +5v (.int(x_cn_21));
 place #(.x(41000),.y(50000)) 41000:50000 (.port(x_cn_21));
-module !_led-3.sym (CATHODE,ANODE);
-endmodule // !_led-3.sym
-
 LED #(.basename(led-3.sym),.description(Generic),.numslots(0)) D1 (.CATHODE(x_cn_23),.ANODE(x_cn_22));
 place #(.x(48200),.y(44700)) 48200:44700 (.port(x_cn_22));
 place #(.x(47300),.y(44700)) 47300:44700 (.port(x_cn_23));

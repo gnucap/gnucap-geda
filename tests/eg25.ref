@@ -1,98 +1,6 @@
-gschem_buffers.sch
-^ ? gschem_buffers.sch: no match
-1
-^ ? 1: no match
-1
-^ ? 1: no match
-1.0
-^ ? 1.0: no match
-Peter Clifton
-^ ? Peter: no match
-Paste buffers
-^ ? Paste: no match
-Schematic page
-^ ? Schematic: no match
-Place buffer
-^ ? Place: no match
-words here
-^ ? words: no match
-Text entry
-^ ? Text: no match
-Component
-^ ? Component: no match
-Library
-^ ? Library: no match
-new
-^ ? new: no match
-deep copy
-^ ? deep: no match
-deep copy
-^ ? deep: no match
-new
-^ ? new: no match
-deep copy
-^ ? deep: no match
-move
-^ ? move: no match
-1  Copy
-^ ? 1: no match
-2  Copy Multiple
-^ ? 2: no match
-3  Move (incl. dragging)
-^ ? 3: no match
-4  Copy (to) Buffer
-^ ? 4: no match
-5  Paste (from) Buffer
-^ ? 5: no match
-6  Place component
-^ ? 6: no match
-7  Place text
-^ ? 7: no match
-8 Delete
-^ ? 8: no match
-deep copy
-^ ? deep: no match
-1,5,7
-^ ? 1: no match
-2,6
-^ ? 2: no match
-5
-^ ? 5: no match
-6
-^ ? 6: no match
-7
-^ ? 7: no match
-4
-^ ? 4: no match
-1,2
-^ ? 1: no match
-NB: Can always free objects in the place buffer
-^ ? NB:: no match
-All but "move" have a trivial cancel operation
-^ ? All: no match
-Can rotate / mirror the place buffer as it does not
-^ ? Can: no match
-reference any schematic page or paste-buffer objects
-^ ? reference: no match
-except inside the "move" action
-^ ? except: no match
-Delete
-^ ? Delete: no match
-items
-^ ? items: no match
-8
-^ ? 8: no match
-3
-^ ? 3: no match
-shallow copy
-^ ? shallow: no match
-shallow free
-^ ? shallow: no match
-3
-^ ? 3: no match
 //v 20081221 2
+//comment (incomplete) title-bordered-A2.sym
 //T 56300 40900 9 20 1 0 0 0 1
-//gschem place buffers
 //T 56300 40600 9 10 1 0 0 0 1
 //T 56300 40300 9 10 1 0 0 0 1
 //T 57800 40300 9 10 1 0 0 0 1
@@ -130,24 +38,18 @@ shallow free
 //A 53704 43001 1494 180 180 3 0 0 0 -1 -1
 //A 53696 44501 1496 180 180 3 0 0 0 -1 -1
 //T 52800 44100 9 20 1 0 0 0 2
-module !_lm741-1.sym (?????,unknown_pin_2,unknown_pin_3,unknown_pin_4,?????,unknown_pin_6,unknown_pin_7);
-endmodule // !_lm741-1.sym
-
-LM741 #(.basename(lm741-1.sym)) U? (.?????(?????),.unknown_pin_2(x_cn_0),.unknown_pin_3(x_cn_1),.unknown_pin_4(x_cn_2),.?????(?????),.unknown_pin_6(x_cn_3),.unknown_pin_7(x_cn_4));
+LM741 #(.basename(lm741-1.sym)) U? (.1(?????),.2(x_cn_0),.3(x_cn_1),.4(x_cn_2),.5(?????),.6(x_cn_3),.7(x_cn_4));
 place #(.x(53300),.y(41900)) 53300:41900 (.port(x_cn_0));
 place #(.x(53300),.y(42300)) 53300:42300 (.port(x_cn_1));
 place #(.x(53800),.y(41700)) 53800:41700 (.port(x_cn_2));
 place #(.x(54300),.y(42100)) 54300:42100 (.port(x_cn_3));
 place #(.x(53800),.y(42500)) 53800:42500 (.port(x_cn_4));
 //T 58400 46600 9 20 1 0 0 0 1
-module !_7400-1.sym (A,B,Y);
-endmodule // !_7400-1.sym
-
-7400 #(.basename(7400-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc00.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(1),.slotdef(4:12)) U1 (.A(x_cn_5),.B(x_cn_6),.Y(x_cn_7));
+7400 #(.basename(7400-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc00.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(1),.slotdef(4:12)) U1 (.1(x_cn_5),.2(x_cn_6),.3(x_cn_7));
 place #(.x(49800),.y(49300)) 49800:49300 (.port(x_cn_5));
 place #(.x(49800),.y(48900)) 49800:48900 (.port(x_cn_6));
 place #(.x(51100),.y(49100)) 51100:49100 (.port(x_cn_7));
-7400 #(.basename(7400-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc00.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(1),.slotdef(4:12)) U2 (.A(x_cn_8),.B(x_cn_9),.Y(x_cn_10));
+7400 #(.basename(7400-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc00.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(1),.slotdef(4:12)) U2 (.1(x_cn_8),.2(x_cn_9),.3(x_cn_10));
 place #(.x(49800),.y(48200)) 49800:48200 (.port(x_cn_8));
 place #(.x(49800),.y(47800)) 49800:47800 (.port(x_cn_9));
 place #(.x(51100),.y(48000)) 51100:48000 (.port(x_cn_10));
@@ -173,11 +75,11 @@ place #(.x(51900),.y(49100)) 51900:49100 (.port(x_nn_19));
 net #() net10 (.p(x_cn_10),.n(x_nn_20));
 place #(.x(51900),.y(48000)) 51900:48000 (.port(x_nn_20));
 net #() extranet11 (.p(x_cn_10),.n(x_nn_14));
-7400 #(.basename(7400-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc00.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(1),.slotdef(4:12)) U1 (.A(x_cn_21),.B(x_cn_22),.Y(x_cn_23));
+7400 #(.basename(7400-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc00.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(1),.slotdef(4:12)) U1 (.1(x_cn_21),.2(x_cn_22),.3(x_cn_23));
 place #(.x(43400),.y(51700)) 43400:51700 (.port(x_cn_21));
 place #(.x(43400),.y(51300)) 43400:51300 (.port(x_cn_22));
 place #(.x(44700),.y(51500)) 44700:51500 (.port(x_cn_23));
-7400 #(.basename(7400-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc00.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(1),.slotdef(4:12)) U2 (.A(x_cn_24),.B(x_cn_25),.Y(x_cn_26));
+7400 #(.basename(7400-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc00.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(1),.slotdef(4:12)) U2 (.1(x_cn_24),.2(x_cn_25),.3(x_cn_26));
 place #(.x(43400),.y(50600)) 43400:50600 (.port(x_cn_24));
 place #(.x(43400),.y(50200)) 43400:50200 (.port(x_cn_25));
 place #(.x(44700),.y(50400)) 44700:50400 (.port(x_cn_26));

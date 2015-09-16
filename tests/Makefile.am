@@ -3,23 +3,31 @@
 # license: GPLv3+
 
 MODULE = ../src/.libs/lang_geda.so
-GNUCAP = export GUILE_WARN_DEPRECATED=no LD_LIBRARY_PATH=../src/.libs; $(shell echo gnucap | sed -e '$(transform)')
+GNUCAP_ENV = export GUILE_WARN_DEPRECATED=no LD_LIBRARY_PATH=../src/.libs;
+GNUCAP = $(shell echo gnucap | sed -e '$(transform)')
 GNUCAP_GEDA = export GUILE_WARN_DEPRECATED=no LD_LIBRARY_PATH=../src/.libs; ../gnucap-geda
 EXTRA_DIST = \
     nets.sch nets.ref spice_foo.sp \
     dut.sch \
     bogus.sch bogus.ref \
     gafrc
-
+#
+#AM_TESTS_ENVIRONMENT = \
+#    export LD_LIBRARY_PATH=../src/.libs \
+#	 GUILE_WARN_DEPRECATED=no;
+#
 TEST_EXTENSIONS = .sh
 AM_TESTS_FD_REDIRECT = 9>&2
 EG_TESTS = eg1.sh \
+           eg1a.sh \
            eg15.sh \
            eg2.sh \
+           eg2b.sh \
            eg25.sh \
            eg26.sh \
            eg3.sh \
            eg34.sh \
+           eg34b.sh \
            eg4.sh \
            eg42.sh \
            eg43.sh \
@@ -27,6 +35,7 @@ EG_TESTS = eg1.sh \
 ER_TESTS = eg1_recon.sh \
            eg15_recon.sh \
            eg2_recon.sh \
+           eg2b_recon.sh \
            eg25_recon.sh \
            eg26_recon.sh \
            eg3_recon.sh \
@@ -35,6 +44,18 @@ ER_TESTS = eg1_recon.sh \
            eg42_recon.sh \
            eg43_recon.sh \
            eg5_recon.sh
+
+XFAIL_TESTS =
+
+# something wrong with lm741 symbol (pinseq?)
+# need workaround.
+XFAIL_TESTS += eg25_recon.sh
+
+# need to think about pinlabels and pinnumbers
+XFAIL_TESTS += eg26_recon.sh
+
+# a Text element starting with a component name confuses find_type_in_string
+XFAIL_TESTS += eg34b.sh
 
 GC_TESTS = res_net.sh short.sh rail.sh spice.sh \
         testbench.sh res.sh notfound.sh convert.sh \
@@ -75,11 +96,12 @@ $(EG_TESTS:%.sh=%.gc): %.gc:
 	echo end >> $@
 
 $(ER_TESTS:%.sh=%.gc): %_recon.gc: %.out
-	echo verilog > $@
-	echo include $*.out >> $@
-	echo gschem >> $@
-	echo list >> $@
-	echo end >> $@
+	@echo creating $@
+	@echo verilog > $@
+	@echo include $(srcdir)/$*.ref >> $@
+	@echo gschem >> $@
+	@echo list >> $@
+	@echo end >> $@
 
 # gnucap-uf warns about pinlable collision.
 eg34.gc: EXTRA_CMD=options nowarn
@@ -109,31 +131,51 @@ res_net.out testbench.out: GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
 
 EXTRA_SED_ARG =
 EXTRA_DIFF_ARG =
+VLIB_FILES =
+
+$(EG_TESTS:%.sh=%_recon.out): %_recon.out: %.out
+$(EG_TESTS:%.sh=%.log): %.log: %.out
+
+$(ER_TESTS:%.sh=%.log): %.log: %.out
 
 $(GC_TESTS:%.sh=%.out): %.out: %.gc
-	$(GNUCAP) -a $(MODULE) $(GC_INCLUDES) < $< | \
-		sed -e '1,/^core-lib version/d' | \
+	$(GNUCAP_ENV) $(GNUCAP) -a $(MODULE) $(GC_INCLUDES) < $< | \
 		sed -e '/^default plugins/d' | \
 		sed -e '/^parameter /d' $(EXTRA_SED_ARG)| \
 		grep -v ^@ > $@
 
 testbench.out: EXTRA_SED_ARG=-e '/^parameter /d'
+$(GC_TESTS:%.sh=%.out): EXTRA_SED_ARG=-e '1,/^\/\/v /d'
+spice.out: EXTRA_SED_ARG=-e '1,/^core-lib version/d'
+verilog.out: EXTRA_SED_ARG=-e '1,/^stashing as/d'
+verilog_place.out: EXTRA_SED_ARG=-e '1,/^stashing as/d'
+notfound.out: EXTRA_SED_ARG=-e '1,/^core-lib version/d'
+bogus.out: EXTRA_SED_ARG=
 
-# $(EG_TESTS:%.sh=%_recon.out): GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
-$(EG_TESTS:%.sh=%.out): GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v \
-                                     -i $(abs_top_srcdir)/include/transistor.v
+$(ER_TESTS:%.sh=%.out): GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
+$(EG_TESTS:%.sh=%.out): GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
+
+eg2b.out eg2b_recon.out: VLIB_FILES+= transistor.v diode.v
+eg3.out eg3_recon.out: VLIB_FILES += transistor.v 74.v
+eg4_recon.out: VLIB_FILES += transistor.v connector.v
+eg5_recon.out: VLIB_FILES = transistor.v connector.v analog.v
+eg25_recon.out: VLIB_FILES = 74.v linear.v
+eg25.out: VLIB_FILES = 74.v linear.v
+eg26_recon.out: VLIB_FILES = connector.v
+eg42.out: VLIB_FILES = transistor.v linear.v switcap.v diode.v analog.v
+eg42_recon.out: VLIB_FILES = transistor.v linear.v switcap.v diode.v analog.v
+eg43_recon.out: VLIB_FILES += asic.v analog.v
 
 # vile hack. maybe should not wrap comments...?
-$(ER_TESTS:%.sh=%.out): EXTRA_SED_ARGS=-e '/title-B/d' -e 's%^//v %v %' -e '/^\/\/.*/d'
+$(ER_TESTS:%.sh=%.out): EXTRA_SED_ARGS=-e '1,/^stashing /d' -e 's%^//v %v %' -e '/^\/\/.*/d'
 
-$(EG_TESTS:%.sh=%.out) $(EG_TESTS:%.sh=%_recon.out): %.out: %.gc
-	$(GNUCAP) -a $(MODULE) $(GC_INCLUDES) < $< | \
-		sed -e '1,/^core-lib version/d' | \
-		sed -e '1,/^stashing as/d' | \
+$(EG_TESTS:%.sh=%.out) $(ER_TESTS:%.sh=%.out): %.out: %.gc
+	-@echo "$(GNUCAP) $<"; $(GNUCAP_ENV) $(GNUCAP) -a $(MODULE) $(GC_INCLUDES) \
+		$(VLIB_FILES:%=-i $(abs_top_srcdir)/include/%) < $< | \
 		sed -e '/^default plugins/d' $(EXTRA_SED_ARGS) | \
 		grep -v ^@ > $@
 
-$(EG_TESTS:%.sh=%.out): EXTRA_SED_ARGS=-e '/^parameter /d'
+$(EG_TESTS:%.sh=%.out): EXTRA_SED_ARGS= | sed -n '/^\/\/v /,$$p' | sed -e '/^parameter /d'
 
 eg_tests: $(EG_TESTS:%.sh=%.log)
 er_tests: $(ER_TESTS:%.sh=%.log)

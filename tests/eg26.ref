@@ -1,9 +1,5 @@
-Write Enable 
-^ ? Write: no match
-SRAM Cell 
-^ ? SRAM: no match
-//v 20081231 1 
-//C 45300 44000 1 0 0 DB25-2.sym 
+//v 20081231 1
+//comment (incomplete) title-B.sym
 module !_DB25-2.sym (SLCT,GND,PE,GND,BUSY,GND,/ACK,GND,DATA7,GND,DATA6,GND,DATA5,GND,DATA4,GND,DATA3,/SLCTIN,DATA2,/INIT,DATA1,/ERROR,DATA0,/AUTOF,/STROBE);
 endmodule // !_DB25-2.sym
 
@@ -33,16 +29,10 @@ place #(.x(45300),.y(45000)) 45300:45000 (.port(x_cn_21));
 place #(.x(45300),.y(44600)) 45300:44600 (.port(x_cn_22));
 place #(.x(46800),.y(44800)) 46800:44800 (.port(x_cn_23));
 place #(.x(46800),.y(44400)) 46800:44400 (.port(x_cn_24));
-module !_nmos-3.sym (D,G,S);
-endmodule // !_nmos-3.sym
-
 NMOS_TRANSISTOR #(.basename(nmos-3.sym),.description(generic),.numslots(0)) Q4 (.D(x_cn_25),.G(x_cn_26),.S(x_cn_27));
 place #(.x(49600),.y(47800)) 49600:47800 (.port(x_cn_25));
 place #(.x(49100),.y(47200)) 49100:47200 (.port(x_cn_26));
 place #(.x(49600),.y(47000)) 49600:47000 (.port(x_cn_27));
-module !_pmos-3.sym (D,G,S);
-endmodule // !_pmos-3.sym
-
 PMOS_TRANSISTOR #(.basename(pmos-3.sym),.description(generic),.numslots(0)) Q1 (.D(x_cn_28),.G(x_cn_29),.S(x_cn_30));
 place #(.x(47900),.y(49000)) 47900:49000 (.port(x_cn_28));
 place #(.x(48400),.y(48400)) 48400:48400 (.port(x_cn_29));
@@ -109,10 +99,10 @@ net #() net25 (.p(x_nn_58),.n(x_nn_59));
 place #(.x(47900),.y(48000)) 47900:48000 (.port(x_nn_59));
 net #() extranet26 (.p(x_nn_59),.n(x_cn_30));
 net #() extranet27 (.p(x_nn_59),.n(x_nn_41));
-//B 49300 44900 1100 1200 3 0 0 0 -1 -1 0 -1 -1 -1 -1 -1 
-//T 49300 44700 9 10 1 0 0 0 1 
-//B 47300 47100 2900 2000 3 0 0 0 -1 -1 0 -1 -1 -1 -1 -1 
-//T 49200 49200 9 10 1 0 0 0 1 
+//B 49300 44900 1100 1200 3 0 0 0 -1 -1 0 -1 -1 -1 -1 -1
+//T 49300 44700 9 10 1 0 0 0 1
+//B 47300 47100 2900 2000 3 0 0 0 -1 -1 0 -1 -1 -1 -1 -1
+//T 49200 49200 9 10 1 0 0 0 1
 net #() net28 (.p(x_nn_60),.n(x_nn_61));
 place #(.x(48700),.y(46000)) 48700:46000 (.port(x_nn_60));
 place #(.x(49900),.y(46000)) 49900:46000 (.port(x_nn_61));

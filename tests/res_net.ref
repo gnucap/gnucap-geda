@@ -1,37 +1,9 @@
-subckt: already installed, replacing
-stashing as subckt:0
-// This File is part of gnucap-geda
-// (C) 2012 Felix Salfelder
-// GPLv3 or later
-// mapping geda-symbols to actual devices
-// "analog" section
-module CAPACITOR (n,p);
-capacitor #(.c(value)) c (.p(n),.n(p));
-endmodule // CAPACITOR
-
-module RESISTOR (n,p);
-resistor #(.r(value)) r (.p(n),.n(p));
-endmodule // RESISTOR
-
-module BATTERY (n,p);
-vsource #(.dc(value)) v (.p(n),.n(p));
-endmodule // BATTERY
-
-module VOLTAGE_SOURCE (p,n);
-vsource #(.dc(value)) v (.p(p),.n(n));
-endmodule // VOLTAGE_SOURCE
-
-vsource #(.dc(5.)) V1 (.p(n1),.n(n0));
-resistor #(.r( 1.)) R1 (.p(n2),.n(n0));
-resistor #(.r( 1.)) R1 (.p(n0),.n(0));
-module res_net.sch (a,b);
-//v 20110115 2
-//C 49800 44500 1 0 0 passive-1.sym
+//comment (incomplete) title-B.sym
 port #(.basename(passive-1.sym),.net(a)) a (.int(x_cn_0),.ext(a));
 place #(.x(49800),.y(44600)) 49800:44600 (.port(x_cn_0));
 port #(.basename(passive-1.sym),.net(b)) b (.int(x_cn_1),.ext(b));
 place #(.x(47500),.y(44600)) 47500:44600 (.port(x_cn_1));
-RESISTOR #(.basename(resistor-1.sym),.class(DISCRETE),.pins(2),.value(1)) R_1 (.n(x_cn_2),.p(x_cn_3));
+RESISTOR #(.basename(resistor-1.sym),.class(DISCRETE),.pins(2),.value(1)) R_1 (.1(x_cn_2),.2(x_cn_3));
 place #(.x(48100),.y(44600)) 48100:44600 (.port(x_cn_2));
 place #(.x(49000),.y(44600)) 49000:44600 (.port(x_cn_3));
 net #() net0 (.p(x_cn_0),.n(x_cn_3));

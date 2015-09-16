@@ -1,8 +1,5 @@
-//v 20110115 2 
-//C 46400 44400 1 0 0 resistor-1.sym 
-module !_resistor-1.sym (1,2);
-endmodule // !_resistor-1.sym
-
+//v 20110115 2
+//comment (incomplete) title-B.sym
 RESISTOR #(.basename(resistor-1.sym),.class(DISCRETE),.pins(2),.value(150)) Re1 (.1(x_cn_0),.2(x_cn_1));
 place #(.x(46400),.y(44500)) 46400:44500 (.port(x_cn_0));
 place #(.x(47300),.y(44500)) 47300:44500 (.port(x_cn_1));
@@ -12,15 +9,9 @@ place #(.x(48600),.y(44500)) 48600:44500 (.port(x_cn_3));
 RESISTOR #(.basename(resistor-1.sym),.class(DISCRETE),.pins(2),.value(20k)) Rc (.1(x_cn_4),.2(x_cn_5));
 place #(.x(48700),.y(46900)) 48700:46900 (.port(x_cn_4));
 place #(.x(48700),.y(47800)) 48700:47800 (.port(x_cn_5));
-module !_current-1.sym (1,2);
-endmodule // !_current-1.sym
-
 CURRENT_SOURCE #(.basename(current-1.sym),.value(0.5mA)) Ic (.1(x_cn_6),.2(x_cn_7));
 place #(.x(47500),.y(44200)) 47500:44200 (.port(x_cn_6));
 place #(.x(47500),.y(43300)) 47500:43300 (.port(x_cn_7));
-module !_BC547-1.sym (1,2,3);
-endmodule // !_BC547-1.sym
-
 BC547 #(.basename(BC547-1.sym),.footprint(TO92)) Q1 (.1(x_cn_8),.2(x_cn_9),.3(x_cn_10));
 place #(.x(46300),.y(46400)) 46300:46400 (.port(x_cn_8));
 place #(.x(45700),.y(45900)) 45700:45900 (.port(x_cn_9));

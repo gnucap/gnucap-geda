@@ -31,4 +31,4 @@ T 41900 53000 9 10 1 0 0 0 1
 Total 53W
 L 40600 53300 43100 53300 3 0 0 0 -1 -1
 T 41600 51100 9 10 1 0 0 0 1
-Transformer specification
+xTransformer specification

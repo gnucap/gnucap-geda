@@ -1,17 +1,5 @@
-Inverter Gate
-^ ? Inverter: no match
-inverter.sch
-^ ? inverter.sch: no match
-1
-^ ? 1: no match
-1
-^ ? 1: no match
-1
-^ ? 1: no match
-Facundo J Ferrer
-^ ? Facundo: no match
 //v 20081231 1
-//N 47500 45600 47500 46900 4
+//comment (incomplete) title-B.sym
 net #() net0 (.p(x_nn_0),.n(x_nn_1));
 place #(.x(47500),.y(45600)) 47500:45600 (.port(x_nn_0));
 place #(.x(47500),.y(46900)) 47500:46900 (.port(x_nn_1));
@@ -27,7 +15,7 @@ place #(.x(48100),.y(47400)) 48100:47400 (.port(x_nn_5));
 //T 52200 40100 9 10 1 0 0 0 1
 //T 54200 40400 9 10 1 0 0 0 1
 //T 54300 40100 9 10 1 0 0 0 1
-//}
+//comment (incomplete) spice-subcircuit-LL-1.sym
 port #(.basename(spice-subcircuit-IO-1.sym)) P1 (.int(x_cn_6));
 place #(.x(49100),.y(46200)) 49100:46200 (.port(x_cn_6));
 port #(.basename(spice-subcircuit-IO-1.sym)) P4 (.int(x_cn_7));
@@ -35,8 +23,8 @@ place #(.x(47500),.y(46300)) 47500:46300 (.port(x_cn_7));
 port #(.basename(spice-subcircuit-IO-1.sym)) P2 (.int(x_nn_4));
 port #(.basename(spice-subcircuit-IO-1.sym)) P3 (.int(x_cn_8));
 place #(.x(48100),.y(44700)) 48100:44700 (.port(x_cn_8));
-//}
-//}
+//comment (incomplete) spice-model-1.sym
+//comment (incomplete) spice-model-1.sym
 net #() net3 (.p(x_nn_3),.n(x_nn_9));
 place #(.x(48400),.y(47400)) 48400:47400 (.port(x_nn_9));
 net #() net4 (.p(x_nn_9),.n(x_nn_5));
@@ -44,16 +32,10 @@ net #() net5 (.p(x_nn_10),.n(x_cn_8));
 place #(.x(48400),.y(44700)) 48400:44700 (.port(x_nn_10));
 net #() net6 (.p(x_nn_11),.n(x_cn_6));
 place #(.x(48100),.y(46200)) 48100:46200 (.port(x_nn_11));
-module !_asic-nmos-1.sym (D,G,S,B);
-endmodule // !_asic-nmos-1.sym
-
 NMOS_TRANSISTOR #(.basename(asic-nmos-1.sym),.description(low),.l(3u),.model-name(nmos4),.w(1u)) M2 (.D(x_cn_13),.G(x_nn_0),.S(x_cn_14),.B(x_cn_12));
 place #(.x(48200),.y(45600)) 48200:45600 (.port(x_cn_12));
 place #(.x(48100),.y(46100)) 48100:46100 (.port(x_cn_13));
 place #(.x(48100),.y(45100)) 48100:45100 (.port(x_cn_14));
-module !_asic-pmos-1.sym (D,G,S,B);
-endmodule // !_asic-pmos-1.sym
-
 PMOS_TRANSISTOR #(.basename(asic-pmos-1.sym),.description(low),.l(1u),.model-name(pmos4),.w(10u)) M1 (.D(x_cn_15),.G(x_nn_1),.S(x_nn_5),.B(x_nn_2));
 place #(.x(48100),.y(46400)) 48100:46400 (.port(x_cn_15));
 net #() net7 (.p(x_cn_13),.n(x_cn_15));

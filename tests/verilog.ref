@@ -1,5 +1,3 @@
-subckt: already installed, replacing
-stashing as subckt:0
 module test (a,b);
 port #(.basename(passive-1.sym),.net(a)) a (.int(x_cn_0),.ext(a));
 place #(.x(48500),.y(44600)) 48500:44600 (.port(x_cn_0));

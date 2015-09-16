@@ -1,6 +1,9 @@
-//v 20100214 2
+//v 20130925 2
 //comment (incomplete) title-B.sym
-VOLTAGE_SOURCE #(.basename(voltage-3.sym),.value(10)) Vin (.1(x_cn_0),.2(x_cn_1));
+module !_voltage-3.sym (1,2);
+endmodule // !_voltage-3.sym
+
+DOESNOTEXIST #(.basename(voltage-3.sym),.value(10)) Vin (.1(x_cn_0),.2(x_cn_1));
 place #(.x(43800),.y(49000)) 43800:49000 (.port(x_cn_0));
 place #(.x(43800),.y(48100)) 43800:48100 (.port(x_cn_1));
 RESISTOR #(.basename(resistor-1.sym),.class(DISCRETE),.pins(2),.value(2k)) R1 (.1(x_cn_2),.2(x_cn_3));

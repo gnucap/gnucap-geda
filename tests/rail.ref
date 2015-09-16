@@ -1,15 +1,4 @@
-subckt: already installed, replacing
-stashing as subckt:0
-reading file rail.sch
-module RESISTOR (n,p);
-resistor #(.r(value)) r (.p(n),.n(p));
-endmodule // RESISTOR
-
-resistor #(.r( 1.)) R1 (.p(n2),.n(0));
-vsource #(.dc(3.0001)) V1 (.p(n1),.n(0));
-module rail.sch (a,b);
-//v 20130925 2 
-//C 52800 44500 1 0 0 passive-1.sym 
+//comment (incomplete) title-B.sym
 port #(.basename(passive-1.sym),.net(a)) a (.int(x_cn_0),.ext(a));
 place #(.x(52800),.y(44600)) 52800:44600 (.port(x_cn_0));
 port #(.basename(passive-1.sym),.net(b)) b (.int(x_cn_1),.ext(b));

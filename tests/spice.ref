@@ -11,7 +11,7 @@ Xfoo ( 1 2 )  foo
 .ends foo
 .subckt spice.sch ( b a )
 *v 20110115 2
-*C 45800 46300 1 0 0 resistor-1.sym
+*comment (incomplete) title-B.sym
 foo0 ( x_cn_0 x_cn_1 )  foo  basename=resistor-1.sym class=DISCRETE file=spice_foo.sp pins=2
 45800:46400 ( x_cn_0 )  place  x=45800 y=46400
 46700:46400 ( x_cn_1 )  place  x=46700 y=46400
