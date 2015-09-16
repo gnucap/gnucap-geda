@@ -1433,11 +1433,16 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
 	trace3("LANG_GEDA::print_component", x->long_label(), basename, coordinates.size());
 	std::vector<std::string*> abscoord;
 	for(unsigned ii=0; ii<coordinates.size(); ++ii){ untested();
-		trace2("LANG_GEDA::print_component", ii, x->net_nodes());
+		trace2("LANG_GEDA::print_component", coordinates[ii][0], coordinates[ii][1]);
+	}
+	for(unsigned ii=0; ii<coordinates.size(); ++ii){ untested();
 		std::string val=x->port_value(ii);
 		abscoord.push_back(find_place_string(x, val));
+		trace2("LANG_GEDA::print_component", abscoord.back()[0],
+				abscoord.back()[1]);
 	}
-	std::string angle[4]={"0","90","180","270"};
+	static std::string angle[4]={"0","90","180","270"};
+	static std::string ms[2] = {"0","1"};
 	std::string xy="";
 	bool gottheanglemirror = false; // guessed rotation matches ports.
 	for(int ii=0; ii<4 ; ++ii){ untested();
@@ -1446,31 +1451,11 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
 		}
 
 		{
-			_mirror="0";
-			_angle=angle[ii];
-			xy="";
-			gottheanglemirror=true;
-			for(unsigned pinind=0; pinind<coordinates.size(); ++pinind){ untested();
-				int a[2];
-				int c[2];
-				a[0] = atoi(abscoord[pinind][0].c_str());
-				a[1] = atoi(abscoord[pinind][1].c_str());
-				c[0] = atoi(coordinates[pinind][0].c_str());
-				c[1] = atoi(coordinates[pinind][1].c_str());
-				if (xy==""){ untested();
-					xy = componentposition_string(a, c, 90*ii, _mirror=="1");
-				}else if(xy != componentposition_string(a, c, 90*ii, _mirror=="1")){ untested();
-					gottheanglemirror=false; // one pin does not fit.
-					break;
-				}
-			}
-			if (gottheanglemirror) { untested();
-				break; // all pins fit...
-			}
-			{ untested();
-				_mirror="1";
+			_angle = angle[ii];
+			for(unsigned mir=0; mir<2; ++mir) { untested();
+				trace2("print_comp case", mir, angle[ii]);
+				_mirror = ms[mir];
 				xy="";
-				gottheanglemirror=true;
 				for(unsigned pinind=0; pinind<coordinates.size(); ++pinind){ untested();
 					int a[2];
 					int c[2];
@@ -1478,11 +1463,20 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
 					a[1] = atoi(abscoord[pinind][1].c_str());
 					c[0] = atoi(coordinates[pinind][0].c_str());
 					c[1] = atoi(coordinates[pinind][1].c_str());
-					if (xy==""){untested();
-						xy = componentposition_string(a, c, 90*ii, _mirror=="1");
-					}else if(xy != componentposition_string(a, c, 90*ii, _mirror=="1")){untested();
-						gottheanglemirror=false;
+					std::string pos = componentposition_string(a, c, 90*ii, mir);
+					if (pinind==0){ untested();
+						// first port. guess component position.
+						xy = pos;
+						gottheanglemirror = true;
+						trace2("print_comp guess from 1st port", ii, pos);
+					}else if(xy != pos){
+						trace2("print_comp check other port", ii, pos);
+						trace2("print_comp rejecting", mir, _angle);
+						// check if it is consistent with the other ports.
+						gottheanglemirror = false;
 						break;
+					}else{
+						trace2("print_comp match", pinind, pos);
 					}
 				}
 				if (gottheanglemirror) { untested();
