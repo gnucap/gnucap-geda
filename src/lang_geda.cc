@@ -283,7 +283,7 @@ std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
 	// char* data = s_clib_symbol_get_data(symbol);
 
 	trace2("LANG_GEDA::parse_symbol_file", basename, filename);
-	GEDA_SYMBOL s = _symbol[basename];
+	/* GEDA_SYMBOL* s = */ _symbol[basename];
 	CS sym_cmd(CS::_INC_FILE, filename);
 	//Now parse the sym_cmd which will get lines
 	int index=0;
@@ -639,8 +639,8 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
 	basename = (*dev)["basename"];
 	c_x = dev->x;
 	c_y = dev->y;
-	angle = dev->angle;
-	mirror = dev->mirror;
+	angle = dev->angle();
+	mirror = dev->mirror();
 	trace1("LANG_GEDA::parse_component", basename);
 
 	//To get port names and values from symbol?
@@ -933,8 +933,8 @@ MODEL_SUBCKT* LANG_GEDA::parse_module(CS& cmd, MODEL_SUBCKT* x)
 		*_C >> x;
 		c_x = _C->x;
 		c_y = _C->y;
-		mirror = _C->mirror;
-		angle = _C->angle;
+		mirror = _C->mirror();
+		angle = _C->angle();
 		basename = (*_C)["basename"];
 		USE(c_x);
 		USE(c_y);
@@ -998,8 +998,8 @@ COMPONENT* LANG_GEDA::parse_componmod(CS& cmd, COMPONENT* x)
 	if(!_C->pincount()) return 0;
 	int c_x = _C->x;
 	int c_y = _C->y;
-	bool mirror = _C->mirror;
-	angle_t angle = _C->angle;
+	bool mirror = _C->mirror();
+	angle_t angle = _C->angle();
 	string basename = (*_C)["basename"];
 	trace5("LANG_GEDA::parse_componmod", c_x, c_y, mirror, angle, basename);
 
@@ -1072,12 +1072,12 @@ GEDA_SYMBOL* LANG_GEDA::parse_C(CS& cmd)const
 	cmd >> " " >> basename;
 	assert( ! ( c_a % 90 ) );
 	assert( -1 < c_a && c_a < 271 );
-	GEDA_SYMBOL sym = _symbol[basename];
-	_C = new GEDA_SYMBOL(sym);
+	GEDA_SYMBOL* sym = _symbol[basename];
+	_C = sym->clone();
 	GEDA_SYMBOL& D = *_C;
 	D.x = c_x; D.y = c_y;
-	D.angle = angle_t( c_a );
-	D.mirror = c_m;
+	D.set_angle(angle_t(c_a));
+	D.set_mirror(c_m);
 	string& s = (*_C)["basename"];
 	s = basename; // hmmm...
 	try{
@@ -1139,71 +1139,71 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 		return "net";
 	} else if (_C || cmd >> "C "){
 		trace2("find_type_in_string C", cmd.fullstring(), _gotline);
-		const GEDA_SYMBOL D = *(parse_C(cmd));
+		const GEDA_SYMBOL* D = parse_C(cmd);
 		assert(_C);
-		trace3("find_type_in_string C", hp(_C), D["device"], D["basename"]);
+		trace3("find_type_in_string C", hp(_C), (*D)["device"], (*D)["basename"]);
 
-		if (!D.pincount()){
-			if ( D.has_key("device") ){
+		if (!D->pincount()){
+			if ( D->has_key("device") ){
 				if ((*_C)["device"] == "directive")
 					incomplete();
 				// return "some command"
 				// don't need non-directive symbol hold directives.
 				// (for now?)
 			}
-			trace2("have no pins", _C->pincount(), D["basename"]);
+			trace2("have no pins", _C->pincount(), (*D)["basename"]);
 //			delete _C;
 //			_C = 0;
 			return "dev_comment";
 		}
 		trace1("have pins", _C->pincount());
 
-		if (D.has_key("device")){
-			trace1("have devicekey", D["device"]);
-			assert(D["device"]!="");
+		if (D->has_key("device")){
+			trace1("have devicekey", (*D)["device"]);
+			assert((*D)["device"]!="");
 			const CARD* modelcard;
 			try {
-				modelcard = *find_nondevice(D["device"]);
-				trace1("found nondevice", D["device"]);
+				modelcard = *find_nondevice((*D)["device"]);
+				trace1("found nondevice", (*D)["device"]);
 			} catch (Exception_Cant_Find){
 				modelcard = NULL;
-				trace1("no nondevice", D["device"]);
+				trace1("no nondevice", (*D)["device"]);
 			}
-			if (CARD* c = device_dispatcher[D["device"]]){
+			if (CARD* c = device_dispatcher[(*D)["device"]]){
 				COMPONENT* d = prechecked_cast<COMPONENT*>(c);
-				if ( unsigned(d->max_nodes()) >= D.pincount()
-						&& unsigned(d->min_nodes()) <= D.pincount()){
-					type = D["device"];
+				if ( unsigned(d->max_nodes()) >= (*D).pincount()
+						&& unsigned(d->min_nodes()) <= (*D).pincount()){
+					type = (*D)["device"];
 				}
 			} else if (modelcard) {
 				if (const COMPONENT* d = prechecked_cast<const COMPONENT*>(modelcard))
-					if(unsigned(d->max_nodes()) >= D.pincount()
-							&& unsigned(d->min_nodes()) <= D.pincount()){
-						type = D["device"];
+					if(unsigned(d->max_nodes()) >= D->pincount()
+							&& unsigned(d->min_nodes()) <= D->pincount()){
+						type = (*D)["device"];
 					}
 				if(const MODEL_SUBCKT* d = prechecked_cast<const MODEL_SUBCKT*>(modelcard))
-					if(unsigned(d->max_nodes()) >= D.pincount()
-							&& unsigned(d->min_nodes()) <= D.pincount()){
-						type = D["device"];
+					if(unsigned(d->max_nodes()) >= D->pincount()
+							&& unsigned(d->min_nodes()) <= D->pincount()){
+						type = (*D)["device"];
 					}
 			} else {
-				string modulename = DUMMY_PREFIX + D["basename"];
+				string modulename = DUMMY_PREFIX + (*D)["basename"];
 				trace1("symbolthere?", modulename);
 				CARD_LIST::const_iterator i = CARD_LIST::card_list.find_(modulename);
 				if(i != CARD_LIST::card_list.end()) {
-					trace1("instanceofsymbol", D["basename"]);
+					trace1("instanceofsymbol", (*D)["basename"]);
 					type = modulename;
 				} else {
 					trace0("C -- new subckt?");
 					type = "gC";
 				}
 			}
-		} else if (D.has_key("net")) {
-			trace2("found rail", D["net"], cmd.fullstring() );
+		} else if (D->has_key("net")) {
+			trace2("found rail", (*D)["net"], cmd.fullstring() );
 			if (CARD* c = device_dispatcher["rail"]){
 				COMPONENT* d = prechecked_cast<COMPONENT*>(c);
-				if(unsigned(d->max_nodes()) >= D.pincount()
-						&& unsigned(d->min_nodes()) <= D.pincount()){
+				if(unsigned(d->max_nodes()) >= D->pincount()
+						&& unsigned(d->min_nodes()) <= D->pincount()){
 					type = "rail";
 					(*_C)["device"] = type;
 				}
@@ -1301,8 +1301,8 @@ static void print_label(OMSTREAM& o, const COMPONENT* x)
 static void print_node_xy(OMSTREAM& o,const COMPONENT* x,int _portindex)
 {untested();
 	std::string _nodename=x->port_value(_portindex);
-	for(CARD_LIST::const_iterator ci=x->scope()->begin(); ci!=x->scope()->end(); ++ci) {untested();
-		if((*ci)->dev_type()=="place"){untested();
+	for(CARD_LIST::const_iterator ci=x->scope()->begin(); ci!=x->scope()->end(); ++ci) {itested();
+		if((*ci)->dev_type()=="place"){itested();
 			if(static_cast<COMPONENT*>(*ci)->port_value(0)==_nodename){untested();
 				trace0("Got some place!");
 				o << (*ci)->param_value(1) << " " << (*ci)->param_value(0) << " ";
@@ -1435,12 +1435,12 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
 	std::string basename = x->param_value(x->param_count()-1);
 
 	trace2("LANG_GEDA::print_component", x->long_label(), basename);
-	GEDA_SYMBOL sym = _symbol[basename];
-	for( std::set<GEDA_PIN>::const_iterator p = sym.pinbegin();
-			p!=sym.pinend(); ++p){
+	GEDA_SYMBOL* sym = _symbol[basename];
+	for( std::set<GEDA_PIN>::const_iterator p = sym->pinbegin();
+			p!=sym->pinend(); ++p){
 		trace3("LANG_GEDA::print_component", p->label(), p->x0(), p->y0());
 	}
-	unsigned howmany = sym.pincount();
+	unsigned howmany = sym->pincount();
 
 	std::vector<const std::pair<int,int>*> coordinates;
 	coordinates.resize(howmany);
@@ -1451,10 +1451,15 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
 		abscoord.push_back(find_place_string(x, val));
 		trace4("LANG_GEDA::print_component", n, val, abscoord.back()[0],
 				abscoord.back()[1]);
-		if(GEDA_PIN const* P = sym.pin(n)){
+		if(GEDA_PIN const* P = sym->pin(n)){
 			trace1("LANG_GEDA::print_component", P->label());
 			coordinates[ii] = &P->X();
+		}else if(GEDA_PIN const* P = sym->pin(ii+1)){ untested();
+			// label mismatch. trying seq.
+			coordinates[ii] = &P->X();
 		}else{ incomplete();
+			trace2("LANG_GEDA::print_component", ii, sym->pin(ii));
+			throw(Exception_Cant_Find("pin in " + basename, n));
 		}
 	}
 	static std::string angle[4]={"0","90","180","270"};
@@ -1472,7 +1477,7 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
 				trace2("print_comp case", mir, angle[ii]);
 				_mirror = ms[mir];
 				xy="";
-				for(unsigned pinind=0; pinind<coordinates.size(); ++pinind){ untested();
+				for(unsigned pinind=0; pinind<howmany; ++pinind){ untested();
 					int a[2];
 					int c[2];
 					a[0] = atoi(abscoord[pinind][0].c_str());
@@ -1633,16 +1638,19 @@ class CMD_GEDA : public CMD { //
 			string label = (device=="")? filename : device;
 
 			if(symbol){ untested();
-				GEDA_SYMBOL sym = GEDA_SYMBOL(lang_geda._symbol[filename]);
-				trace3("symbol", sym.pincount(), filename, lang_geda._symbol[filename].pincount());
-				assert(sym.pincount());
-				if(source!="") sym["source"] = source;
-				if(sym["source"]==""){untested();
+				GEDA_SYMBOL* sym = lang_geda._symbol[filename]->clone();
+				trace3("symbol", sym->pincount(), filename, lang_geda._symbol[filename]->pincount());
+				assert(sym->pincount());
+				if(source!="") {
+					(*sym)["source"] = source;
+				}
+				if((*sym)["source"]==""){untested();
 					OPT::language = oldlang;
 					throw Exception_CS("empty source", cmd);
 				}
 				model = new MODEL_GEDA_SUBCKT(); // BUG: ask dispatcher?
-				sym >> model;
+				*sym >> model;
+				delete sym;
 				model->set_label(label);
 				try{ untested();
 					LANG_GEDA::read_file(source, Scope, model);
