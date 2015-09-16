@@ -120,7 +120,11 @@ $(GC_TESTS:%.sh=%.out): %.out: %.gc
 testbench.out: EXTRA_SED_ARG=-e '/^parameter /d'
 
 # $(EG_TESTS:%.sh=%_recon.out): GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
-$(EG_TESTS:%.sh=%.out): GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
+$(EG_TESTS:%.sh=%.out): GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v \
+                                     -i $(abs_top_srcdir)/include/transistor.v
+
+# vile hack. maybe should not wrap comments...?
+$(ER_TESTS:%.sh=%.out): EXTRA_SED_ARGS=-e '/title-B/d' -e 's%^//v %v %' -e '/^\/\/.*/d'
 
 $(EG_TESTS:%.sh=%.out) $(EG_TESTS:%.sh=%_recon.out): %.out: %.gc
 	$(GNUCAP) -a $(MODULE) $(GC_INCLUDES) < $< | \
