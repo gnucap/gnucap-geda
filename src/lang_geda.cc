@@ -734,8 +734,17 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 DEV_COMMENT* LANG_GEDA::parse_comment(CS& cmd, DEV_COMMENT* x)
-{
+{ untested();
+
+	if(_C){ untested();
+
+		x->set("comment (incomplete) " + (*_C)["basename"]);
+		delete _C;
+		_C = NULL;
+		return x;
+	}
 	assert(x);
+	trace2("LANG_GEDA::parse_comment", x->comment(), cmd.fullstring());
 	x->set(cmd.fullstring());
 	std::string dump,no_of_lines="";
 	if (cmd >> "T "){
