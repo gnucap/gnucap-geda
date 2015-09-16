@@ -1,1 +1,1 @@
-EXTRA_DIST=analog.v
+EXTRA_DIST=analog.v transistor.v

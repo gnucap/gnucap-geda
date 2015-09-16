@@ -6,14 +6,14 @@ simulator language=verilog
 // mapping geda-symbols to actual devices
 // "analog" section
 
-module CAPACITOR(n p);
+module CAPACITOR(1 2);
 	parameter value=1;
-	capacitor #(.c(value)) c(n,p);
+	capacitor #(.c(value)) c(1,2);
 endmodule
 
-module RESISTOR(n p);
+module RESISTOR(1 2);
 	parameter value=1;
-	resistor #(.r(value)) r(n,p);
+	resistor #(.r(value)) r(1,2);
 endmodule
 
 module BATTERY(n p);
@@ -24,6 +24,15 @@ endmodule
 module VOLTAGE_SOURCE(p n);
 	parameter value=1;
 	vsource #(.dc(value)) v(p n);
+endmodule
+
+module CURRENT_SOURCE(1 2);
+	parameter value=1;
+	isource #(.dc(value)) i(p n);
+endmodule
+
+module BC547(1 2 3 4);
+// nothing yet
 endmodule
 
 simulator lang=acs
