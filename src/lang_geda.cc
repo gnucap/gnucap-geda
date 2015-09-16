@@ -258,6 +258,7 @@ std::string* LANG_GEDA::parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel
 }
 /*--------------------------------------------------------------------------*/
 // FIXME: do symbol_type?
+// BUG: returns coords...
 std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
 		string basename)const
 {
@@ -281,7 +282,7 @@ std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
 	// the file contents as string (wtf?!)
 	// char* data = s_clib_symbol_get_data(symbol);
 
-	// trace2("LANG_GEDA::parse_symbol_file", basename, filename);
+	trace2("LANG_GEDA::parse_symbol_file", basename, filename);
 	GEDA_SYMBOL s = _symbol[basename];
 	CS sym_cmd(CS::_INC_FILE, filename);
 	//Now parse the sym_cmd which will get lines
@@ -294,7 +295,7 @@ std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
 			break;
 		}
 		std::string linetype = find_type_in_string(sym_cmd);
-		trace2("LANG_GEDA::parse_symbol_file", linetype, sym_cmd.fullstring());
+		// trace2("LANG_GEDA::parse_symbol_file", linetype, sym_cmd.fullstring());
 		bool ismodel=false;
 		if (x && x->short_label()==DUMMY_PREFIX+basename){untested();
 			ismodel=true;
@@ -767,6 +768,7 @@ DEV_COMMENT* LANG_GEDA::parse_comment(CS& cmd, DEV_COMMENT* x)
 		}
 	}
 	return x;
+	trace1("LANG_GEDA::parse_comment done", x->comment());
 }
 /*--------------------------------------------------------------------------*/
 DEV_DOT* LANG_GEDA::parse_symbol_file( DEV_DOT* x, const GEDA_SYMBOL& sym )const
@@ -1094,8 +1096,8 @@ GEDA_SYMBOL* LANG_GEDA::parse_C(CS& cmd)const
 					(*_C)[name] = value;
 				}
 			}
-		} else { // "C" without body
-			trace1("C w/o body", cmd.fullstring());
+		} else { untested();
+			trace2("C w/o body", cmd.fullstring(), (*_C)["basename"]);
 			_gotline = 1; // dont read another time.
 		}
 	}catch(Exception_End_Of_Input&){ untested();
@@ -1136,9 +1138,10 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 		assert(!_C);
 		return "net";
 	} else if (_C || cmd >> "C "){
+		trace2("find_type_in_string C", cmd.fullstring(), _gotline);
 		const GEDA_SYMBOL D = *(parse_C(cmd));
 		assert(_C);
-		trace2("find_type_in_string C", hp(_C), D["device"]);
+		trace3("find_type_in_string C", hp(_C), D["device"], D["basename"]);
 
 		if (!D.pincount()){
 			if ( D.has_key("device") ){
@@ -1148,9 +1151,9 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 				// don't need non-directive symbol hold directives.
 				// (for now?)
 			}
-			trace1("have no pins", _C->pincount());
-			delete _C;
-			_C = 0;
+			trace2("have no pins", _C->pincount(), D["basename"]);
+//			delete _C;
+//			_C = 0;
 			return "dev_comment";
 		}
 		trace1("have pins", _C->pincount());
@@ -1410,7 +1413,9 @@ static void print_net(OMSTREAM& o, const COMPONENT* x)
 	//o<< node1x << node2x
 	print_node_xy(o,x,0);
 	print_node_xy(o,x,1);
-	if(x->value().string()!=""){untested();
+	if(x->value().string()=="NA( 0.)"){untested();
+		o << "4\n"; // HACK
+	}else if(x->value().string()!=""){untested();
 		o  << x->value().string()<<"\n"; //The color
 	}else{untested();
 		o << "4\n";
@@ -1428,18 +1433,29 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
 	std::string _angle,_mirror;
 	o << "C ";
 	std::string basename = x->param_value(x->param_count()-1);
-	//go through the symbol file and get the relative pin positions
-	std::vector<std::string*> coordinates = parse_symbol_file(NULL, basename);
-	trace3("LANG_GEDA::print_component", x->long_label(), basename, coordinates.size());
-	std::vector<std::string*> abscoord;
-	for(unsigned ii=0; ii<coordinates.size(); ++ii){ untested();
-		trace2("LANG_GEDA::print_component", coordinates[ii][0], coordinates[ii][1]);
+
+	trace2("LANG_GEDA::print_component", x->long_label(), basename);
+	GEDA_SYMBOL sym = _symbol[basename];
+	for( std::set<GEDA_PIN>::const_iterator p = sym.pinbegin();
+			p!=sym.pinend(); ++p){
+		trace3("LANG_GEDA::print_component", p->label(), p->x0(), p->y0());
 	}
-	for(unsigned ii=0; ii<coordinates.size(); ++ii){ untested();
+	unsigned howmany = sym.pincount();
+
+	std::vector<const std::pair<int,int>*> coordinates;
+	coordinates.resize(howmany);
+	std::vector<std::string*> abscoord;
+	for(unsigned ii=0; ii<howmany; ++ii){ untested();
+		std::string n=x->port_name(ii);
 		std::string val=x->port_value(ii);
 		abscoord.push_back(find_place_string(x, val));
-		trace2("LANG_GEDA::print_component", abscoord.back()[0],
+		trace4("LANG_GEDA::print_component", n, val, abscoord.back()[0],
 				abscoord.back()[1]);
+		if(GEDA_PIN const* P = sym.pin(n)){
+			trace1("LANG_GEDA::print_component", P->label());
+			coordinates[ii] = &P->X();
+		}else{ incomplete();
+		}
 	}
 	static std::string angle[4]={"0","90","180","270"};
 	static std::string ms[2] = {"0","1"};
@@ -1461,8 +1477,8 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
 					int c[2];
 					a[0] = atoi(abscoord[pinind][0].c_str());
 					a[1] = atoi(abscoord[pinind][1].c_str());
-					c[0] = atoi(coordinates[pinind][0].c_str());
-					c[1] = atoi(coordinates[pinind][1].c_str());
+					c[0] = coordinates[pinind]->first;
+					c[1] = coordinates[pinind]->second;
 					std::string pos = componentposition_string(a, c, 90*ii, mir);
 					if (pinind==0){ untested();
 						// first port. guess component position.
