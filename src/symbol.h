@@ -36,6 +36,10 @@ enum angle_t { a_invalid = -1,
                a_180 = 180,
                a_270 = 270 };
 
+enum mirror_t { m_invalid = -1,
+                m_0 = 0,
+                m_r = 1 };
+
 // should be std::map<std::string, morethanstring>?
 class GEDA_PIN : public std::map<std::string, std::string>{
 	public:
@@ -47,14 +51,15 @@ class GEDA_PIN : public std::map<std::string, std::string>{
 		typedef std::map<std::string, std::string> parent;
 		typedef parent::const_iterator const_iterator;
 	private:
-		int _xy[2];
+		std::pair<int,int> _xy;
 		unsigned _color;
 		bool _bus; //"type of pin"
 	public:
-		int& x0(){return _xy[0];}
-		int& y0(){return _xy[1];}
-		int x0()const{return _xy[0];}
-		int y0()const{return _xy[1];}
+		int& x0(){return _xy.first;}
+		int& y0(){return _xy.second;}
+		int x0()const{return _xy.first;}
+		int y0()const{return _xy.second;}
+		const std::pair<int,int>& X()const { return _xy; }
 		//int& x1(){return _xy[2];}
 		//int& y1(){return _xy[3];}
 		unsigned& color(){return _color;}
@@ -83,6 +88,7 @@ class GEDA_SYMBOL : public std::map<std::string, std::string> {
 	typedef std::map<std::string, std::string> parent;
 	std::string _filename;
 	std::set<GEDA_PIN> _pins;
+	std::map<std::string, const GEDA_PIN*> _pins_by_name;
 	// T and stuff?
 
 	public:
@@ -132,7 +138,12 @@ class GEDA_SYMBOL : public std::map<std::string, std::string> {
 						}
 						// _pins.resize(max(p.pinseq(), _pins.size()+1));
 						assert(p.pinseq());
-						_pins.insert(p);
+						std::pair<std::set<GEDA_PIN>::const_iterator,bool> f = _pins.insert(p);
+						if(f.second){ incomplete();
+							// collision
+						}
+						const GEDA_PIN* P = &(*(f.first));
+						_pins_by_name[p.label()] = P;
 						continue; // line has been read
 					}
 					{
@@ -177,21 +188,22 @@ class GEDA_SYMBOL : public std::map<std::string, std::string> {
 		std::set<GEDA_PIN>::const_iterator pinbegin()const {return _pins.begin();}
 		std::set<GEDA_PIN>::const_iterator pinend()const {return _pins.end();}
 		COMPONENT* operator>>(COMPONENT*) const;
+		GEDA_PIN const* pin(std::string x){return _pins_by_name[x];}
 };
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 GEDA_PIN::GEDA_PIN( CS& cmd )
 {
-	_xy[0] = cmd.ctoi();
-	_xy[1] = cmd.ctoi();
+	x0() = cmd.ctoi();
+	y0() = cmd.ctoi();
 	int x = cmd.ctoi();
 	int y = cmd.ctoi();
 	_bus = cmd.ctob();
 	_color = cmd.ctou();
 	bool swap = cmd.ctob();
 	if (swap){
-		_xy[0] = x;
-		_xy[1] = y;
+		x0() = x;
+		y0() = y;
 	}
 	std::string    _portvalue="_";
 	try{
