@@ -1425,22 +1425,27 @@ static void print_net(OMSTREAM& o, const COMPONENT* x)
 void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
 { untested();
 	assert(x);
-	std::string _x,_y,_angle,_mirror;
-	o << "gC";
-	std::string basename=x->param_value(x->param_count()-1);
-	trace2("LANG_GEDA::print_component", x->long_label(), basename);
+	std::string _angle,_mirror;
+	o << "C ";
+	std::string basename = x->param_value(x->param_count()-1);
 	//go through the symbol file and get the relative pin positions
-	std::vector<std::string*> coordinates=parse_symbol_file(NULL, basename);
+	std::vector<std::string*> coordinates = parse_symbol_file(NULL, basename);
+	trace3("LANG_GEDA::print_component", x->long_label(), basename, coordinates.size());
 	std::vector<std::string*> abscoord;
 	for(unsigned ii=0; ii<coordinates.size(); ++ii){ untested();
-		abscoord.push_back(find_place_string(x,x->port_value(ii)));
+		trace2("LANG_GEDA::print_component", ii, x->net_nodes());
+		std::string val=x->port_value(ii);
+		abscoord.push_back(find_place_string(x, val));
 	}
 	std::string angle[4]={"0","90","180","270"};
 	std::string xy="";
-	bool gottheanglemirror=false;
+	bool gottheanglemirror = false; // guessed rotation matches ports.
 	for(int ii=0; ii<4 ; ++ii){ untested();
 		if(gottheanglemirror){ untested();
-		}else{ untested();
+			break;
+		}
+
+		{
 			_mirror="0";
 			_angle=angle[ii];
 			xy="";
@@ -1455,14 +1460,14 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
 				if (xy==""){ untested();
 					xy = componentposition_string(a, c, 90*ii, _mirror=="1");
 				}else if(xy != componentposition_string(a, c, 90*ii, _mirror=="1")){ untested();
-					gottheanglemirror=false;
+					gottheanglemirror=false; // one pin does not fit.
 					break;
 				}
 			}
 			if (gottheanglemirror) { untested();
-				o << xy << " " << "1" << " " << _angle << " "
-				  << _mirror << " " << basename<< "\n";
-			}else{ untested();
+				break; // all pins fit...
+			}
+			{ untested();
 				_mirror="1";
 				xy="";
 				gottheanglemirror=true;
@@ -1481,12 +1486,16 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
 					}
 				}
 				if (gottheanglemirror) { untested();
-					o << xy << " " << "1" << " " << _angle << " "
-					  << _mirror << " " << basename<< "\n";
+					break;
 				}
 			}
 		}
 	}
+	if(!gottheanglemirror){ unreachable();
+		// could not match symbol pin to places (!?)
+	}
+	o << xy << " " << "1" << " " << _angle << " "
+		<< _mirror << " " << basename<< "\n";
 	//map those with the absolute positions of nodes and place the device
 	//such that it is in between the nodes.
 	//std::vector<std::string*> coord = parse_symbol_file(static_cast<COMPONENT*>(x) , basename);
