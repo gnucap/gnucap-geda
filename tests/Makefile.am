@@ -10,7 +10,10 @@ EXTRA_DIST = \
     nets.sch nets.ref spice_foo.sp \
     dut.sch \
     bogus.sch bogus.ref \
-    gafrc
+	 gafrc \
+	 $(EG_TESTS:%.sh=%.sch) \
+	 $(EG_TESTS:%.sh=%.ref) \
+	 $(ER_TESTS:%.sh=%.ref)
 #
 #AM_TESTS_ENVIRONMENT = \
 #    export LD_LIBRARY_PATH=../src/.libs \
@@ -44,6 +47,8 @@ ER_TESTS = eg1_recon.sh \
            eg42_recon.sh \
            eg43_recon.sh \
            eg5_recon.sh
+
+DISTCLEANFILES = $(EG_TESTS:%.sh=%.gc) $(ER_TESTS:%.sh=%.gc)
 
 XFAIL_TESTS =
 
