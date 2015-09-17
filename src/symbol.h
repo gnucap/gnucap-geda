@@ -290,6 +290,7 @@ class GEDA_SYMBOL_MAP{
 		typedef std::map<std::string, GEDA_SYMBOL*> parent;
 		~GEDA_SYMBOL_MAP(){
 			for(parent::iterator i = _m.begin(); i!=_m.end(); ++i){
+				// incomplete(); // memory leak
 				// delete i->second;
 			}
 		}
