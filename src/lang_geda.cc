@@ -735,9 +735,9 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 DEV_COMMENT* LANG_GEDA::parse_comment(CS& cmd, DEV_COMMENT* x)
-{ untested();
+{
 
-	if(_C){ untested();
+	if(_C){
 
 		x->set("comment (incomplete) " + (*_C)["basename"]);
 		delete _C;
@@ -1096,7 +1096,7 @@ GEDA_SYMBOL* LANG_GEDA::parse_C(CS& cmd)const
 					(*_C)[name] = value;
 				}
 			}
-		} else { untested();
+		} else {
 			trace2("C w/o body", cmd.fullstring(), (*_C)["basename"]);
 			_gotline = 1; // dont read another time.
 		}
@@ -1299,11 +1299,11 @@ static void print_label(OMSTREAM& o, const COMPONENT* x)
 #endif
 /*--------------------------------------------------------------------------*/
 static void print_node_xy(OMSTREAM& o,const COMPONENT* x,int _portindex)
-{untested();
+{
 	std::string _nodename=x->port_value(_portindex);
-	for(CARD_LIST::const_iterator ci=x->scope()->begin(); ci!=x->scope()->end(); ++ci) {itested();
-		if((*ci)->dev_type()=="place"){itested();
-			if(static_cast<COMPONENT*>(*ci)->port_value(0)==_nodename){untested();
+	for(CARD_LIST::const_iterator ci=x->scope()->begin(); ci!=x->scope()->end(); ++ci) {
+		if((*ci)->dev_type()=="place"){
+			if(static_cast<COMPONENT*>(*ci)->port_value(0)==_nodename){
 				trace0("Got some place!");
 				o << (*ci)->param_value(1) << " " << (*ci)->param_value(0) << " ";
 			}
@@ -1344,7 +1344,7 @@ pair<int,int> componentposition(int* absxy, int* delxy, int angle, bool mirror)
 				newx += delxy[1]; //  0  1
 				newy += delxy[0]; //  1  0
 				break;
-			case 180: untested();
+			case 180:
 				newx -= delxy[0]; // -1  0
 				newy += delxy[1]; //  0  1
 				break;
@@ -1359,7 +1359,7 @@ pair<int,int> componentposition(int* absxy, int* delxy, int angle, bool mirror)
 /*--------------------------------------------------------------------------*/
 // urghs
 static std::string componentposition_string(int* absxy, int* relxy, int angle, bool mirror)
-{untested();
+{
 	return to_string(componentposition(absxy, relxy, angle, mirror).first)
 		+ " " +
 		to_string(componentposition(absxy, relxy, angle, mirror).second);
@@ -1380,7 +1380,7 @@ const place::DEV_PLACE* LANG_GEDA::find_place(const CARD* x, string name)const
 }
 /*--------------------------------------------------------------------------*/
 pair<int,int> LANG_GEDA::find_place_(const CARD* x, string name)const
-{untested();
+{
 	const place::DEV_PLACE*p = find_place(x,name);
 	assert(p);
 	pair<int,int> a;
@@ -1391,20 +1391,20 @@ pair<int,int> LANG_GEDA::find_place_(const CARD* x, string name)const
 }
 /*--------------------------------------------------------------------------*/
 string* LANG_GEDA::find_place_string(const CARD* x, std::string name)const
-{untested();
+{
 	std::string* a = new std::string[2];
-	try{untested();
+	try{
 		pair<int,int> b = find_place_(x, name);
 		a[0] = to_string(b.first);
 		a[1] = to_string(b.second);
 		return a;
-	}catch(Exception_Cant_Find){untested();
+	}catch(Exception_Cant_Find){
 		return NULL;
 	}
 }
 /*--------------------------------------------------------------------------*/
 static void print_net(OMSTREAM& o, const COMPONENT* x)
-{untested();
+{
 	assert(x);
 	assert(x->dev_type()=="net");
 	o << "N ";
@@ -1413,7 +1413,7 @@ static void print_net(OMSTREAM& o, const COMPONENT* x)
 	//o<< node1x << node2x
 	print_node_xy(o,x,0);
 	print_node_xy(o,x,1);
-	if(x->value().string()=="NA( 0.)"){untested();
+	if(x->value().string()=="NA( 0.)"){
 		o << "4\n"; // HACK
 	}else if(x->value().string()!=""){untested();
 		o  << x->value().string()<<"\n"; //The color
@@ -1428,7 +1428,7 @@ static void print_net(OMSTREAM& o, const COMPONENT* x)
  * }
  */
 void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
-{ untested();
+{
 	assert(x);
 	std::string _angle,_mirror;
 	o << "C ";
@@ -1445,7 +1445,7 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
 	std::vector<const std::pair<int,int>*> coordinates;
 	coordinates.resize(howmany);
 	std::vector<std::string*> abscoord;
-	for(unsigned ii=0; ii<howmany; ++ii){ untested();
+	for(unsigned ii=0; ii<howmany; ++ii){
 		std::string n=x->port_name(ii);
 		std::string val=x->port_value(ii);
 		abscoord.push_back(find_place_string(x, val));
@@ -1454,7 +1454,7 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
 		if(GEDA_PIN const* P = sym->pin(n)){
 			trace1("LANG_GEDA::print_component", P->label());
 			coordinates[ii] = &P->X();
-		}else if(GEDA_PIN const* P = sym->pin(ii+1)){ untested();
+		}else if(GEDA_PIN const* P = sym->pin(ii+1)){
 			// label mismatch. trying seq.
 			coordinates[ii] = &P->X();
 		}else{ incomplete();
@@ -1466,18 +1466,18 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
 	static std::string ms[2] = {"0","1"};
 	std::string xy="";
 	bool gottheanglemirror = false; // guessed rotation matches ports.
-	for(int ii=0; ii<4 ; ++ii){ untested();
-		if(gottheanglemirror){ untested();
+	for(int ii=0; ii<4 ; ++ii){
+		if(gottheanglemirror){
 			break;
 		}
 
 		{
 			_angle = angle[ii];
-			for(unsigned mir=0; mir<2; ++mir) { untested();
+			for(unsigned mir=0; mir<2; ++mir) {
 				trace2("print_comp case", mir, angle[ii]);
 				_mirror = ms[mir];
 				xy="";
-				for(unsigned pinind=0; pinind<howmany; ++pinind){ untested();
+				for(unsigned pinind=0; pinind<howmany; ++pinind){
 					int a[2];
 					int c[2];
 					a[0] = atoi(abscoord[pinind][0].c_str());
@@ -1485,7 +1485,7 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
 					c[0] = coordinates[pinind]->first;
 					c[1] = coordinates[pinind]->second;
 					std::string pos = componentposition_string(a, c, 90*ii, mir);
-					if (pinind==0){ untested();
+					if (pinind==0){
 						// first port. guess component position.
 						xy = pos;
 						gottheanglemirror = true;
@@ -1500,7 +1500,7 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
 						trace2("print_comp match", pinind, pos);
 					}
 				}
-				if (gottheanglemirror) { untested();
+				if (gottheanglemirror) {
 					break;
 				}
 			}
@@ -1523,32 +1523,32 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
 	bool _parameters=false;
 	bool _label=false;
 	bool _devtype=false;
-	if(x->short_label()!=""){ untested();
+	if(x->short_label()!=""){
 		_label=true;
 	}
-	if(x->param_count()>6){ untested();
+	if(x->param_count()>6){
 		_parameters=true;
 	}
-	if(x->dev_type()!="" && x->dev_type().substr(0,DUMMY_PREFIX.length())!=DUMMY_PREFIX){ untested();
+	if(x->dev_type()!="" && x->dev_type().substr(0,DUMMY_PREFIX.length())!=DUMMY_PREFIX){
 		_devtype=true;
 	}
-	if (_label or _parameters or _devtype){ untested();
+	if (_label or _parameters or _devtype){
 		o << "{\n";
-		if(_devtype){untested();
+		if(_devtype){
 			o << "T "<< xy << " 5 10 0 1 0 0 1\n";
 			o << "device=" << x->dev_type() << "\n";
 		}
-		if(_label){untested();
+		if(_label){
 			o << "T "<< xy << " 5 10 0 1 0 0 1\n";
 			o << "refdes=" << x->short_label() << "\n";
 		}
-		if(_parameters){ untested();
-			for(int i=x->param_count()-1; i>=0 ; --i){untested();
-				if(x->param_value(i)=="NA( 0.)"){untested();
-				}else if(x->param_value(i)=="NA( NA)"){untested();
-				}else if(x->param_value(i)=="NA( 27.)"){untested();
-				}else if(x->param_name(i)=="basename"){untested();
-				}else{ untested();
+		if(_parameters){
+			for(int i=x->param_count()-1; i>=0 ; --i){
+				if(x->param_value(i)=="NA( 0.)"){
+				}else if(x->param_value(i)=="NA( NA)"){
+				}else if(x->param_value(i)=="NA( 27.)"){
+				}else if(x->param_name(i)=="basename"){
+				}else{
 					o << "T "<< xy << " 5 10 0 1 0 0 1\n";
 					o << x->param_name(i) << "=" << x->param_value(i) << "\n";
 				}
@@ -1565,33 +1565,33 @@ void LANG_GEDA::print_paramset(OMSTREAM& o, const MODEL_CARD* x)
 }
 /*--------------------------------------------------------------------------*/
 void LANG_GEDA::print_module(OMSTREAM& o, const MODEL_SUBCKT* x)
-{untested();
+{
 	assert(x);
 	//o<<x->short_label();
 	//o<<"\n";
 	assert(x->subckt());
-	if(x->short_label().find(DUMMY_PREFIX)!=std::string::npos){ untested();
+	if(x->short_label().find(DUMMY_PREFIX)!=std::string::npos){
 		trace0("Got a placeholding model");
 	}else{ incomplete();
 	}
 }
 /*--------------------------------------------------------------------------*/
 void LANG_GEDA::print_instance(OMSTREAM& o, const COMPONENT* x)
-{untested();
+{
 	trace1("LANG_GEDA::print_instance", x->long_label());
 	// print_type(o, x);
 	// print_label(o, x);
-	if(x->dev_type()=="net"){ untested();
+	if(x->dev_type()=="net"){
 		print_net(o, x);
-	}else if(x->dev_type()=="place"){ untested();
-	}else{ untested();
+	}else if(x->dev_type()=="place"){
+	}else{
 		//Component
 		print_component(o ,x);
 	}
 }
 /*--------------------------------------------------------------------------*/
 void LANG_GEDA::print_comment(OMSTREAM& o, const DEV_COMMENT* x)
-{ untested();
+{
 	assert(x);
 	o << x->comment() << '\n';
 }
@@ -1616,7 +1616,7 @@ class CMD_GEDA : public CMD { //
 			string filename;
 			cmd >> filename;
 			trace1("gschem", filename);
-			if(filename==""){untested();
+			if(filename==""){
 				command("options lang=gschem", Scope);
 				return;
 			}

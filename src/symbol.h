@@ -97,7 +97,7 @@ class GEDA_SYMBOL {
 		typedef std::map<std::string, std::string>::iterator iterator;
 		typedef std::map<std::string, std::string>::const_iterator const_iterator;
 		GEDA_SYMBOL() {untested();}
-		~GEDA_SYMBOL(){ untested(); }
+		~GEDA_SYMBOL(){}
 	private:
 		GEDA_SYMBOL(const GEDA_SYMBOL& p) :
 			_pins(p._pins),
@@ -108,7 +108,7 @@ class GEDA_SYMBOL {
 			y(p.y),
 			_mirror(p._mirror),
 			_angle(p._angle)
-			{untested();}
+			{}
 //		GEDA_SYMBOL(const GEDA_SYMBOL& x) :
 //			std::map<std::string, std::string>(x),
 //			_filename(x._filename),
@@ -288,8 +288,8 @@ COMPONENT* GEDA_SYMBOL::operator>>(COMPONENT* m) const{
 class GEDA_SYMBOL_MAP{
 	public:
 		typedef std::map<std::string, GEDA_SYMBOL*> parent;
-		~GEDA_SYMBOL_MAP(){ untested();
-			for(parent::iterator i = _m.begin(); i!=_m.end(); ++i){ untested();
+		~GEDA_SYMBOL_MAP(){
+			for(parent::iterator i = _m.begin(); i!=_m.end(); ++i){
 				// delete i->second;
 			}
 		}
@@ -298,7 +298,7 @@ class GEDA_SYMBOL_MAP{
 		GEDA_SYMBOL* operator[](const std::string key){
 			parent::const_iterator it = _m.find( key );
 			GEDA_SYMBOL*& s = _m[key];
-			if ( it == _m.end() ) { untested();
+			if ( it == _m.end() ) {
 				trace1("GEDA_SYMBOL_MAP", key);
 				s = new GEDA_SYMBOL(key);
 			} else {
