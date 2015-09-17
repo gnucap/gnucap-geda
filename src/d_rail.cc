@@ -150,14 +150,8 @@ string DEV_RAIL::param_value(int i)const
 	}
 }
 /*--------------------------------------------------------------------------*/
-void DEV_RAIL::set_port_by_index(uint_t i, string& name){
-	if(i){
-		trace2("DEV_RAIL::set_port_by_index", i, name);
-		// reachable when parsing non-gschem netlist
-		// containing ports with 2 connections.
-		incomplete();
-		return;
-	}
+void DEV_RAIL::set_port_by_index(uint_t i, string& name)
+{ untested();
 	DEV_NET::set_port_by_index(i, name);
 	trace3("DEV_RAIL::set_port_by_index", i, name, net);
 	string portname = name;
