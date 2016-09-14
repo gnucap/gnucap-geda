@@ -1,7 +1,8 @@
 
+include ../include/analog.v
 
 spice
-V1 n1 n0 pulse iv=0 pv=1 delay=0 width=10m
+V1 n1 n0 pulse iv=0 pv=1 delay=0 width=10m rise=1m
 R1 n0 0 1
 
 *.load lang_geda.so
@@ -12,13 +13,12 @@ rc.sch sch1(n1 n2 n0);
 list
 
 spice
-.echo dc
 .print dc v(nodes) r(sch1.R1.*) c(sch1.C1.*)
 .print tran v(nodes) v(sch1.C1.c) v(sch1.R1.r)
 .dc
 
 .store tran v(n2)
-.tran 0 20m .1m basic trace=n
+.tran 0 20m .1m basic trace=a
 .measure vn2 at(probe="v(n2)" x=1m)
 
 .end

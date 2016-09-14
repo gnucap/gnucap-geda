@@ -73,7 +73,7 @@ TESTS = $(EG_TESTS) \
 EXTRA_DIST+= $(TESTS:%.sh=%.ref) $(GC_TESTS:%.sh=%.gc)
 
 # these require schematics
-SCHEMATICS = testbench.sch spice.sch rail.sch res_net.sch short.sch res.sch
+SCHEMATICS = testbench.sch spice.sch rail.sch res_net.sch short.sch res.sch rc.sch
 $(SCHEMATICS:%.sch=%.out): %.out: $(PWD)/%.sch
 EXTRA_DIST+= $(SCHEMATICS)
 
