@@ -132,10 +132,12 @@ void DEV_GEDA_SUBCKT::apply_map(unsigned* map)
 /*--------------------------------------------------------------------------*/
 // map is a permutation
 // a permutation has orbits, hence induces a partition
-// the minimal element of a partition is the partition number
-// assign to each element the number of its partition
+// the minimal element of a set is the set number
+// assign to each element the number of its set
 // e.g. turn 0 1 4 3 2 5 into
 //           0 1 2 3 2 5
+//
+// also update port array
 void DEV_GEDA_SUBCKT::orbit_number(unsigned* map, unsigned len, unsigned* port)
 {
 	for(unsigned i=0; i<len; ++i) {
@@ -246,6 +248,7 @@ void DEV_GEDA_SUBCKT::collapse_nodes(const NODE* a, const NODE* b)
 	assert(j<num_nodes_in_subckt+2);
 
 	if(_map){
+		// FIXME: need to check if already collapsed
 		std::swap(_map[i], _map[j]);
 	}else{
 	}

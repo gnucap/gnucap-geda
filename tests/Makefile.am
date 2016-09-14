@@ -3,9 +3,9 @@
 # license: GPLv3+
 
 MODULE = ../src/.libs/lang_geda.so
-GNUCAP_ENV = export GUILE_WARN_DEPRECATED=no LD_LIBRARY_PATH=../src/.libs;
+GNUCAP_ENV = export GUILE_WARN_DEPRECATED=no LD_LIBRARY_PATH=../src/.libs$(LD_LIBRARY_PATH:%=:%);
 GNUCAP = $(shell echo gnucap | sed -e '$(transform)')
-GNUCAP_GEDA = export GUILE_WARN_DEPRECATED=no LD_LIBRARY_PATH=../src/.libs; ../gnucap-geda
+GNUCAP_GEDA = ../gnucap-geda
 EXTRA_DIST = \
     nets.sch nets.ref spice_foo.sp \
     dut.sch \
@@ -64,7 +64,7 @@ XFAIL_TESTS += eg34b.sh
 
 GC_TESTS = res_net.sh short.sh rail.sh spice.sh \
         testbench.sh res.sh notfound.sh convert.sh \
-        verilog.sh verilog_place.sh
+        verilog.sh verilog_place.sh rc.sh
 CUSTOM_TESTS = nets.sh bogus.sh
 TESTS = $(EG_TESTS) \
         $(ER_TESTS) \
@@ -113,12 +113,12 @@ eg34.gc: EXTRA_CMD=options nowarn
 eg26.gc: EXTRA_CMD=options nowarn
 
 nets.out: nets.sch
-	$(GNUCAP_GEDA) -a $(MODULE) $< |grep ^net | wc -l > $@
+	$(GNUCAP_ENV) $(GNUCAP_GEDA) -a $(MODULE) $< |grep ^net | wc -l > $@
 
 $(TESTS:%.sh=%.log): %.log: %.out
 
 bogus.out: $(PWD)/bogus.sch
-	$(GNUCAP_GEDA) -a $(MODULE) $< > $@
+	$(GNUCAP_ENV) $(GNUCAP_GEDA) -a $(MODULE) $< > $@
 
 %.reg: %.test %.ref
 	diff $+
@@ -159,6 +159,8 @@ bogus.out: EXTRA_SED_ARG=
 
 $(ER_TESTS:%.sh=%.out): GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
 $(EG_TESTS:%.sh=%.out): GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
+
+rc.out: GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
 
 eg2b.out eg2b_recon.out: VLIB_FILES+= transistor.v diode.v
 eg3.out eg3_recon.out: VLIB_FILES += transistor.v 74.v
