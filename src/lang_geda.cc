@@ -27,22 +27,26 @@
 #include <c_comand.h>
 #include <d_dot.h>
 #include <d_coment.h>
-#include <d_subckt.h>
+#include <e_paramlist.h>
 #include <e_model.h>
 #include <u_lang.h>
 #include <u_nodemap.h>
+
 #include <fts.h>
 #include <gmpxx.h> // to workaround bug in gmp header about __cplusplus
+
 #define COMPLEX NOCOMPLEX // COMPLEX already came from md.h
-extern "C"{ //
+extern "C"{
 # include <libgeda/libgeda.h>
 }
 #undef COMPLEX
+
 #include "symbol.h"
 #include "d_net.h"
 #include "d_place.h"
 #include "d_gedasckt.h"
 #include "io_trace.h"
+
 /*--------------------------------------------------------------------------*/
 #ifndef USE
 #define USE(a) (void) a;

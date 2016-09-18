@@ -21,7 +21,9 @@
  *------------------------------------------------------------------
  * data structures for subcircuits from geda schematics
  */
-#include <d_subckt.h>
+#include <e_node.h>
+#include <e_paramlist.h>
+#include <e_subckt.h>
 
 #ifndef HAVE_UINT_T
 typedef int uint_t;

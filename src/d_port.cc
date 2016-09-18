@@ -26,7 +26,7 @@
 #include <e_compon.h>
 #include <e_node.h>
 #include <u_nodemap.h>
-#include <d_subckt.h>
+// #include <d_subckt.h>
 #include "d_gedasckt.h"
 #include "d_net.h"
 #ifdef HAVE_BOOST_ASSIGN

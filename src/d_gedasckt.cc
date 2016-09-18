@@ -27,6 +27,7 @@
 #include <u_nodemap.h>
 #include "io_trace.h"
 /*--------------------------------------------------------------------------*/
+#define COMMON_SUBCKT COMMON_PARAMLIST // FIXME
 static COMMON_SUBCKT Default_SUBCKT(CC_STATIC);
 static DEV_GEDA_SUBCKT p1;
 static MODEL_GEDA_SUBCKT p2;
