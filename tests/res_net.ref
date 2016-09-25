@@ -13,5 +13,5 @@ endmodule // res_net.sch
 res_net.sch #() s1 (.a(n1),.b(n2));
 #           v(n0)      v(n1)      v(n2)      v(s1.R_1.r) i(R1)     
  0.         124.02p    5.         2.5       -2.5        2.5       
-vn2= 2.499988
-iR1= 2.499988
+vn2= 2.5
+iR1= 2.5

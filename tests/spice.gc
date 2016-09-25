@@ -1,4 +1,5 @@
 options debug
+options numdgt 6
 geda spice.sch module
 
 list

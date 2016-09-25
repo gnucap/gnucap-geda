@@ -151,7 +151,8 @@ $(GC_TESTS:%.sh=%.out): %.out: %.gc
 
 testbench.out: EXTRA_SED_ARG=-e '/^parameter /d'
 $(GC_TESTS:%.sh=%.out): EXTRA_SED_ARG=-e '1,/^\/\/v /d'
-spice.out: EXTRA_SED_ARG=-e '1,/^core-lib version/d'
+spice.out: EXTRA_SED_ARG=-e '1,/^core-lib version/d' -e 's/499999.*$$/5/'
+res_net.out: EXTRA_SED_ARG += -e 's/4999.*$$/5/'
 verilog.out: EXTRA_SED_ARG=-e '1,/^stashing as/d'
 verilog_place.out: EXTRA_SED_ARG=-e '1,/^stashing as/d'
 notfound.out: EXTRA_SED_ARG=-e '1,/^core-lib version/d'
