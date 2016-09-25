@@ -48,7 +48,7 @@ MODEL_GEDA_SUBCKT::MODEL_GEDA_SUBCKT(MODEL_GEDA_SUBCKT const& p) :
 /*--------------------------------------------------------------------------*/
 MODEL_GEDA_SUBCKT::~MODEL_GEDA_SUBCKT()
 {
-	trace3("destroying model", long_label(), hp(this), hp(common()));
+	trace3("destroying model", long_label(), (this), (common()));
 }
 /*--------------------------------------------------------------------------*/
 CARD* MODEL_GEDA_SUBCKT::clone_instance()const
@@ -84,7 +84,7 @@ DEV_GEDA_SUBCKT::DEV_GEDA_SUBCKT() :
 	detach_common();
 	attach_common(&Default_SUBCKT);
 	_n = _nodes;
-	trace2("new", long_label(), hp(this));
+	trace2("new", long_label(), (this));
 }
 /*--------------------------------------------------------------------------*/
 DEV_GEDA_SUBCKT::DEV_GEDA_SUBCKT(DEV_GEDA_SUBCKT const& p) :
@@ -95,12 +95,12 @@ DEV_GEDA_SUBCKT::DEV_GEDA_SUBCKT(DEV_GEDA_SUBCKT const& p) :
   }
   _n = _nodes;
   assert(!subckt());
-  trace2("copy", long_label(), hp(this));
+  trace2("copy", long_label(), (this));
 }
 /*--------------------------------------------------------------------------*/
 DEV_GEDA_SUBCKT::~DEV_GEDA_SUBCKT()
 {
-	trace3("destroying", long_label(), hp(this), hp(common()));
+	trace3("destroying", long_label(), (this), (common()));
 }
 /*--------------------------------------------------------------------------*/
 void DEV_GEDA_SUBCKT::set_parent(const MODEL_GEDA_SUBCKT* p)
@@ -190,7 +190,7 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 	// namely model->n_(i).t_() for i < net_nodes()
 	for (unsigned i=1; i <= (unsigned)model->net_nodes(); ++i) {
 		trace5("model port", long_label(), i, model->n_(i-1).t_(), n_(i-1).t_(), n_(i-1).e_());
-		trace2("model port", hp(this), hp(model));
+		trace2("model port", (this), (model));
 		assert(model->n_(i-1).e_() == model->n_(i-1).t_());
 		unsigned usernumber = model->n_(i-1).t_();
 		port[usernumber] = n_(i-1).t_();
@@ -336,7 +336,7 @@ void DEV_GEDA_SUBCKT::set_port_by_index(uint_t num, std::string& ext_name)
 {
   trace3("DEV_GEDA_SUBCKT::set_port_by_index", long_label(), num, ext_name);
   COMPONENT::set_port_by_index(num, ext_name);
-  trace2("DEV_GEDA_SUBCKT::set_port_by_index", hp(this), _n[num].t_());
+  trace2("DEV_GEDA_SUBCKT::set_port_by_index", (this), _n[num].t_());
 }
 /*--------------------------------------------------------------------------*/
 double DEV_GEDA_SUBCKT::tr_probe_num(const std::string& x)const

@@ -622,7 +622,7 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
 {
 	// "component" means instance of a subckt
 	trace4("LANG_GEDA::parse_component", x->long_label(), cmd.fullstring(),
-			hp(x->owner()), hp(x->scope()));
+			(x->owner()), (x->scope()));
 	assert(x);
 	assert(!_placeq.size());
 	assert(_C);
@@ -715,7 +715,7 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
 		// port_by_name?!
 		try{
 			string p=i->label();
-			trace3("LANG_GEDA::parse_component setting port", p, portname, hp(x));
+			trace3("LANG_GEDA::parse_component setting port", p, portname, (x));
 			x->set_port_by_name(p, portname);
 			assert(p==i->label());
 		}catch(Exception_No_Match){
@@ -1131,7 +1131,7 @@ GEDA_SYMBOL* LANG_GEDA::parse_C(CS& cmd)const
  */
 std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 {
-	trace2("LANG_GEDA::find_type_in_string", cmd.tail(), hp(_C));
+	trace2("LANG_GEDA::find_type_in_string", cmd.tail(), (_C));
 	unsigned here = cmd.cursor(); //store cursor position to reset back later
 	std::string type;   //stores type : should check device attribute..
 	//graphical=["v","L","G","B","V","A","H","T"]
@@ -1145,7 +1145,7 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 		trace2("find_type_in_string C", cmd.fullstring(), _gotline);
 		const GEDA_SYMBOL* D = parse_C(cmd);
 		assert(_C);
-		trace3("find_type_in_string C", hp(_C), (*D)["device"], (*D)["basename"]);
+		trace3("find_type_in_string C", (_C), (*D)["device"], (*D)["basename"]);
 
 		if (!D->pincount()){
 			if ( D->has_key("device") ){
@@ -1264,7 +1264,7 @@ void LANG_GEDA::parse_item_(CS& cmd, CARD* owner, CARD_LIST* scope)const
 	// .... _gotline means:
 	// - component needs to be instanciated after sckt declaration.
 	// - parser found nonbrace when trying to parse body
-	trace4("LANG_GEDA::parse_item_", _gotline, _placeq.size(), _netq.size(), hp(_C));
+	trace4("LANG_GEDA::parse_item_", _gotline, _placeq.size(), _netq.size(), (_C));
 	if(_C && !_gotline){
 		_C = NULL;
 		throw(Exception_CS("something wrong", cmd));
@@ -1747,7 +1747,7 @@ d8(&command_dispatcher, "geda|v ", &p8);
 class CMD_C : public CMD { //
 	void do_it(CS& cmd, CARD_LIST* Scope)
 	{
-		trace1("CMD_C::do_it", hp(Scope));
+		trace1("CMD_C::do_it", (Scope));
 		CARD* c = device_dispatcher["symbol"]; // future overrides?
 		if(!c) c = device_dispatcher["subckt"];
 		assert(c);
