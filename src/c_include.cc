@@ -58,7 +58,7 @@ public:
 } p0;
 
 // BUG: should be plain `include. how to do that?
-DISPATCHER<CMD>::INSTALL d0(&command_dispatcher, "`gedalib", &p0);
+DISPATCHER<CMD>::INSTALL d0(&command_dispatcher, "`gedalib|gedalib", &p0);
 /*--------------------------------------------------------------------------*/
 }
 /*--------------------------------------------------------------------------*/

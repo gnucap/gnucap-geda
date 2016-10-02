@@ -24,6 +24,8 @@
 #include <e_node.h>
 #include <e_paramlist.h>
 #include <e_subckt.h>
+#include <boost/pending/disjoint_sets.hpp>
+//#include <m_part.h>
 
 #ifndef HAVE_UINT_T
 typedef int uint_t;
@@ -38,6 +40,8 @@ class DEV_GEDA_SUBCKT : public BASE_SUBCKT {
   friend class MODEL_GEDA_SUBCKT;
 private:
   explicit	DEV_GEDA_SUBCKT(const DEV_GEDA_SUBCKT&);
+public:
+  typedef boost::disjoint_sets_with_storage<> PARTITION;
 public:
   explicit	DEV_GEDA_SUBCKT();
 		~DEV_GEDA_SUBCKT();
@@ -85,6 +89,7 @@ public:
 #endif
 private:
   void set_parent(const MODEL_GEDA_SUBCKT* p);
+  PARTITION *_part;
   unsigned *_map;
   const MODEL_GEDA_SUBCKT* _parent;
   node_t _nodes[PORTS_PER_SUBCKT];

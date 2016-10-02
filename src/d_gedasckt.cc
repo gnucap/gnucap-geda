@@ -26,9 +26,10 @@
 #include <globals.h>
 #include <u_nodemap.h>
 #include "io_trace.h"
+#include <boost/iterator/counting_iterator.hpp>
+
 /*--------------------------------------------------------------------------*/
-#define COMMON_SUBCKT COMMON_PARAMLIST // FIXME
-static COMMON_SUBCKT Default_SUBCKT(CC_STATIC);
+static COMMON_PARAMLIST Default_SUBCKT(CC_STATIC);
 static DEV_GEDA_SUBCKT p1;
 static MODEL_GEDA_SUBCKT p2;
 static DISPATCHER<CARD>::INSTALL
@@ -78,7 +79,7 @@ void MODEL_GEDA_SUBCKT::set_port_by_index(uint_t num, std::string& ext_name)
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 DEV_GEDA_SUBCKT::DEV_GEDA_SUBCKT() :
-	BASE_SUBCKT(), _map(NULL), _parent(NULL)
+	BASE_SUBCKT(), _part(NULL), _map(NULL), _parent(NULL)
 {
 	attach_common(&Default_SUBCKT);
 	detach_common();
@@ -88,7 +89,7 @@ DEV_GEDA_SUBCKT::DEV_GEDA_SUBCKT() :
 }
 /*--------------------------------------------------------------------------*/
 DEV_GEDA_SUBCKT::DEV_GEDA_SUBCKT(DEV_GEDA_SUBCKT const& p) :
-	BASE_SUBCKT(p), _map(NULL), _parent(p._parent)
+	BASE_SUBCKT(p), _part(NULL), _map(NULL), _parent(p._parent)
 {
   for (uint_t ii = 0; ii < max_nodes(); ++ii) {
     _nodes[ii] = p._nodes[ii];
@@ -131,38 +132,6 @@ void DEV_GEDA_SUBCKT::apply_map(unsigned* map)
 	trace1("apply_map done", long_label());
 }
 /*--------------------------------------------------------------------------*/
-// map is a permutation
-// a permutation has orbits, hence induces a partition
-// the minimal element of a set is the set number
-// assign to each element the number of its set
-// e.g. turn 0 1 4 3 2 5 into
-//           0 1 2 3 2 5
-//
-// also update port array
-void DEV_GEDA_SUBCKT::orbit_number(unsigned* map, unsigned len, unsigned* port)
-{
-	for(unsigned i=0; i<len; ++i) {
-		unsigned j=i;
-		while(map[j]>i){
-			unsigned tmp = map[j];
-			map[j] = i;
-			j = tmp;
-
-			if (port[j] == (unsigned)INVALID_NODE){
-			}else if(port[i] == (unsigned)INVALID_NODE){
-				port[i] = port[j];
-			}else{
-				delete _map; // FIXME: use proper container.
-				_map = NULL;
-				throw Exception(long_label() + ": cannot connect ports \"" +
-							_parent->n_(i-1).n_()->short_label() + "\" and \"" +
-							_parent->n_(j-1).n_()->short_label() + "\"");
-			}
-
-		}
-	}
-}
-/*--------------------------------------------------------------------------*/
 std::string DEV_GEDA_SUBCKT::port_name(uint_t i)const {
 	if (_parent) {
 		if (i<_parent->net_nodes()){
@@ -181,6 +150,7 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 	assert(model->subckt());
 	assert(model->subckt()->nodes());
 	unsigned num_nodes_in_subckt = _parent->subckt()->nodes()->how_many();
+	typedef boost::counting_iterator<unsigned> elt_iter;
 
 	unsigned *port=new unsigned[num_nodes_in_subckt+1];
 	std::fill(port, port+num_nodes_in_subckt+1, INVALID_NODE);
@@ -191,21 +161,36 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 	for (unsigned i=1; i <= (unsigned)model->net_nodes(); ++i) {
 		trace5("model port", long_label(), i, model->n_(i-1).t_(), n_(i-1).t_(), n_(i-1).e_());
 		trace2("model port", (this), (model));
-		assert(model->n_(i-1).e_() == model->n_(i-1).t_());
-		unsigned usernumber = model->n_(i-1).t_();
-		port[usernumber] = n_(i-1).t_();
+//		unsigned usernumber = model->n_(i-1).t_();
+//		port[usernumber] = n_(i-1).t_();
 	}
 	for (unsigned i=1; i <= num_nodes_in_subckt; ++i) {
-		trace3("collapse map", i, _map[i], port[i]);
+		trace3("collapse map", i, _part->find_set(i), port[i]);
 	}
+	assert(_part);
 	assert(_map);
-	orbit_number(_map, num_nodes_in_subckt, port);
+//	     orbit_number(_map, num_nodes_in_subckt, port);
+	_part->compress_sets(elt_iter(1), elt_iter(num_nodes_in_subckt));
+	_part->normalize_sets(elt_iter(1), elt_iter(num_nodes_in_subckt));
+
+	trace1("COUNT", _part->count_sets(elt_iter(1), elt_iter(num_nodes_in_subckt)));
+
+//
+   
+	for(unsigned i=1; i<=(unsigned)model->net_nodes(); ++i){
+		unsigned usernumber = model->n_(i-1).t_();
+		unsigned partno=_part->find_set(usernumber);
+		assert(model->n_(i-1).e_() == model->n_(i-1).t_());
+		trace3("port", i, usernumber, partno);
+		port[partno] = n_(i-1).t_();
+	}
+
 	for(unsigned i=0; i<=num_nodes_in_subckt; ++i){
-		trace4("orbit", long_label(), i, _map[i], port[i]);
+		trace4("portsconn", i, _part->find_set(i), port[i], port[_part->find_set(i)]);
 	}
 
 	{
-		assert(_map[0]==0);
+		assert(_part->find_set(0)==0);
 		// self test: verify that port node numbering is correct
 		for (unsigned port = 0; port < (unsigned)model->net_nodes(); ++port) {
 			assert(model->n_(port).e_() <= (uint_t)num_nodes_in_subckt);
@@ -214,22 +199,23 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 		}
 		{
 			unsigned seek=model->net_nodes();
-			for (unsigned i=1; i <= num_nodes_in_subckt; ++i) {
-				if(port[_map[i]]!=(unsigned)INVALID_NODE){
-					trace2("port", i, _map[i]);
-					_map[i] = port[_map[i]];
-				}else if(_map[i]<=seek){ untested();
+			for (unsigned i=1; i <= num_nodes_in_subckt; ++i) { untested();
+				trace3("num", i, _part->find_set(i), port[_part->find_set(i)]);
+				if(port[_part->find_set(i)]!=(unsigned)INVALID_NODE){ untested();
+					trace2("port", i, _part->find_set(i));
+					_map[i] = port[_part->find_set(i)];
+				}else if(_part->find_set(i)<=seek){ untested();
 					trace3("internal, exists", i, _map[i], seek);
-					_map[i] = _map[_map[i]];
+					_map[i] = _part->find_set(i);
 				}else{
 					trace3("internal, new", i, _map[i], seek);
-					seek = _map[i];
+					seek = _part->find_set(i);
 					_map[i] = CKT_BASE::_sim->newnode_subckt();
 				}
 			}
-			delete[] port;
 		}
 	}
+	delete[] port;
 	// "map" now contains a translation list,
 	// from subckt local numbers to matrix index numbers
 
@@ -242,17 +228,16 @@ void DEV_GEDA_SUBCKT::collapse_nodes(const NODE* a, const NODE* b)
 {
 	unsigned num_nodes_in_subckt = _parent->subckt()->nodes()->how_many();
 	trace4("DEV_GEDA_SUBCKT::collapse_nodes", long_label(), a->user_number(), b->user_number(), num_nodes_in_subckt);
+
 	trace2("DEV_GEDA_SUBCKT::collapse_nodes", a->short_label(), b->short_label());
 	unsigned i=a->user_number();
 	assert(i<num_nodes_in_subckt+1);
 	unsigned j=b->user_number();
 	assert(j<num_nodes_in_subckt+2);
 
-	if(_map){
-		// FIXME: need to check if already collapsed
-		std::swap(_map[i], _map[j]);
-	}else{
-	}
+	assert(_part);
+	trace2("collapse", i, j);
+	_part->union_set(i, j);
 }
 /*--------------------------------------------------------------------------*/
 void DEV_GEDA_SUBCKT::precalc_first()
@@ -260,7 +245,7 @@ void DEV_GEDA_SUBCKT::precalc_first()
   BASE_SUBCKT::precalc_first();
 
   if (subckt()) {
-    COMMON_SUBCKT* c = prechecked_cast<COMMON_SUBCKT*>(mutable_common());
+    COMMON_PARAMLIST* c = prechecked_cast<COMMON_PARAMLIST*>(mutable_common());
     assert(c);
     subckt()->attach_params(&(c->_params), scope());
     subckt()->precalc_first();
@@ -273,7 +258,7 @@ void DEV_GEDA_SUBCKT::expand()
 {
 	trace1("DEV_GEDA_SUBCKT::expand", long_label());
 	BASE_SUBCKT::expand();
-	COMMON_SUBCKT* c = prechecked_cast<COMMON_SUBCKT*>(mutable_common());
+	COMMON_PARAMLIST* c = prechecked_cast<COMMON_PARAMLIST*>(mutable_common());
 	assert(c);
 	if (!_parent) { untested();
 		const CARD* model = find_looking_out(c->modelname());
@@ -306,6 +291,7 @@ void DEV_GEDA_SUBCKT::expand()
 	for(unsigned i=0; i<num_nodes_in_subckt; ++i){
 		_map[i] = i;
 	}
+	_part = new PARTITION(num_nodes_in_subckt);
 	subckt()->precalc_first(); // collapses nodes (HACK).
 	// maybe
 	// for i in subckt{
@@ -324,7 +310,7 @@ void DEV_GEDA_SUBCKT::precalc_last()
 {
   BASE_SUBCKT::precalc_last();
 
-  COMMON_SUBCKT* c = prechecked_cast<COMMON_SUBCKT*>(mutable_common());
+  COMMON_PARAMLIST* c = prechecked_cast<COMMON_PARAMLIST*>(mutable_common());
   assert(c);
   subckt()->attach_params(&(c->_params), scope());
   subckt()->precalc_last();

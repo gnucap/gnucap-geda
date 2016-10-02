@@ -12,7 +12,6 @@ For lang_geda (gEDA plugin)
 
 **gnucap issues (0.36), (*)=fixed/hacked/worked\ around for gnucap-uf
 - port declaration order (*)
-- node collapse (*)
 -global nodes?
 - precalc_first is 'printing parameter <basename> has no value' (*)
 
