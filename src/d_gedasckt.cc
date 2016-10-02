@@ -182,7 +182,15 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 		unsigned partno=_part->find_set(usernumber);
 		assert(model->n_(i-1).e_() == model->n_(i-1).t_());
 		trace3("port", i, usernumber, partno);
-		port[partno] = n_(i-1).t_();
+
+		if(port[partno]!=INVALID_NODE) { untested();
+			delete port;
+			throw Exception(long_label() + ": cannot connect ports \"" +
+					_parent->n_(partno-1).n_()->short_label() + "\" and \"" +
+					_parent->n_(i-1).n_()->short_label() + "\"");
+		}else{
+			port[partno] = n_(i-1).t_();
+		}
 	}
 
 	for(unsigned i=0; i<=num_nodes_in_subckt; ++i){
@@ -299,7 +307,16 @@ void DEV_GEDA_SUBCKT::expand()
 	//     some_callback
 	// }
 
-	map_subckt_nodes(_parent);
+	try{
+		map_subckt_nodes(_parent);
+	}catch(Exception){ untested();
+		incomplete();
+//		delete[] _subckt;
+//		_subckt = NULL; hmm.
+		delete[] _map;
+		_map = NULL;
+		throw;
+	}
 	subckt()->expand();
 
 	delete[] _map;
