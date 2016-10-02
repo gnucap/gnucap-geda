@@ -23,9 +23,8 @@ load as follows
 gnucap>load ./lang_geda.so
 -------------
 
-this gnucap-module package depends on unmerged upstream changes. some are
-included in gnucap-uf >= 0.0.2-rc6.
+this package now provides (some) component implementations for (some) geda symbols.
+e.g. if you use "analog" symbols from geda, use "`gedalib analog.v" to load the
+implementations. (this is slightly in flux/under construction).
 
-if you do not insist on doing everything manually, see INSTALL
-after installation loading works independently of cwd:
-gnucap>load lang_geda.so
+this gnucap-module package works best with unstable gnucap (or gnucap-uf).
