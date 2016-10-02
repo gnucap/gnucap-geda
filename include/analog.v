@@ -12,6 +12,7 @@ module CAPACITOR(1 2);
 endmodule
 
 module POLARIZED_CAPACITOR(p n);
+// nothing yet
 endmodule
 
 module RESISTOR(1 2);

@@ -1,4 +1,4 @@
-EXTRA_DIST = \
+pkginclude_HEADERS = \
 	74.v \
 	analog.v \
 	asic.v \
