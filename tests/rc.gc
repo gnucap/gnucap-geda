@@ -18,7 +18,7 @@ spice
 .dc
 
 .store tran v(n2)
-.tran 0 20m basic trace=n
+.tran 0 20m 1m basic trace=n
 .measure vn2 at(probe="v(n2)" x=1m)
 
 .end
