@@ -918,7 +918,7 @@ CARD_LIST::const_iterator LANG_GEDA::find_card(string name, CARD_LIST* Scope, bo
 }
 /*--------------------------------------------------------------------------*/
 MODEL_SUBCKT* LANG_GEDA::parse_module(CS& cmd, MODEL_SUBCKT* x)
-{
+{ untested();
 	CARD_LIST* scope = x->owner()?x->owner()->scope():x->scope();
 
 	int c_x=0;
@@ -926,11 +926,12 @@ MODEL_SUBCKT* LANG_GEDA::parse_module(CS& cmd, MODEL_SUBCKT* x)
 	bool mirror;
 	angle_t angle=a_invalid;
 	string basename;
-	if (!_C) { // parse from cmd...
+	if (!_C) { untested();
+		// parse from cmd...
 		incomplete(); // not possible right now
 		//cmd>>"C";
 		//cmd>>component_x>>" ">>component_y>>" ">>dump>>" ">>angle>>" ">>mirror>>" ">>basename;
-	} else {
+	}else{ untested();
 		if ( !_C->has_key("source") && !_C->has_key("file") ){
 			return 0;
 		}
@@ -948,11 +949,11 @@ MODEL_SUBCKT* LANG_GEDA::parse_module(CS& cmd, MODEL_SUBCKT* x)
 	}
 
 	x->set_label((*_C)["device"]);
-	if ( _C->has_key("source")){
+	if(_C->has_key("source")){ untested();
 		GEDA_SYMBOL* tmp=_C; _C=0;
 		read_file( (*tmp)["source"], scope, x);
 		_C=tmp;
-	} else if ( _C->has_key("file") ){
+	}else if(_C->has_key("file") ){ untested();
 		trace1("spice-sdb hack", (*_C)["file"] );
 		// file must be a spice deck defining device.
 		// just source it and check...
@@ -1135,29 +1136,32 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 	unsigned here = cmd.cursor(); //store cursor position to reset back later
 	std::string type;   //stores type : should check device attribute..
 	//graphical=["v","L","G","B","V","A","H","T"]
-	if (_placeq.size()){
+	if (_placeq.size()){ untested();
 		assert(!_C);
 		return "place";
-	} else if (_netq.size()){
+	} else if (_netq.size()){ untested();
 		assert(!_C);
 		return "net";
-	} else if (_C || cmd >> "C "){
+	} else if (_C || cmd >> "C "){ untested();
 		trace2("find_type_in_string C", cmd.fullstring(), _gotline);
 		const GEDA_SYMBOL* D = parse_C(cmd);
 		assert(_C);
 		trace3("find_type_in_string C", (_C), (*D)["device"], (*D)["basename"]);
 
-		if (!D->pincount()){
-			if ( D->has_key("device") ){
-				if ((*_C)["device"] == "directive")
-					incomplete();
-				// return "some command"
-				// don't need non-directive symbol hold directives.
-				// (for now?)
-			}
+		if (D->pincount()){
+			// nets and devices.. see below
+			// ... 
+		}else if (!D->has_key("device") ){
 			trace2("have no pins", _C->pincount(), (*D)["basename"]);
 //			delete _C;
 //			_C = 0;
+			return "dev_comment";
+		}else{
+
+			if ((*_C)["device"] == "directive"){ untested();
+				incomplete();
+				return "some_command";
+			}
 			return "dev_comment";
 		}
 		trace1("have pins", _C->pincount());
@@ -1179,7 +1183,7 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 						&& unsigned(d->min_nodes()) <= (*D).pincount()){
 					type = (*D)["device"];
 				}
-			} else if (modelcard) {
+			}else if (modelcard) { untested();
 				if (const COMPONENT* d = prechecked_cast<const COMPONENT*>(modelcard))
 					if(unsigned(d->max_nodes()) >= D->pincount()
 							&& unsigned(d->min_nodes()) <= D->pincount()){
@@ -1190,7 +1194,7 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 							&& unsigned(d->min_nodes()) <= D->pincount()){
 						type = (*D)["device"];
 					}
-			} else {
+			}else{
 				string modulename = DUMMY_PREFIX + (*D)["basename"];
 				trace1("symbolthere?", modulename);
 				CARD_LIST::const_iterator i = CARD_LIST::card_list.find_(modulename);
@@ -1227,14 +1231,16 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 		} catch(Exception_End_Of_Input&){ untested();
 			return "dev_comment";
 		}
-	} else if (cmd >> "N "){
+	}else if(cmd >> "N "){ untested();
 		return "net";
-	} else if (cmd >> "U "){ type="bus";}
-	else if (cmd >> "P "){ type="pin";}
-	else if (cmd >> "place "){untested();
+	}else if(cmd >> "U "){ untested();
+		type="bus";
+	}else if(cmd >> "P "){ untested();
+		type="pin";
+	}else if(cmd >> "place "){untested();
 		// hmmm. ouch
-		type="place"; 
-	} else {
+		type="place";
+	}else{ untested();
 		switch(_mode){untested();
 			case mCOMMENT: return "dev_comment";
 			default : cmd >> type;
@@ -1243,8 +1249,8 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 	trace1("LANG_GEDA::find_type_in_string done", type);
 	//Not matched with the type. What now?
 	//trace2("find_type_in_string", cmd.fullstring(),type);
-	cmd.reset(here);//Reset cursor back to the position that
-	//has been started with at beginning
+	cmd.reset(here); // Reset cursor back to the position that
+	                 // has been started with at beginning
 	return type;    // returns the type of the string
 }
 /*----------------------------------------------------------------------*/
