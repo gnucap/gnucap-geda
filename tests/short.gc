@@ -5,7 +5,7 @@ R1 n2 0 1
 .verilog
 vsource #(.dc(3.)) V1 (.p(n1),.n(0));
 
-gschem short.sch module
+geda short.sch module
 short.sch s1(n1 n2);
 list
 

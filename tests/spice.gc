@@ -1,5 +1,6 @@
 options debug
-gschem spice.sch module
+options numdgt 6
+geda spice.sch module
 
 list
 spice

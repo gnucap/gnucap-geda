@@ -1,1 +1,51 @@
-va= 0.99998
+//comment (incomplete) title-B.sym
+net #() net0 (.p(x_nn_0),.n(x_nn_1));
+place #(.x(46100),.y(45200)) 46100:45200 (.port(x_nn_0));
+place #(.x(46100),.y(46300)) 46100:46300 (.port(x_nn_1));
+VOLTAGE_SOURCE #(.basename(voltage-3.sym),.value(1)) V1 (.1(x_cn_2),.2(x_cn_3));
+place #(.x(43900),.y(46900)) 43900:46900 (.port(x_cn_2));
+place #(.x(43900),.y(46000)) 43900:46000 (.port(x_cn_3));
+net #() net1 (.p(x_nn_4),.n(x_cn_3));
+place #(.x(43900),.y(45200)) 43900:45200 (.port(x_nn_4));
+net #() net2 (.p(x_cn_2),.n(x_nn_5));
+place #(.x(43900),.y(47900)) 43900:47900 (.port(x_nn_5));
+net #() nhi (.p(x_nn_5),.n(x_nn_6));
+place #(.x(49300),.y(47900)) 49300:47900 (.port(x_nn_6));
+net #() net4 (.p(x_nn_7),.n(x_nn_8));
+place #(.x(46100),.y(47900)) 46100:47900 (.port(x_nn_7));
+place #(.x(46100),.y(47200)) 46100:47200 (.port(x_nn_8));
+net #() extranet5 (.p(x_nn_7),.n(x_nn_5));
+rail #(.basename(gnd-1.sym),.net(0)) 0 (.pin(x_nn_4),.rail(0));
+rail #(.basename(gnd-1.sym),.net(0)) 0 (.pin(x_nn_0),.rail(0));
+module DUT (1,2);
+//v 20130925 2
+//comment (incomplete) title-B.sym
+//T 50000 40700 9 10 1 0 0 0 1
+//T 53900 40100 9 10 1 0 0 0 1
+port #(.basename(spice-subcircuit-IO-1.sym),.pinseq(1),.pinlabel(1)) P1 (.int(x_cn_9),.ext(1));
+place #(.x(45900),.y(46800)) 45900:46800 (.port(x_cn_9));
+port #(.basename(spice-subcircuit-IO-1.sym),.pinseq(2),.pinlabel(2)) P2 (.int(x_cn_10),.ext(2));
+place #(.x(47900),.y(46800)) 47900:46800 (.port(x_cn_10));
+RESISTOR #(.basename(resistor-1.sym),.class(DISCRETE),.pins(2),.value(1k)) R1 (.1(x_cn_11),.2(x_cn_12));
+place #(.x(46400),.y(46800)) 46400:46800 (.port(x_cn_11));
+place #(.x(47300),.y(46800)) 47300:46800 (.port(x_cn_12));
+net #() net6 (.p(x_cn_11),.n(x_cn_9));
+net #() net7 (.p(x_cn_12),.n(x_cn_10));
+endmodule // DUT
+
+DUT #(.basename(resistor-2.sym),.source(dut.sch)) dut0 (.1(x_nn_1),.2(x_nn_8));
+//T 50000 40700 9 10 1 0 0 0 1
+//T 53900 40100 9 10 1 0 0 0 1
+net #() net8 (.p(x_nn_13),.n(x_nn_14));
+place #(.x(48800),.y(47900)) 48800:47900 (.port(x_nn_13));
+place #(.x(48800),.y(47200)) 48800:47200 (.port(x_nn_14));
+net #() extranet9 (.p(x_nn_13),.n(x_nn_5));
+net #() extranet10 (.p(x_nn_13),.n(x_nn_7));
+net #() net11 (.p(x_nn_15),.n(x_nn_16));
+place #(.x(48800),.y(45200)) 48800:45200 (.port(x_nn_15));
+place #(.x(48800),.y(46300)) 48800:46300 (.port(x_nn_16));
+rail #(.basename(gnd-1.sym),.net(0)) 0 (.pin(x_nn_15),.rail(0));
+DUT #(.basename(resistor-2.sym),.source(dut.sch)) dut1 (.1(x_nn_16),.2(x_nn_14));
+port #(.basename(spice-subcircuit-IO-1.sym),.pinlabel(a)) a (.int(x_nn_6));
+#           v(a)       i(V1.v)   
+ 0.         1.        -0.002     

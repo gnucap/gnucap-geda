@@ -1,0 +1,39 @@
+//v 20030525
+NPN_TRANSISTOR #(.basename(npn-3.sym)) Q1 (.C(x_cn_1),.B(x_cn_0),.E(x_cn_2));
+place #(.x(78900),.y(59000)) 78900:59000 (.port(x_cn_0));
+place #(.x(79500),.y(59500)) 79500:59500 (.port(x_cn_1));
+place #(.x(79500),.y(58500)) 79500:58500 (.port(x_cn_2));
+RESISTOR #(.basename(resistor-2.sym)) R1 (.1(x_cn_3),.2(x_cn_0));
+place #(.x(78000),.y(59000)) 78000:59000 (.port(x_cn_3));
+RESISTOR #(.basename(resistor-2.sym)) R3 (.1(x_cn_4),.2(x_cn_2));
+place #(.x(79500),.y(57600)) 79500:57600 (.port(x_cn_4));
+RESISTOR #(.basename(resistor-2.sym)) R2 (.1(x_cn_5),.2(x_cn_6));
+place #(.x(78900),.y(57600)) 78900:57600 (.port(x_cn_5));
+place #(.x(78900),.y(58500)) 78900:58500 (.port(x_cn_6));
+RESISTOR #(.basename(resistor-2.sym)) R4 (.1(x_cn_7),.2(x_cn_2));
+place #(.x(80400),.y(58500)) 80400:58500 (.port(x_cn_7));
+net #() net0 (.p(x_cn_6),.n(x_cn_0));
+net #() net1 (.p(x_nn_8),.n(x_nn_9));
+place #(.x(77600),.y(57600)) 77600:57600 (.port(x_nn_8));
+place #(.x(80800),.y(57600)) 80800:57600 (.port(x_nn_9));
+net #() extranet2 (.p(x_nn_8),.n(x_cn_4));
+net #() extranet3 (.p(x_nn_8),.n(x_cn_5));
+net #() extranet4 (.p(x_nn_8),.n(x_cn_5));
+net #() net5 (.p(x_cn_1),.n(x_nn_10));
+place #(.x(77600),.y(59500)) 77600:59500 (.port(x_nn_10));
+port #(.basename(input-1.sym)) input-1.sym_0 (.int(x_nn_10));
+port #(.basename(input-1.sym)) input-1.sym_1 (.int(x_nn_10));
+port #(.basename(input-1.sym)) input-1.sym_2 (.int(x_nn_10));
+port #(.basename(input-1.sym)) input-1.sym_3 (.int(x_cn_11));
+place #(.x(77600),.y(59000)) 77600:59000 (.port(x_cn_11));
+port #(.basename(input-1.sym)) input-1.sym_4 (.int(x_nn_8));
+port #(.basename(output-1.sym)) output-1.sym_5 (.int(x_cn_12));
+place #(.x(80800),.y(58500)) 80800:58500 (.port(x_cn_12));
+port #(.basename(output-1.sym)) output-1.sym_6 (.int(x_nn_9));
+//T 76200 59400 9 10 1 0 0 0
+//T 76200 58900 9 10 1 0 0 0
+//T 76300 57500 9 10 1 0 0 0
+//T 81700 57500 9 10 1 0 0 0
+//T 81700 58400 9 10 1 0 0 0
+net #() net6 (.p(x_cn_11),.n(x_cn_3));
+net #() net7 (.p(x_cn_7),.n(x_cn_12));

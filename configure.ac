@@ -2,9 +2,21 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.67])
-AC_INIT([gnucap-geda], [0.0.3-rc1], [felix@salfelder.org])
+AC_INIT([gnucap-geda], [0.0.3-rc2], [felix@salfelder.org])
 # AC_CONFIG_SRCDIR([lang_geda.cc])
 AC_CONFIG_HEADERS([config.h])
+
+# bug. hardwired.
+if test "x${prefix}" = "xNONE"; then
+	_prefix="$ac_default_prefix"
+else
+	_prefix="$prefix"
+fi
+pkgincludedir="$_prefix/include/$PACKAGE_NAME"
+
+AH_TEMPLATE(GNUCAP_GEDA_PKGINCLUDEDIR, [pkgincludedir])
+AC_DEFINE_UNQUOTED([GNUCAP_GEDA_PKGINCLUDEDIR],["$pkgincludedir"])
+
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign silent-rules])
 LT_INIT()

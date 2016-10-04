@@ -1,0 +1,12 @@
+v 20040111 1
+C 39200 53500 1 0 0 transformer-5.sym
+{
+T 39200 53500 5 10 0 1 0 0 1
+device=TRANSFORMER
+T 39200 53500 5 10 0 1 0 0 1
+refdes=T?
+T 39200 53500 5 10 0 1 0 0 1
+comment=The
+T 39200 53500 5 10 0 1 0 0 1
+numslots=0
+}

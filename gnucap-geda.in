@@ -6,7 +6,7 @@
 
 # implementation note:
 # passing "list > output" would be much more canonical, but neither "list >
-# file" nor a quiet switch (to disable sign-on) is implemented using bash
+# file" nor a quiet switch (to disable sign-on) is implemented. using bash
 # builtin exec and /dev/fd/3 for now.
 
 helptext="convert geda schematics to verilog/spice\n\

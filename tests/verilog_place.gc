@@ -1,0 +1,15 @@
+verilog
+
+place #(.x(48500),.y(44000)) 48500:44600 (.port(1));
+module test (a,b);
+place #(.x(48500),.y(44600)) 48500:44600 (.port(x_cn_0));
+endmodule
+
+test bla(1,2);
+
+list
+
+spice
+.print dc v(nodes)
+.dc
+.end

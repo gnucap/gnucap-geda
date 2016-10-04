@@ -5,7 +5,7 @@ R1 n2 n0 1
 R1 n0 0 1
 
 .verilog
-gschem res_net.sch module
+geda res_net.sch module
 res_net.sch s1(n1 n2);
 list
 

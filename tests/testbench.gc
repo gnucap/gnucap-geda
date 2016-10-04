@@ -1,7 +1,6 @@
 options picky
-options order=sinkr
 
-gschem testbench.sch
+geda testbench.sch
 
 verilog
 list
@@ -9,12 +8,9 @@ list
 spice
 .options insensitive=0
 
-.mstat
+* .mstat
 
-.store dc v(a)
-.print dc v(nhi) i(V1.v) v1(V1) v2(V1) v(a)
+.print dc v(a) i(V1.v)
 .dc
-
-.measure va at(probe="v(a)")
 
 .end

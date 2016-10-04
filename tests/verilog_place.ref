@@ -1,0 +1,8 @@
+place #(.x(48500),.y(44000)) 48500:44600 (.port(1));
+module test (a,b);
+place #(.x(48500),.y(44600)) 48500:44600 (.port(x_cn_0));
+endmodule // test
+
+test #() bla (.a(1),.b(2));
+#           v(1)       v(2)      
+ 0.         0.         0.        

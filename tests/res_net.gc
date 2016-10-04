@@ -1,18 +1,19 @@
 options order=f
 
+verilog
+vsource #(5.) V1 (.p(n1),.n(n0));
 spice
-V1 n1 n0 5
 R1 n2 n0 1
 
 R1 n0 0 1
 
 .verilog
-gschem res_net.sch module
+geda res_net.sch module
 res_net.sch s1(n1 n2);
 list
 
 spice
-.print dc m(nodes) v(nodes) v(s1.R_1.r) i(R1) mp(s1.R_1.r) mn(s1.R_1.r)
+.print dc v(nodes) v(s1.R_1.r) i(R1)
 .store dc v(n2) i(R1)
 .dc
 .measure vn2 at(probe="v(n2)")

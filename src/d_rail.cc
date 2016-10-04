@@ -26,7 +26,7 @@
 #include <e_compon.h>
 #include <e_node.h>
 #include <u_nodemap.h>
-#include <d_subckt.h>
+// #include <d_subckt.h>
 #include "d_net.h"
 #include "io_trace.h"
 #ifdef HAVE_BOOST_ASSIGN
@@ -46,6 +46,7 @@ class DEV_RAIL : public DEV_NET {
 		~DEV_RAIL(){}
 	private:
 		string param_name(int i)const;
+		string param_name(int i, int j)const;
 		void set_param_by_name(string Name, string Value);
 		bool param_is_printable(int i)const;
 		string param_value(int i)const;
@@ -128,6 +129,15 @@ string DEV_RAIL::param_name(int i)const
 	}
 }
 /*--------------------------------------------------------------------------*/
+std::string DEV_RAIL::param_name(int i, int j)const
+{untested();
+	if (j == 0) {itested();
+		return param_name(i);
+	}else{ incomplete();
+		return "";
+	}
+}
+/*--------------------------------------------------------------------------*/
 string DEV_RAIL::param_value(int i)const
 {
 	switch(param_count()-1-i) {
@@ -140,14 +150,8 @@ string DEV_RAIL::param_value(int i)const
 	}
 }
 /*--------------------------------------------------------------------------*/
-void DEV_RAIL::set_port_by_index(uint_t i, string& name){
-	if(i){
-		trace2("DEV_RAIL::set_port_by_index", i, name);
-		// reachable when parsing non-gschem netlist
-		// containing ports with 2 connections.
-		incomplete();
-		return;
-	}
+void DEV_RAIL::set_port_by_index(uint_t i, string& name)
+{ untested();
 	DEV_NET::set_port_by_index(i, name);
 	trace3("DEV_RAIL::set_port_by_index", i, name, net);
 	string portname = name;

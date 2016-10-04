@@ -43,6 +43,7 @@ class DEV_PLACE : public COMPONENT {
 		    _x(p._x),
 		    _y(p._y)
 		{
+			_nodes[0] = p._nodes[0];
 			_n = _nodes;
 		}
 		~DEV_PLACE(){}
@@ -55,7 +56,7 @@ class DEV_PLACE : public COMPONENT {
 		std::string param_name(int) const;
 		std::string param_name(int, int) const;
 		void set_param_by_name(std::string, std::string);
-		void set_param_by_index(int, std::string, int);
+		void set_param_by_index(int, std::string&, int);
 		std::string param_value(int) const;
 	private:
 		char id_letter()const {return 'P';}
@@ -63,11 +64,11 @@ class DEV_PLACE : public COMPONENT {
 		std::string dev_type()const {return "place";}
 		uint_t max_nodes() const {return 1;}
 		uint_t min_nodes()const {return 1;}
-		uint_t matrix_nodes()const {return 1;}
+		uint_t matrix_nodes()const {return 0;}
 		uint_t net_nodes()const {return 1;}
-		bool has_iv_probe()const {return true;}
+		bool has_iv_probe()const {return false;}
 		bool print_type_in_spice()const {return true;}
-		bool is_device() const {return false;}
+		bool is_device() const {untested(); return true;}
 		CARD* clone()const {return new DEV_PLACE(*this);}
 		int param_count()const {return 2;}
 		std::string port_name(uint_t i)const{
@@ -75,7 +76,7 @@ class DEV_PLACE : public COMPONENT {
 			return "port";
 		}
 	public:
-		node_t _nodes[NODES_PER_BRANCH];
+		node_t _nodes[1];
 	public: // geda stuff
 		int x()const { return _x; }
 		int y()const { return _y; }

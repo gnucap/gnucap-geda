@@ -63,7 +63,7 @@ void DEV_PLACE::set_param_by_name(std::string Name,std::string Value)
     throw Exception_No_Match(Name+" "+Value);
 }
 /*--------------------------------------------------------------------------*/
-void DEV_PLACE::set_param_by_index(int i, std::string Value, int offset)
+void DEV_PLACE::set_param_by_index(int i, std::string& Value, int offset)
 {
     switch(DEV_PLACE::param_count()-1-i) {
     case 0: _x = atoi(Value.c_str()); break;

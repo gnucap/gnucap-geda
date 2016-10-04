@@ -26,7 +26,8 @@
 #include <e_compon.h>
 #include <e_node.h>
 #include <u_nodemap.h>
-#include <d_subckt.h>
+// #include <d_subckt.h>
+#include "d_gedasckt.h"
 #include "d_net.h"
 #ifdef HAVE_BOOST_ASSIGN
 # include <boost/assign.hpp>
@@ -47,6 +48,7 @@ class DEV_PORT : public DEV_NET {
 		~DEV_PORT(){}
 	private:
 		string param_name(int i)const;
+		string param_name(int i, int j)const;
 		void set_param_by_name(string Name, string Value);
 		bool param_is_printable(int i)const;
 		string param_value(int i)const;
@@ -135,6 +137,15 @@ string DEV_PORT::param_name(int i)const
 	}
 }
 /*--------------------------------------------------------------------------*/
+std::string DEV_PORT::param_name(int i, int j)const
+{untested();
+	if (j == 0) {itested();
+		return param_name(i);
+	}else{ incomplete();
+		return "";
+	}
+}
+/*--------------------------------------------------------------------------*/
 string DEV_PORT::param_value(int i)const
 {
 	switch(param_count()-1-i) {
@@ -148,22 +159,28 @@ string DEV_PORT::param_value(int i)const
 	}
 }
 /*--------------------------------------------------------------------------*/
-void DEV_PORT::set_port_by_index(uint_t i, string& name){
+void DEV_PORT::set_port_by_index(uint_t i, string& name)
+{
 	if(i){
 		trace2("DEV_PORT::set_port_by_index", i, name);
 		// reachable when parsing non-gschem netlist
 		// containing ports with 2 connections.
 		incomplete();
 		return;
+	}else{
 	}
+
 	DEV_NET::set_port_by_index(i, name);
-	if(MODEL_SUBCKT* o = dynamic_cast<MODEL_SUBCKT*>(owner())){
-		string portname = name;
-		if(pinlabel.has_hard_value()){
-			portname = pinlabel.string();
-		}else if(net.has_hard_value()){
-			portname = net.string();
-		}
+
+	string portname = name;
+	if(pinlabel.has_hard_value()){
+		portname = pinlabel.string();
+	}else if(net.has_hard_value()){
+		portname = net.string();
+	}
+
+	// register port during model building
+	if(DEV_GEDA_SUBCKT* o = dynamic_cast<DEV_GEDA_SUBCKT*>(owner())){
 		unsigned portpos = o->net_nodes();
 		CARD_LIST empty;
 
@@ -172,12 +189,36 @@ void DEV_PORT::set_port_by_index(uint_t i, string& name){
 			portpos = atoi(pinseq.string().c_str())-1;
 		} else {
 			// rely on pinlabel?
-			untested();
 		}
 
 		trace3("DEV_PORT::set_port_by_index", portpos, portname, pinseq);
-		o->set_port_by_index(portpos, portname);
+
+		bool done=false;
+		for (uint_t i=0; i<o->net_nodes(); ++i) {
+			if (portname == o->port_value(i)) {
+				o->set_port_by_index(i, portname);
+				done = true;
+				break;
+			}else{
+			}
+		}
+		if(!done){
+			// new port
+			o->set_port_by_index(portpos, portname);
+		}
+
+		// DEV_NET::set_port_by_index(1, portname);
 		DEV_NET::set_port_by_index(1, portname);
+
+	}else if(MODEL_GEDA_SUBCKT* o = dynamic_cast<MODEL_GEDA_SUBCKT*>(owner())){ untested();
+		USE(o);
+	}else if(BASE_SUBCKT* o = dynamic_cast<BASE_SUBCKT*>(owner())){ untested();
+		(void) o;
+		// using incompatible sckt type?
+		untested(); incomplete();
+	}else if(owner()){ unreachable();
+	}else{
+		// DEV_NET::set_port_by_index(1, portname);
 	}
 }
 /*---------------------------------------------------------------------------*/

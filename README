@@ -1,6 +1,19 @@
 lang_geda aims to add the functionality of parsing, writing and simulating geda
 schematics.
 
+lang_geda.cc implements two commands
+- gschem
+  equivalent to options lang=gschem. changes the interpreted language to gschem
+- geda <args>
+  miscellaneous commands related to geda modules and schematics. for example
+  "geda file.sch module" loads an instanciable (module/subcircuit) from a gschem
+  schematic file. this is under construction, please refer to the tests
+  subdirectory for examples.
+
+d_{net,port,rail,place,gedasckt}.cc implement various geda related devices.
+these express extra semantics of instances found in geda schematics.
+
+------------
 In order to load lang_geda as a plugin, compile as follows:
 g++ -DHAVE_GEDA -shared -fPIC -o lang_geda.so lang_geda.cc \
    d_net.cc d_place.cc  $(pkg-config --cflags gtk+-2.0 --libs libgeda)
@@ -10,10 +23,8 @@ load as follows
 gnucap>load ./lang_geda.so
 -------------
 
-this gnucap-module package depends on yet unreleased upstream changes some are
-included in the 'dev' branch on tool/git/gnucap. all are included in the "geda"
-branch. see TODO.
+this package now provides (some) component implementations for (some) geda symbols.
+e.g. if you use "analog" symbols from geda, use "`gedalib analog.v" to load the
+implementations. (this is slightly in flux/under construction).
 
-if you do not insist on doing everything manually, see INSTALL
-after installation loading works independently of cwd:
-gnucap>load lang_geda.so
+this gnucap-module package works best with unstable gnucap (or gnucap-uf).

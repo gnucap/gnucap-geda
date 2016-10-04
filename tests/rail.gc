@@ -1,13 +1,20 @@
 options debug
 options numdgt=2
 
+verilog
+module RESISTOR(n p);
+	parameter value=1;
+	resistor #(.r(value)) r(n,p);
+endmodule
+
 spice
 R1 n2 0 1
 
 .verilog
+
 vsource #(.dc(3.0001)) V1 (.p(n1),.n(0));
 
-gschem rail.sch module
+geda rail.sch module
 rail.sch s1(n1 n2);
 list
 

@@ -1,25 +1,24 @@
-reading file rail.sch
-resistor #(.r( 1.)) R1 (.p(n2),.n(0));
-vsource #(.dc(3.0001)) V1 (.p(n1),.n(0));
-module rail.sch (a,b);
-//v 20110115 2 
-//C 52800 44500 1 0 0 passive-1.sym 
+//comment (incomplete) title-B.sym
 port #(.basename(passive-1.sym),.net(a)) a (.int(x_cn_0),.ext(a));
 place #(.x(52800),.y(44600)) 52800:44600 (.port(x_cn_0));
 port #(.basename(passive-1.sym),.net(b)) b (.int(x_cn_1),.ext(b));
 place #(.x(48100),.y(44600)) 48100:44600 (.port(x_cn_1));
 net #() net0 (.p(x_nn_2),.n(x_cn_1));
-place #(.x(48900),.y(44600)) 48900:44600 (.port(x_nn_2));
+place #(.x(49000),.y(44600)) 49000:44600 (.port(x_nn_2));
 net #() net1 (.p(x_cn_0),.n(x_nn_3));
 place #(.x(52000),.y(44600)) 52000:44600 (.port(x_nn_3));
 net #() net2 (.p(x_nn_3),.n(x_nn_4));
 place #(.x(52000),.y(43900)) 52000:43900 (.port(x_nn_4));
 rail #(.basename(gnd-1.sym),.net(GND:1)) GND:1 (.pin(x_nn_4),.rail(GND:1));
-rail #(.basename(gnd-1.sym),.net(GND:1)) GND:1 (.pin(x_cn_5),.rail(GND:1));
-place #(.x(48900),.y(44000)) 48900:44000 (.port(x_cn_5));
-net #() net3 (.p(x_nn_2),.n(x_cn_5));
+RESISTOR #(.basename(resistor-1.sym),.class(DISCRETE),.pins(2),.value(1)) R1 (.n(x_nn_2),.p(x_cn_5));
+place #(.x(49900),.y(44600)) 49900:44600 (.port(x_cn_5));
+rail #(.basename(gnd-1.sym),.net(GND:1)) GND:1 (.pin(x_cn_6),.rail(GND:1));
+place #(.x(50800),.y(43900)) 50800:43900 (.port(x_cn_6));
+net #() net3 (.p(x_nn_7),.n(x_cn_6));
+place #(.x(50800),.y(44600)) 50800:44600 (.port(x_nn_7));
+net #() net4 (.p(x_nn_7),.n(x_cn_5));
 endmodule // rail.sch
 
 rail.sch #() s1 (.a(n1),.b(n2));
 #         v(n1)    v(n2)   
- 0.       3.       3.      
+ 0.       3.       1.5     
