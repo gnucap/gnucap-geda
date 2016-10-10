@@ -1,4 +1,5 @@
 
+options numdgt=3
 include ../include/analog.v
 
 spice
@@ -14,7 +15,8 @@ list
 
 spice
 .print dc v(nodes) r(sch1.R1.*) c(sch1.C1.*)
-.print tran v(nodes) v(sch1.C1.c) v(sch1.R1.r)
+.print tran  v(n1)    v(n2)
++ v(sch1.C1.c) v(sch1.R1.r)
 .dc
 
 .store tran v(n2)

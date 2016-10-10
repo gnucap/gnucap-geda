@@ -1,0 +1,15 @@
+#!/bin/bash -x
+
+[ x$1 = xSKIP ] && exit 77
+
+base=`basename $1`
+out=${base}.out
+
+ref=$srcdir/${base%%sch}ref
+
+[ -f ${base%%sch}ref ] && ref=${base%%sch}ref
+
+make $out
+# diff $out $ref
+cat $out < $ref | diff -up - $ref --label $ref || exit 1
+rm $out
