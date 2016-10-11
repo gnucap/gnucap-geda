@@ -1,0 +1,25 @@
+//comment (incomplete) title-B.sym
+net #() net0 (.p(x_nn_0),.n(x_nn_1));
+place #(.x(47300),.y(46600)) 47300:46600 (.port(x_nn_0));
+place #(.x(47300),.y(47300)) 47300:47300 (.port(x_nn_1));
+port #(.basename(input-2.sym),.net(INPUT:1)) INPUT:1 (.int(x_cn_2),.ext(INPUT:1));
+place #(.x(44900),.y(47300)) 44900:47300 (.port(x_cn_2));
+port #(.basename(output-2.sym),.net(nout)) nout (.int(x_cn_3),.ext(nout));
+place #(.x(53500),.y(47300)) 53500:47300 (.port(x_cn_3));
+RESISTOR #(.basename(resistor-2.sym),.value(4k)) R1 (.1(x_cn_4),.2(x_cn_5));
+place #(.x(45500),.y(47300)) 45500:47300 (.port(x_cn_4));
+place #(.x(46400),.y(47300)) 46400:47300 (.port(x_cn_5));
+net #() net1 (.p(x_cn_4),.n(x_cn_2));
+net #() net2 (.p(x_nn_6),.n(x_nn_7));
+place #(.x(47300),.y(45200)) 47300:45200 (.port(x_nn_6));
+place #(.x(47300),.y(45700)) 47300:45700 (.port(x_nn_7));
+port #(.basename(passive-1.sym),.net(PASSIVE:1)) PASSIVE:1 (.int(x_nn_6),.ext(PASSIVE:1));
+CAPACITOR #(.basename(capacitor-1.sym),.description(capacitor),.numslots(0),.symversion(0.1),.value(oneu)) C1 (.1(x_nn_7),.2(x_nn_0));
+net #() teetop (.p(x_cn_5),.n(x_cn_3));
+net #() extranet4 (.p(x_cn_5),.n(x_nn_1));
+endmodule // rcsch
+
+rcsch #(.oneu(oneu)) sch1 (.INPUT:1(n1),.nout(n2),.PASSIVE:1(n0));
+#         v(n0)    v(n1)    v(n2)    r(sch1.R1.r) c(sch1.C1.c) ev(sch1.C1.c)
+ 0.       0.       0.       0.       4.K      1.u      1.u     
+vn2= 0.675

@@ -1,0 +1,28 @@
+
+options numdgt=3
+
+spice
+V1 n1 n0 pulse iv=0 pv=1 delay=0 width=10m rise=1m
+R1 n0 0 1
+
+*.load lang_geda.so
+
+
+.verilog
+
+geda "rc.2.sch" module device="rcsch"
+
+parameter oneu=1u
+rcsch #(.oneu(oneu)) sch1(n1 n2 n0);
+list
+
+spice
+.print dc v(nodes) r(sch1.R1.*) c(sch1.C1.*) ev(sch1.C1.*)
+.print tran  v(nodes)
+.dc
+
+.store tran v(n2)
+.tran 0 20m 1m basic trace=n > /dev/null
+.measure vn2 at(probe="v(n2)" x=5m)
+
+.end

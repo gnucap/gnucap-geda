@@ -73,7 +73,10 @@ XFAIL_TESTS += eg34b.sch
 
 GC_TESTS = res_net.gc short.gc rail.gc spice.gc \
         testbench.gc res.gc notfound.gc convert.gc \
-        verilog.gc verilog_place.gc rc.gc
+        verilog.gc verilog_place.gc \
+	rc.gc \
+	rc.2.gc
+
 CUSTOM_TESTS = nets.sh bogus.sh
 TESTS = $(EG_TESTS) \
         $(ER_TESTS) \
@@ -86,7 +89,10 @@ EXTRA_DIST+= \
 	$(GC_TESTS)
 
 # these require schematics
-SCHEMATICS = testbench.sch spice.sch rail.sch res_net.sch short.sch res.sch rc.sch
+SCHEMATICS = \
+	testbench.sch spice.sch rail.sch res_net.sch short.sch res.sch rc.sch \
+	rc.2.sch
+
 $(SCHEMATICS:%.sch=%.out): %.out: $(PWD)/%.sch
 EXTRA_DIST+= $(SCHEMATICS)
 
@@ -180,11 +186,12 @@ verilog.out: EXTRA_SED_ARG=-e '1,/^stashing as/d'
 verilog_place.out: EXTRA_SED_ARG=-e '1,/^stashing as/d'
 notfound.out: EXTRA_SED_ARG=-e '1,/^core-lib version/d'
 bogus.out: EXTRA_SED_ARG=
+rc.2.out: EXTRA_SED_ARG += -e 's/675.*$$/675/'
 
 $(ER_TESTS:%.sh=%.out): GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
 $(EG_TESTS:%.sch=%.out): GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
 
-rc.out: GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
+rc.out rc.2.out: GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
 
 eg2b.sch.out eg2b_recon.out: VLIB_FILES+= transistor.v diode.v
 eg3.sch.out eg3_recon.out: VLIB_FILES += transistor.v 74.v
@@ -226,6 +233,7 @@ CLEANFILES = $(TESTS:%.gc:%.out) \
 	$(OUTFILES)
 
 $(GC_TESTS:%.gc=%.log): .P
+$(GC_TESTS:%.gc=%.out): .P
 
 .PHONY:
 	
