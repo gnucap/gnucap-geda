@@ -22,6 +22,9 @@
  * data structures for subcircuits from geda schematics
  */
 
+// workaround bug in unstable gnucap
+#define USE(x) (void)x
+
 #include "d_gedasckt.h"
 #include <globals.h>
 #include <u_nodemap.h>
@@ -72,7 +75,7 @@ void MODEL_GEDA_SUBCKT::set_port_by_index(uint_t num, std::string& ext_name)
     }else{
       // it's already big enough, probably assigning out of order
     }
-  }else{
+  }else{ untested();
     throw Exception_Too_Many(num+1, max_nodes(), 0/*offset*/);
   }
 }
@@ -111,21 +114,18 @@ void DEV_GEDA_SUBCKT::set_parent(const MODEL_GEDA_SUBCKT* p)
 /*--------------------------------------------------------------------------*/
 void DEV_GEDA_SUBCKT::apply_map(unsigned* map)
 {
+	trace2("apply_map", long_label(), is_device());
 	CARD_LIST* cl = subckt();
 	assert(cl);
 
-	unsigned num_nodes_in_subckt = _parent->subckt()->nodes()->how_many();
-	for(unsigned i=0; i<=num_nodes_in_subckt; ++i){
-		trace4("preapply", long_label(), i, _map[i], is_device());
-	}
-
 	for (CARD_LIST::iterator ci = cl->begin(); ci != cl->end(); ++ci) {
-		if ((**ci).is_device()) {
+		if ((**ci).is_device()) { untested();
 			for (uint_t ii=0;  ii<(**ci).net_nodes(); ++ii) {
-				trace2("apply", (*ci)->long_label(), ii); //  (**ci).n_(ii).e_());
+				trace3("apply", (*ci)->long_label(), ii, (**ci).net_nodes()); //  (**ci).n_(ii).e_());
+				trace3("apply", ii, _map[(**ci).n_(ii).e_()], (**ci).n_(ii).e_());
 				(**ci).n_(ii).map_subckt_node((uint_t*)map, this); //  _ttt = map[e_()];
 			}
-		}else{
+		}else{ untested();
 //			assert(dynamic_cast<MODEL_CARD*>(*ci));
 		}
 	}
@@ -145,12 +145,16 @@ std::string DEV_GEDA_SUBCKT::port_name(uint_t i)const {
 }
 /*--------------------------------------------------------------------------*/
 void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
-{
+{ untested();
 	assert(model);
 	assert(model->subckt());
 	assert(model->subckt()->nodes());
 	unsigned num_nodes_in_subckt = _parent->subckt()->nodes()->how_many();
 	typedef boost::counting_iterator<unsigned> elt_iter;
+	error(bTRACE, "%s: map_subckt_nodes net: %d sckt: %d\n",
+			long_label().c_str(),
+			(unsigned)model->net_nodes(),
+			num_nodes_in_subckt);
 
 	unsigned *port=new unsigned[num_nodes_in_subckt+1];
 	std::fill(port, port+num_nodes_in_subckt+1, INVALID_NODE);
@@ -173,8 +177,13 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 	_part->compress_sets(elt_iter(1), elt_iter(num_nodes_in_subckt));
 	_part->normalize_sets(elt_iter(1), elt_iter(num_nodes_in_subckt));
 
-	trace1("COUNT", _part->count_sets(elt_iter(1), elt_iter(num_nodes_in_subckt)));
+	for (unsigned i=1; i <= num_nodes_in_subckt; ++i) {
+		trace3("normalized map", i, _part->find_set(i), port[i]);
+	}
 
+	error(bTRACE, "%s: map_subckt_nodes connected components %d\n",
+			long_label().c_str(),
+			_part->count_sets(elt_iter(1), elt_iter(num_nodes_in_subckt+1)));
 //
    
 	for(unsigned i=1; i<=(unsigned)model->net_nodes(); ++i){
@@ -207,18 +216,18 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 		}
 		{
 			unsigned seek=model->net_nodes();
-			for (unsigned i=1; i <= num_nodes_in_subckt; ++i) { untested();
+			for (unsigned i=1; i <= num_nodes_in_subckt; ++i) { itested();
 				trace3("num", i, _part->find_set(i), port[_part->find_set(i)]);
-				if(port[_part->find_set(i)]!=(unsigned)INVALID_NODE){ untested();
-					trace2("port", i, _part->find_set(i));
+				if(port[_part->find_set(i)]!=(unsigned)INVALID_NODE){ itested();
 					_map[i] = port[_part->find_set(i)];
-				}else if(_part->find_set(i)<=seek){ untested();
+					trace3("port", i, _part->find_set(i), _map[i]);
+				}else if(_part->find_set(i)<=seek){ itested();
 					trace3("internal, exists", i, _map[i], seek);
 					_map[i] = _map[_part->find_set(i)];
 				}else{
-					trace3("internal, new", i, _map[i], seek);
-					seek = _part->find_set(i);
+					seek = i;
 					_map[i] = CKT_BASE::_sim->newnode_subckt();
+					trace4("internal, new", i, _map[i], seek, _sim->_total_nodes);
 				}
 			}
 		}
@@ -226,6 +235,10 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 	delete[] port;
 	// "map" now contains a translation list,
 	// from subckt local numbers to matrix index numbers
+	
+	for(unsigned i=0; i<=num_nodes_in_subckt; ++i){
+		trace3("preapply", long_label(), i, _map[i]);
+	}
 
 	// scan the list, map the nodes
 	apply_map(_map);
@@ -234,13 +247,13 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 // a net (=set of nodes) is a cycle in the permutation defined by _map.
 void DEV_GEDA_SUBCKT::collapse_nodes(const NODE* a, const NODE* b)
 {
-	unsigned num_nodes_in_subckt = _parent->subckt()->nodes()->how_many();
-	trace4("DEV_GEDA_SUBCKT::collapse_nodes", long_label(), a->user_number(), b->user_number(), num_nodes_in_subckt);
-
-	trace2("DEV_GEDA_SUBCKT::collapse_nodes", a->short_label(), b->short_label());
 	unsigned i=a->user_number();
-	assert(i<num_nodes_in_subckt+1);
 	unsigned j=b->user_number();
+	unsigned num_nodes_in_subckt = _parent->subckt()->nodes()->how_many();
+	error(bTRACE, "collapse %s: %s (%d), %s(%d)\n", long_label().c_str(),
+			a->short_label().c_str(), i, b->short_label().c_str(), j);
+
+	assert(i<num_nodes_in_subckt+1);
 	assert(j<num_nodes_in_subckt+2);
 
 	assert(_part);
@@ -270,7 +283,7 @@ void DEV_GEDA_SUBCKT::expand()
 	assert(c);
 	if (!_parent) { untested();
 		const CARD* model = find_looking_out(c->modelname());
-		if(!dynamic_cast<const BASE_SUBCKT*>(model)) {
+		if(!dynamic_cast<const BASE_SUBCKT*>(model)) { untested();
 			throw Exception_Type_Mismatch(long_label(), c->modelname(), "subckt");
 		}else{ untested();
 			_parent = prechecked_cast<const MODEL_GEDA_SUBCKT*>(model);
@@ -294,7 +307,11 @@ void DEV_GEDA_SUBCKT::expand()
 	subckt()->set_owner(this);
 
 	unsigned num_nodes_in_subckt = _parent->subckt()->nodes()->how_many() + 1;
-	assert(!_map);
+	if(_map){
+		incomplete();
+		delete[] _map;
+	}else{ untested();
+	}
 	_map = new unsigned[num_nodes_in_subckt];
 	for(unsigned i=0; i<num_nodes_in_subckt; ++i){
 		_map[i] = i;
@@ -310,6 +327,7 @@ void DEV_GEDA_SUBCKT::expand()
 	try{
 		map_subckt_nodes(_parent);
 	}catch(Exception){ untested();
+		error(bDEBUG, "something went wrong in map_sckt_nodes %s\n", long_label().c_str());
 		incomplete();
 //		delete[] _subckt;
 //		_subckt = NULL; hmm.
@@ -324,7 +342,7 @@ void DEV_GEDA_SUBCKT::expand()
 }
 /*--------------------------------------------------------------------------*/
 void DEV_GEDA_SUBCKT::precalc_last()
-{
+{ untested();
   BASE_SUBCKT::precalc_last();
 
   COMMON_PARAMLIST* c = prechecked_cast<COMMON_PARAMLIST*>(mutable_common());

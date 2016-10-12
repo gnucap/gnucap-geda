@@ -20,6 +20,9 @@
  *
  */
 
+// workaround bug in unstable gnucap
+#define USE(x) (void)x
+
 #define ADD_VERSION
 #include <l_lib.h>
 #include <l_dispatcher.h>
@@ -1259,7 +1262,7 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
  * created and (TODO)post processing of nets is done
  */
 void LANG_GEDA::parse_top_item(CS& cmd, CARD_LIST* Scope)
-{
+{ untested();
 	parse_item_(cmd, NULL, Scope);
 }
 /*----------------------------------------------------------------------*/
@@ -1284,7 +1287,12 @@ void LANG_GEDA::parse_item_(CS& cmd, CARD* owner, CARD_LIST* scope)const
 
 	//problem: if new__instance interprets as command, Scope is lost.
 	trace2("LANG_GEDA::parse_item_", cmd.fullstring(), cmd.tail());
-	CARD_LIST* s = (owner) ? owner->subckt() : scope;
+	CARD_LIST* s;
+	if (owner){ untested();
+	  s = owner->subckt();
+	}else{ untested();
+	  s =	scope;
+	}
 	assert(!cmd.match1("{"));
 
 	// nothing if cmd.is_end...
@@ -1619,9 +1627,9 @@ class CMD_GEDA : public CMD { //
 		{
 			LANGUAGE* oldlang = OPT::language;
 			// BUG breaks direct "options lang=gschem", does it?
-			lang_geda._mode=lang_geda.mATTRIBUTE;
-			lang_geda._no_of_lines=0;
-			lang_geda._gotline=false;
+			lang_geda._mode = lang_geda.mATTRIBUTE;
+			lang_geda._no_of_lines = 0;
+			lang_geda._gotline = false;
 			//
 			string filename;
 			cmd >> filename;
@@ -1645,18 +1653,22 @@ class CMD_GEDA : public CMD { //
 			} while (cmd.more() && !cmd.stuck(&here));
 
 			BASE_SUBCKT* model=NULL;
+
+			// hmm could take from "subckt" comment block?
 			string label = (device=="")? filename : device;
 
 			if(symbol){ untested();
 				GEDA_SYMBOL* sym = lang_geda._symbol[filename]->clone();
 				trace3("symbol", sym->pincount(), filename, lang_geda._symbol[filename]->pincount());
 				assert(sym->pincount());
-				if(source!="") {
+				if(source!=""){ untested();
 					(*sym)["source"] = source;
+				}else{untested();
 				}
 				if((*sym)["source"]==""){untested();
 					OPT::language = oldlang;
 					throw Exception_CS("empty source", cmd);
+				}else{untested();
 				}
 				model = new MODEL_GEDA_SUBCKT(); // BUG: ask dispatcher?
 				*sym >> model;
@@ -1670,7 +1682,7 @@ class CMD_GEDA : public CMD { //
 				}
 				//align(model); // might be needed for gnucap .36
 				Scope->push_back(model);
-			}else if(module) {
+			}else if(module) { untested();
 				trace1("reading module", filename);
 				model = new MODEL_GEDA_SUBCKT(); // BUG: ask dispatcher?
 				model->set_label(label);
@@ -1687,7 +1699,7 @@ class CMD_GEDA : public CMD { //
 // 					trace3("", i, model->port_value(i), model->n_(i).e_());
 // 				}
 				Scope->push_back(model);
-			} else if(filename!=""){
+			} else if(filename!=""){ untested();
 				command("options lang=gschem", Scope);
 				LANG_GEDA::read_file(filename, Scope);
 			} else {untested();

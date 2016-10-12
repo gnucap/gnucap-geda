@@ -51,6 +51,13 @@ private: // from DEV_SUBCKT
   std::string   value_name()const	{return "#";}
   // std::string   dev_type()const
   uint_t	max_nodes()const	{return PORTS_PER_SUBCKT;}
+#ifdef NDEBUG
+  void map_nodes(){
+    untested();
+    trace3("map_nodes", long_label(), net_nodes(), matrix_nodes());
+    BASE_SUBCKT::map_nodes();
+  }
+#endif
   uint_t	min_nodes()const	{return 0;}
   uint_t	matrix_nodes()const	{return 0;}
 public: //HACK
@@ -105,7 +112,6 @@ public: // override virtual
   char id_letter()const	{untested();return '\0';}
   CARD* clone_instance()const;
   CARD* clone()const		{return new MODEL_GEDA_SUBCKT(*this);}
-  //void		map_nodes()		{}
   void set_port_by_index(uint_t num, std::string& ext_name);
   bool		makes_own_scope()const  {return true;}
   CARD_LIST*	   scope()		{assert(subckt()); return subckt();}
@@ -115,7 +121,10 @@ private: // no-ops for prototype
   void precalc_first(){untested();}
   void expand(){untested();}
   void precalc_last(){untested();}
-  void map_nodes(){untested();}
+  void map_nodes(){
+    untested();
+    trace1("map_nodes base", long_label());
+  }
   void tr_begin(){untested();}
   void tr_load(){untested();}
   TIME_PAIR tr_review(){untested(); return TIME_PAIR(NEVER, NEVER);}

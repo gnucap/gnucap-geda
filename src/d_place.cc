@@ -20,6 +20,9 @@
  *------------------------------------------------------------------
  * This is the device 'place' : a schematic node location.
  */
+// workaround bug in unstable gnucap
+#define USE(x) (void)x
+
 #include <globals.h>
 #include <e_compon.h>
 #include <e_node.h>
