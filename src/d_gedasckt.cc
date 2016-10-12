@@ -214,7 +214,7 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 					_map[i] = port[_part->find_set(i)];
 				}else if(_part->find_set(i)<=seek){ untested();
 					trace3("internal, exists", i, _map[i], seek);
-					_map[i] = _part->find_set(i);
+					_map[i] = _map[_part->find_set(i)];
 				}else{
 					trace3("internal, new", i, _map[i], seek);
 					seek = _part->find_set(i);
