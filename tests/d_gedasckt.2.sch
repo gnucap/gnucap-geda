@@ -1,0 +1,41 @@
+v 20130925 2
+C 40000 40000 0 0 0 title-B.sym
+C 46300 46900 1 270 0 nmos-1.sym
+{
+T 47100 46200 5 10 0 0 270 0 1
+device=NMOS_TRANSISTOR
+T 46900 46300 5 10 1 1 270 0 1
+refdes=N2
+T 47300 46200 5 10 0 0 270 0 1
+symversion=0.1
+}
+T 50100 40700 9 10 1 0 0 0 1
+debugging gnd issue
+C 43400 46700 1 270 0 voltage-3.sym
+{
+T 44100 46500 5 8 0 0 270 0 1
+device=VOLTAGE_SOURCE
+T 43900 46400 5 10 1 1 270 0 1
+refdes=Vlow
+T 42900 46200 5 10 1 1 0 0 1
+value=vdd
+}
+C 43800 45800 1 180 0 5V-minus-1.sym
+{
+T 43900 45600 5 10 1 0 0 0 1
+refdes=lowrail
+}
+T 53900 40300 9 10 1 0 0 0 1
+1.1
+T 53900 40100 9 10 1 0 0 0 1
+Felix
+C 43600 46600 1 0 0 passive-1.sym
+{
+T 44500 46800 5 10 1 0 0 0 1
+net=ngnd
+T 43800 47300 5 10 0 0 0 0 1
+device=port
+T 44500 46700 5 10 1 1 0 1 1
+value=PASSIVE
+}
+C 46900 46200 1 180 0 5V-minus-1.sym

@@ -15,17 +15,15 @@ EXTRA_DIST = \
 	 gafrc \
 	 $(EG_TESTS:%.sch=%.ref) \
 	 $(ER_TESTS:%.sh=%.ref)
-#
-#AM_TESTS_ENVIRONMENT = \
-#    export LD_LIBRARY_PATH=../src/.libs \
-#	 GUILE_WARN_DEPRECATED=no;
+
 AM_TESTS_ENVIRONMENT = \
     export PATH='../src:$(PATH)'\
            GNUCAP='$(GNUCAP)'\
            REDIRECT='exec 2>&9'\
            MAKEFLAGS=--no-print-directory \
            srcdir='$(srcdir)';
-#
+#	 GUILE_WARN_DEPRECATED=no;
+
 TEST_EXTENSIONS = .sh .sch .gc
 GC_LOG_COMPILER = $(top_srcdir)/tests/gc_log_compiler
 SCH_LOG_COMPILER = $(top_srcdir)/tests/sch_log_compiler
@@ -71,11 +69,19 @@ XFAIL_TESTS += eg26_recon.gc
 # a Text element starting with a component name confuses find_type_in_string
 XFAIL_TESTS += eg34b.sch
 
-GC_TESTS = res_net.gc short.gc rail.gc spice.gc \
-        testbench.gc res.gc notfound.gc convert.gc \
-        verilog.gc verilog_place.gc \
+GC_TESTS = \
+	convert.gc \
+	d_gedasckt.1.gc \
+	d_gedasckt.2.gc \
+	notfound.gc \
+	rc.2.gc \
 	rc.gc \
-	rc.2.gc
+	res.gc \
+	res_net.gc \
+	short.gc rail.gc spice.gc \
+	testbench.gc \
+	verilog.gc \
+	verilog_place.gc
 
 CUSTOM_TESTS = nets.sh bogus.sh
 TESTS = $(EG_TESTS) \
@@ -91,7 +97,7 @@ EXTRA_DIST+= \
 # these require schematics
 SCHEMATICS = \
 	testbench.sch spice.sch rail.sch res_net.sch short.sch res.sch rc.sch \
-	rc.2.sch
+	rc.2.sch d_gedasckt.2.sch
 
 $(SCHEMATICS:%.sch=%.out): %.out: $(PWD)/%.sch
 EXTRA_DIST+= $(SCHEMATICS)
@@ -120,7 +126,7 @@ $(EG_TESTS:%=%.out): %.sch.out: %.sch
 	end | $(GNUCAP) -a ../src/.libs/lang_geda.so \
 	                -i $(top_srcdir)/include/analog.v \
 	                $(VLIB_FILES:%=-i $(abs_top_srcdir)/include/%) | \
-	   sed -e '/^default plugins/d' | \
+	   sed -e '/^default plugins/d' $(EXTRA_SED_ARG) | \
 	   sed -e '/^parameter /d' $(EXTRA_SED_ARG) | \
 	   sed -e 's/ $$//' $(EXTRA_SED_ARGS) > $@
 
@@ -173,13 +179,16 @@ $(EG_TESTS:%.sch=%_recon.out): %_recon.out: %.out
 $(ER_TESTS:%.sh=%.log): %.log: %.out
 
 $(GC_TESTS:%.gc=%.out): %.out: %.gc
+	echo gctest...
 	$(GNUCAP_ENV) $(GNUCAP) -a $(MODULE) $(GC_INCLUDES) < $< | \
 		sed -e '/^default plugins/d' | \
 		sed -e '/^parameter /d' $(EXTRA_SED_ARG)| \
 		grep -v ^@ > $@
 
 testbench.out: EXTRA_SED_ARG=-e '/^parameter /d'
-$(GC_TESTS:%.gc=%.out): EXTRA_SED_ARG=-e '1,/^\/\/v /d'
+# $(GC_TESTS:%.gc=%.out): EXTRA_SED_ARG=-e '1,/^\/\/v /d'
+$(GC_TESTS:%.gc=%.out): EXTRA_SED_ARG=-e '1,/^stashing as/d'
+$(GC_TESTS:%.gc=%.out): EXTRA_SED_ARG+=-e '/^\/\/v /d'
 spice.out: EXTRA_SED_ARG=-e '1,/^core-lib version/d' -e 's/499999.*$$/5/'
 res_net.out: EXTRA_SED_ARG += -e 's/4999.*$$/5/'
 verilog.out: EXTRA_SED_ARG=-e '1,/^stashing as/d'
@@ -219,7 +228,6 @@ $(EG_TESTS:%.sch=%.sch.out): EXTRA_SED_ARGS= | sed -n '/^\/\/v /,$$p' | sed -e '
 eg_tests: $(EG_TESTS:%.sch=%.log)
 er_tests: $(ER_TESTS:%.sh=%.log)
 gc_tests: $(GC_TESTS:%.gc=%.log)
-
 
 OUTFILES = \
 	$(CUSTOM_TESTS:%.sh=%.out) \

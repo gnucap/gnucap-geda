@@ -1,6 +1,5 @@
 
 options numdgt=3
-include ../include/analog.v
 
 spice
 V1 n1 n0 pulse iv=0 pv=1 delay=0 width=10m rise=1m
@@ -14,7 +13,7 @@ rc.sch sch1(n1 n2 n0);
 list
 
 spice
-.print dc v(nodes) r(sch1.R1.*) c(sch1.C1.*)
+.print dc v(nodes) r(sch1.R1.*) c(sch1.C1.*) ev(sch1.C1.*)
 .print tran  v(n1)    v(n2)
 + v(sch1.C1.c) v(sch1.R1.r)
 .dc

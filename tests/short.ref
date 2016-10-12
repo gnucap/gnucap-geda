@@ -1,3 +1,6 @@
+resistor #(.r( 1.)) R1 (.p(n2),.n(0));
+vsource #(.dc(3.)) V1 (.p(n1),.n(0));
+module short.sch (a,b);
 //comment (incomplete) title-B.sym
 port #(.basename(passive-1.sym),.net(a)) a (.int(x_cn_0),.ext(a));
 place #(.x(48500),.y(44600)) 48500:44600 (.port(x_cn_0));

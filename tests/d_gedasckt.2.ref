@@ -1,0 +1,71 @@
+>>>>>spice 
+>>>>>.param amplitude = 1 
+>>>>>.param offset 0 
+>>>>>.options language=verilog 
+>>>>>spice 
+>>>>>.verilog 
+>>>>>module NMOS_TRANSISTOR(D G S B); 
+>>>>>module VOLTAGE_SOURCE(1, 2); 
+>>>>>parameter value=1; 
+>>>>>geda "d_gedasckt.2.sch" module device="amp" 
+reading file d_gedasckt.2.sch
+debugging gnd issue 
+^ ? debugging: no match
+1.1 
+^ ? 1.1: no match
+Felix 
+^ ? Felix: no match
+>>>>>list 
+//* V1 nin 0 1 
+module NMOS_TRANSISTOR (D,G,S,B);
+endmodule // NMOS_TRANSISTOR
+
+module VOLTAGE_SOURCE (1,2);
+vsource #(.dc(value)) v (.p(1),.n(2));
+endmodule // VOLTAGE_SOURCE
+
+module amp (ngnd);
+//comment (incomplete) title-B.sym
+NMOS_TRANSISTOR #(.basename(nmos-1.sym),.description(NMOS),.numslots(0),.symversion(0.1)) N2 (.D(x_cn_1),.G(x_cn_2),.S(x_cn_3),.B(x_cn_0));
+place #(.x(46700),.y(46200)) 46700:46200 (.port(x_cn_0));
+place #(.x(47100),.y(46400)) 47100:46400 (.port(x_cn_1));
+place #(.x(46700),.y(46900)) 46700:46900 (.port(x_cn_2));
+place #(.x(46300),.y(46400)) 46300:46400 (.port(x_cn_3));
+//T 50100 40700 9 10 1 0 0 0 1 
+VOLTAGE_SOURCE #(.basename(voltage-3.sym),.value(vdd)) Vlow (.1(x_cn_4),.2(x_cn_5));
+place #(.x(43600),.y(46700)) 43600:46700 (.port(x_cn_4));
+place #(.x(43600),.y(45800)) 43600:45800 (.port(x_cn_5));
+rail #(.basename(5V-minus-1.sym),.net(-5V:1)) lowrail (.pin(x_cn_5),.rail(-5V:1));
+//T 53900 40300 9 10 1 0 0 0 1 
+//T 53900 40100 9 10 1 0 0 0 1 
+port #(.basename(passive-1.sym),.net(ngnd)) ngnd (.int(x_cn_4),.ext(ngnd));
+rail #(.basename(5V-minus-1.sym),.net(-5V:1)) -5V:1 (.pin(x_cn_0),.rail(-5V:1));
+endmodule // amp
+
+//amp #(.vdd(3.3)) myamp(.nin(0), .nout(0), .ngnd(0)); 
+amp #(.vdd(3.3)) myamp (.ngnd(0));
+>>>>>spice 
+>>>>>.print op v(nin) v(v1)  v(myamp.lowrail)  ev(myamp.Vlow.v)  v(myamp.Vlow.v)  i(myamp.Vlow.v) 
+collapse myamp: x_cn_5 (6), -5V:1(7)
+collapse myamp: x_cn_4 (5), ngnd(8)
+collapse myamp: x_cn_0 (1), -5V:1(7)
+myamp: map_subckt_nodes net: 1 sckt: 8
+myamp: map_subckt_nodes connected components 5
+collapse myamp: x_cn_5 (6), -5V:1(7)
+collapse myamp: x_cn_4 (5), ngnd(8)
+collapse myamp: x_cn_0 (1), -5V:1(7)
+myamp.N2: map_subckt_nodes net: 4 sckt: 4
+myamp.N2: map_subckt_nodes connected components 4
+myamp.Vlow: map_subckt_nodes net: 2 sckt: 2
+myamp.Vlow: map_subckt_nodes connected components 2
+.print op v(nin) v(v1)  v(myamp.lowrail)  ev(myamp.Vlow.v)  v(myamp.Vl
+            ^ ? no match
+.print op v(nin) v(v1)  v(myamp.lowrail)  ev(myamp.Vlow.v)  v(myamp.Vl
+                   ^ ? no match
+>>>>>.op 
+collapse myamp: x_cn_5 (6), -5V:1(7)
+collapse myamp: x_cn_4 (5), ngnd(8)
+collapse myamp: x_cn_0 (1), -5V:1(7)
+#           v(myamp.lowrail) ev(myamp.Vlow.v) v(myamp.Vlow.v) i(myamp.Vlow.v)
+ 27.       -3.3        3.3        3.3        0.        
+>>>>>.end 

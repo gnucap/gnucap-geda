@@ -1,0 +1,34 @@
+load lang_geda.so
+options trace
+spice
+.param amplitude = 1
+.param offset 0
+
+.options language=verilog
+
+spice
+* V1 nin 0 1
+
+.verilog
+module NMOS_TRANSISTOR(D G S B);
+endmodule
+module VOLTAGE_SOURCE(1, 2);
+	parameter value=1;
+	vsource #(.dc(value)) v(1, 2);
+endmodule
+geda "d_gedasckt.2.sch" module device="amp"
+
+//amp #(.vdd(3.3)) myamp(.nin(0), .nout(0), .ngnd(0));
+amp #(.vdd(3.3)) myamp(.ngnd(0));
+
+list
+
+spice
+.print op v(nin) v(v1)
++ v(myamp.lowrail)
++ ev(myamp.Vlow.v)
++ v(myamp.Vlow.v)
++ i(myamp.Vlow.v)
+
+.op
+.end
