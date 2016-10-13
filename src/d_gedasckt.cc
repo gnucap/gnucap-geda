@@ -64,15 +64,14 @@ CARD* MODEL_GEDA_SUBCKT::clone_instance()const
 /*--------------------------------------------------------------------------*/
 void MODEL_GEDA_SUBCKT::set_port_by_index(uint_t num, std::string& ext_name)
 {
-  if (num < max_nodes()) {
+  if (num < max_nodes()) { untested();
     _n[num].new_node(ext_name, this);
 	 trace4("MODEL_GEDA_SUBCKT::set_port_by_index", long_label(), num, ext_name, _n[num].t_());
 
-
-    if (num+1 > _net_nodes) {
+    if (num+1 > _net_nodes) { untested();
       // make the list bigger
       _net_nodes = num+1;
-    }else{
+    }else{ untested();
       // it's already big enough, probably assigning out of order
     }
   }else{ untested();
@@ -163,7 +162,12 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 	// some of them are external
 	// namely model->n_(i).t_() for i < net_nodes()
 	for (unsigned i=1; i <= (unsigned)model->net_nodes(); ++i) {
-		trace5("model port", long_label(), i, model->n_(i-1).t_(), n_(i-1).t_(), n_(i-1).e_());
+		trace4("model port", long_label(), i, model->n_(i-1).t_(), n_(i-1).t_());
+		if(n_(i-1).t_()==INVALID_NODE){ incomplete();
+			// port has never been connected
+		}else{ untested();
+			trace1("..", n_(i-1).e_());
+		}
 		trace2("model port", (this), (model));
 //		unsigned usernumber = model->n_(i-1).t_();
 //		port[usernumber] = n_(i-1).t_();
@@ -212,20 +216,22 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 		for (unsigned port = 0; port < (unsigned)model->net_nodes(); ++port) {
 			assert(model->n_(port).e_() <= (uint_t)num_nodes_in_subckt);
 			//assert(model->n_(port).e_() == port+1);
-			trace3("ports", port, model->n_(port).e_(), n_(port).t_());
+			trace4("ports", port, model->n_(port).short_label(),
+					model->n_(port).e_(), n_(port).t_());
 		}
 		{
-			unsigned seek=model->net_nodes();
+			unsigned seek=0; // model->net_nodes();
+			trace1("seek", seek);
 			for (unsigned i=1; i <= num_nodes_in_subckt; ++i) { itested();
 				trace3("num", i, _part->find_set(i), port[_part->find_set(i)]);
 				if(port[_part->find_set(i)]!=(unsigned)INVALID_NODE){ itested();
 					_map[i] = port[_part->find_set(i)];
 					trace3("port", i, _part->find_set(i), _map[i]);
-				}else if(_part->find_set(i)<seek){ itested();
+				}else if(_part->find_set(i)<=seek){ itested();
 					trace3("internal, exists", i, _map[i], seek);
 					_map[i] = _map[_part->find_set(i)];
 				}else{
-					seek = i+1;
+					seek = i;
 					_map[i] = CKT_BASE::_sim->newnode_subckt();
 					trace4("internal, new", i, _map[i], seek, _sim->_total_nodes);
 				}
