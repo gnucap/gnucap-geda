@@ -239,18 +239,15 @@ std::string* LANG_GEDA::parse_pin(CS& cmd, COMPONENT* x, int index, bool ismodel
 			cmd.get_line("");
 			if(cmd>>"}"){
 				break;
-			}else{
-				if (cmd>>"T"){
-					cmd>>dump;
-				}
-				else{
-					std::string _pname=cmd.ctos("=","",""),_pvalue;
-					cmd>>"=">>_pvalue;
-					if(_pname=="pinlabel"){
-						_portvalue=_pvalue+_portvalue;
-					}else if (_pname=="pintype"){
-						_portvalue=_portvalue+_pvalue;
-					}
+			}else if (cmd>>"T"){ untested();
+				cmd>>dump;
+			}else{ untested();
+				std::string _pname=cmd.ctos("=","",""),_pvalue;
+				cmd>>"=">>_pvalue;
+				if(_pname=="pinlabel"){
+					_portvalue=_pvalue+_portvalue;
+				}else if (_pname=="pintype"){
+					_portvalue=_portvalue+_pvalue;
 				}
 			}
 		}
@@ -745,32 +742,34 @@ DEV_COMMENT* LANG_GEDA::parse_comment(CS& cmd, DEV_COMMENT* x)
 {
 
 	if(_C){
-
+		unreachable();
 		x->set("comment (incomplete) " + (*_C)["basename"]);
 		delete _C;
 		_C = NULL;
 		return x;
+	}else{ untested();
 	}
 	assert(x);
 	trace2("LANG_GEDA::parse_comment", x->comment(), cmd.fullstring());
 	x->set(cmd.fullstring());
-	std::string dump,no_of_lines="";
-	if (cmd >> "T "){
-		_mode=mCOMMENT;
+	std::string dump, no_of_lines="";
+	if (cmd >> "T "){ untested();
+		_mode = mCOMMENT;
 		for(int i=0; i<8; ++i){
 			cmd >> dump >> " ";
 		}
 		cmd>>no_of_lines;
 		if(no_of_lines==""){untested();
-			_no_of_lines=1;
-		}else{
-			_no_of_lines=atoi(no_of_lines.c_str());
-		}   
-	}else{
-		if(_no_of_lines!=0){
+			_no_of_lines = 1;
+		}else{ untested();
+			_no_of_lines = atoi(no_of_lines.c_str());
+		}
+	}else{ untested();
+		if(_no_of_lines!=0){ untested();
 			--_no_of_lines;
-			if(_no_of_lines==0){
+			if(_no_of_lines==0){ untested();
 				_mode=mATTRIBUTE;
+			}else{ untested();
 			}
 		}
 	}
@@ -778,7 +777,7 @@ DEV_COMMENT* LANG_GEDA::parse_comment(CS& cmd, DEV_COMMENT* x)
 	trace1("LANG_GEDA::parse_comment done", x->comment());
 }
 /*--------------------------------------------------------------------------*/
-DEV_DOT* LANG_GEDA::parse_symbol_file( DEV_DOT* x, const GEDA_SYMBOL& sym )const
+DEV_DOT* LANG_GEDA::parse_symbol_file(DEV_DOT* x, const GEDA_SYMBOL& sym)const
 { untested();
 	trace0("LANG_GEDA::parse_symbol_file");
 	return x;
@@ -803,11 +802,9 @@ DEV_DOT* LANG_GEDA::parse_command(CS& cmd, DEV_DOT* x)
 	}
 	return 0;
 
-
 	assert(_C);
 	basename=(*_C)["basename"];
 	trace3("LANG_GEDA::parse_command", x->s(), x->owner(), basename);
-
 
 	bool graphical = 0;
 	if(basename.length() > 4 && basename.substr(basename.length()-4) == ".sym"){ untested();
@@ -1135,16 +1132,25 @@ GEDA_SYMBOL* LANG_GEDA::parse_C(CS& cmd)const
  */
 std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 {
-	trace2("LANG_GEDA::find_type_in_string", cmd.tail(), (_C));
+	trace5("LANG_GEDA::find_type_in_string", cmd.tail(), (_C),
+			_placeq.size(), _netq.size(), _mode);
 	unsigned here = cmd.cursor(); //store cursor position to reset back later
+	bool reset=true;
 	std::string type;   //stores type : should check device attribute..
 	//graphical=["v","L","G","B","V","A","H","T"]
+	//
+	// if (_mode==mCOMMENT){ untested();
+	// 	type = "dev_comment";
+	// 	reset = false;
+	// }
 	if (_placeq.size()){ untested();
 		assert(!_C);
-		return "place";
+		type = "place";
+		reset = false;
 	} else if (_netq.size()){ untested();
 		assert(!_C);
-		return "net";
+		type = "net";
+		reset = false;
 	} else if (_C || cmd >> "C "){ untested();
 		trace2("find_type_in_string C", cmd.fullstring(), _gotline);
 		const GEDA_SYMBOL* D = parse_C(cmd);
@@ -1153,7 +1159,6 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 
 		if (D->pincount()){
 			// nets and devices.. see below
-			// ... 
 		}else if (!D->has_key("device") ){ untested();
 			trace2("have no pins", _C->pincount(), (*D)["basename"]);
 //			delete _C;
@@ -1223,11 +1228,32 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 			type = "gC"; // declare module first...
 		}
 		trace1("find_type_in_string, no reset", type);
-		return type;
-	} else if (cmd >> "v " || cmd >> "L " || cmd >> "G " || cmd >> "B " || cmd >>"V "
-			|| cmd >> "A " || cmd >> "H " || cmd >> "T " ){
-		return "dev_comment";
-	} else if (cmd >> "}"){
+		reset = false;
+	} else if (cmd >> "v "){ untested();
+		reset = false;
+		type = "dev_comment";
+	} else if (cmd >> "L "){ untested();
+		reset = false;
+		type = "dev_comment";
+	} else if (cmd >> "G "){ untested();
+		reset = false;
+		type = "dev_comment";
+	} else if (cmd >> "B "){ untested();
+		reset = false;
+		type = "dev_comment";
+	} else if (cmd >> "V "){ untested();
+		reset = false;
+		type = "dev_comment";
+	} else if (cmd >> "A "){ untested();
+		reset = false;
+		type = "dev_comment";
+	} else if (cmd >> "H "){ untested();
+		reset = false;
+		type = "dev_comment";
+	} else if (cmd >> "T "){ untested();
+		reset = true;
+		type = "dev_comment";
+	} else if (cmd >> "}"){ untested();
 		try {
 			cmd.get_line("brace-bug>");
 			return find_type_in_string(cmd);
@@ -1237,23 +1263,28 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 	}else if(cmd >> "N "){ untested();
 		return "net";
 	}else if(cmd >> "U "){ untested();
-		type="bus";
+		type = "bus";
+		reset = true;
 	}else if(cmd >> "P "){ untested();
-		type="pin";
+		type = "pin";
+		reset = true;
 	}else if(cmd >> "place "){untested();
 		// hmmm. ouch
-		type="place";
+		type = "place";
+		reset = true;
 	}else{ untested();
 		switch(_mode){untested();
 			case mCOMMENT: return "dev_comment";
 			default : cmd >> type;
 		}
 	}
-	trace1("LANG_GEDA::find_type_in_string done", type);
+	trace3("LANG_GEDA::find_type_in_string done", type, reset, _gotline);
 	//Not matched with the type. What now?
 	//trace2("find_type_in_string", cmd.fullstring(),type);
-	cmd.reset(here); // Reset cursor back to the position that
-	                 // has been started with at beginning
+	if(reset){untested();
+		cmd.reset(here);
+	}else{itested();
+	}
 	return type;    // returns the type of the string
 }
 /*----------------------------------------------------------------------*/
