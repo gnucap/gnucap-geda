@@ -69,11 +69,16 @@ XFAIL_TESTS += eg26_recon.gc
 # a Text element starting with a component name confuses find_type_in_string
 XFAIL_TESTS += eg34b.sch
 
+# incomplete
+XFAIL_TESTS += d_gedasckt.5.gc
+
 GC_TESTS = \
 	convert.gc \
 	d_gedasckt.1.gc \
 	d_gedasckt.2.gc \
 	d_gedasckt.3.gc \
+	d_gedasckt.4.gc \
+	d_gedasckt.5.gc \
 	notfound.gc \
 	rc.2.gc \
 	rc.gc \
@@ -100,7 +105,9 @@ SCHEMATICS = \
 	testbench.sch spice.sch rail.sch res_net.sch short.sch res.sch rc.sch \
 	rc.2.sch \
 	d_gedasckt.2.sch \
-	d_gedasckt.3.sch
+	d_gedasckt.3.sch \
+	d_gedasckt.4.sch \
+	d_gedasckt.5.sch
 
 $(SCHEMATICS:%.sch=%.out): %.out: $(PWD)/%.sch
 EXTRA_DIST+= $(SCHEMATICS)
@@ -129,7 +136,7 @@ $(EG_TESTS:%=%.out): %.sch.out: %.sch
 	end | $(GNUCAP) -a ../src/.libs/lang_geda.so \
 	                -i $(top_srcdir)/include/analog.v \
 	                $(VLIB_FILES:%=-i $(abs_top_srcdir)/include/%) | \
-	   sed -e '/^default plugins/d' $(EXTRA_SED_ARG) | \
+	   sed -e '/^default plugins/d' -e '/^lang_geda/d'  $(EXTRA_SED_ARG) | \
 	   sed -e '/^parameter /d' $(EXTRA_SED_ARG) | \
 	   sed -e 's/ $$//' $(EXTRA_SED_ARGS) > $@
 
@@ -184,7 +191,7 @@ $(ER_TESTS:%.sh=%.log): %.log: %.out
 $(GC_TESTS:%.gc=%.out): %.out: %.gc
 	echo gctest...
 	$(GNUCAP_ENV) $(GNUCAP) -a $(MODULE) $(GC_INCLUDES) < $< | \
-		sed -e '/^default plugins/d' | \
+		sed -e '/^default plugins/d'  -e '/^lang_geda/d' | \
 		sed -e '/^parameter /d' $(EXTRA_SED_ARG)| \
 		grep -v ^@ > $@
 
@@ -199,6 +206,8 @@ verilog_place.out: EXTRA_SED_ARG=-e '1,/^stashing as/d'
 notfound.out: EXTRA_SED_ARG=-e '1,/^core-lib version/d'
 bogus.out: EXTRA_SED_ARG=
 rc.2.out: EXTRA_SED_ARG += -e 's/675.*$$/675/'
+rc.out: EXTRA_SED_ARG += -e '/vn2/s\#0\.11.*$$\#0.11\#'
+rc.out: EXTRA_SED_ARG += -e '/vn2/s\#0\.67.*$$\#0.67\#'
 
 $(ER_TESTS:%.sh=%.out): GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
 $(EG_TESTS:%.sch=%.out): GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
@@ -223,7 +232,8 @@ $(ER_TESTS:%.sh=%.out): EXTRA_SED_ARGS=-e '1,/^stashing /d' -e 's%^//v %v %' -e 
 $(ER_TESTS:%.sh=%.out): %.out: %.gc
 	-@echo "$(GNUCAP) $<"; $(GNUCAP_ENV) $(GNUCAP) -a $(MODULE) $(GC_INCLUDES) \
 		$(VLIB_FILES:%=-i $(abs_top_srcdir)/include/%) < $< | \
-		sed -e '/^default plugins/d' $(EXTRA_SED_ARGS) | \
+		sed -e '/^default plugins/d' \
+		    -e '/^lang_geda/d' $(EXTRA_SED_ARGS) | \
 		grep -v ^@ > $@
 
 $(EG_TESTS:%.sch=%.sch.out): EXTRA_SED_ARGS= | sed -n '/^\/\/v /,$$p' | sed -e '/^parameter /d'

@@ -1,0 +1,54 @@
+load f_random.so
+load lang_geda.so
+load lang_adms.so
+load c_debug.so
+options trace
+spice
+.param amplitude = 1
+.param offset 0
+.param vdd=0.9
+
+.param bias=.1m
+
+.options language=verilog
+
+param mcvth = agauss(0,1)
+eval mcvth
+param mcmu = agauss(0,1)
+
+
+spice
+
+V1 nin 0 sin ( offset=0 phase=0 amplitude=amplitude frequency=1e4 delay=0)
+.verilog
+module RESISTOR(1 2);
+	parameter value=1;
+	resistor #(.r(value)) r(1,2);
+endmodule
+module VOLTAGE_SOURCE(1, 2);
+	parameter value=1;
+	vsource #(.dc(value)) v(1, 2);
+endmodule
+module NMOS_TRANSISTOR(D G S B);
+endmodule
+
+module PMOS_TRANSISTOR(D G S B);
+endmodule
+geda "d_gedasckt.5.sch" module device="amp"
+
+//amp #() myamp(nin, nout, 0);
+amp #(.bias(.01m), .vdd(3.3)) myamp(.nin(nin), .nout(nout), .gnd(0));
+
+nodelist
+list
+
+spice
+.print op v(nin) v(v1) v(myamp.GROUND) v(nout)
++ v(myamp.highrail)
++ v(myamp.lowrail)
++ ev(myamp.Vlow.v)
++ v(myamp.Vlow.v)
++ i(myamp.Vlow.v)
+
+.op
+.end
