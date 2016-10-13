@@ -73,6 +73,7 @@ GC_TESTS = \
 	convert.gc \
 	d_gedasckt.1.gc \
 	d_gedasckt.2.gc \
+	d_gedasckt.3.gc \
 	notfound.gc \
 	rc.2.gc \
 	rc.gc \
@@ -97,7 +98,9 @@ EXTRA_DIST+= \
 # these require schematics
 SCHEMATICS = \
 	testbench.sch spice.sch rail.sch res_net.sch short.sch res.sch rc.sch \
-	rc.2.sch d_gedasckt.2.sch
+	rc.2.sch \
+	d_gedasckt.2.sch \
+	d_gedasckt.3.sch
 
 $(SCHEMATICS:%.sch=%.out): %.out: $(PWD)/%.sch
 EXTRA_DIST+= $(SCHEMATICS)

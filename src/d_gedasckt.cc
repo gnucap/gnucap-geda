@@ -221,11 +221,11 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 				if(port[_part->find_set(i)]!=(unsigned)INVALID_NODE){ itested();
 					_map[i] = port[_part->find_set(i)];
 					trace3("port", i, _part->find_set(i), _map[i]);
-				}else if(_part->find_set(i)<=seek){ itested();
+				}else if(_part->find_set(i)<seek){ itested();
 					trace3("internal, exists", i, _map[i], seek);
 					_map[i] = _map[_part->find_set(i)];
 				}else{
-					seek = i;
+					seek = i+1;
 					_map[i] = CKT_BASE::_sim->newnode_subckt();
 					trace4("internal, new", i, _map[i], seek, _sim->_total_nodes);
 				}
