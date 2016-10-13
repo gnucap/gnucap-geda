@@ -1154,18 +1154,18 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 		if (D->pincount()){
 			// nets and devices.. see below
 			// ... 
-		}else if (!D->has_key("device") ){
+		}else if (!D->has_key("device") ){ untested();
 			trace2("have no pins", _C->pincount(), (*D)["basename"]);
 //			delete _C;
 //			_C = 0;
 			return "dev_comment";
-		}else{
-
+		}else{ untested();
 			if ((*_C)["device"] == "directive"){ untested();
 				incomplete();
-				return "some_command";
+				return "dev_comment";
+			}else{ untested();
+				return "dev_comment";
 			}
-			return "dev_comment";
 		}
 		trace1("have pins", _C->pincount());
 
