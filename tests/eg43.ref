@@ -10,11 +10,17 @@ net #() net2 (.p(x_nn_4),.n(x_nn_5));
 place #(.x(48100),.y(47500)) 48100:47500 (.port(x_nn_4));
 place #(.x(48100),.y(47400)) 48100:47400 (.port(x_nn_5));
 //T 51800 40900 9 16 1 0 0 0 1
+//Inverter Gate
 //T 50100 40400 9 10 1 0 0 0 1
+//inverter.sch
 //T 50500 40100 9 10 1 0 0 0 1
+//1
 //T 52200 40100 9 10 1 0 0 0 1
+//1
 //T 54200 40400 9 10 1 0 0 0 1
+//1
 //T 54300 40100 9 10 1 0 0 0 1
+//Facundo J Ferrer
 //comment (incomplete) spice-subcircuit-LL-1.sym
 port #(.basename(spice-subcircuit-IO-1.sym)) P1 (.int(x_cn_6));
 place #(.x(49100),.y(46200)) 49100:46200 (.port(x_cn_6));

@@ -28,7 +28,9 @@ TEST_EXTENSIONS = .sh .sch .gc
 GC_LOG_COMPILER = $(top_srcdir)/tests/gc_log_compiler
 SCH_LOG_COMPILER = $(top_srcdir)/tests/sch_log_compiler
 AM_TESTS_FD_REDIRECT = 9>&2
-EG_TESTS = eg1.sch \
+EG_TESTS = \
+	comment.1.sch \
+	eg1.sch \
            eg1a.sch \
            eg15.sch \
            eg2.sch \
@@ -58,6 +60,9 @@ ER_TESTS = eg1_recon.sh \
 DISTCLEANFILES = $(EG_TESTS:%.sch=%.gc) $(ER_TESTS:%.sh=%.gc)
 
 XFAIL_TESTS =
+
+# empty line in comment, breaks counter.
+XFAIL_TESTS += comment.1.sch
 
 # something wrong with lm741 symbol (pinseq?)
 # need workaround.

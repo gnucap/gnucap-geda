@@ -30,10 +30,15 @@ port #(.basename(input-1.sym)) input-1.sym_4 (.int(x_nn_8));
 port #(.basename(output-1.sym)) output-1.sym_5 (.int(x_cn_12));
 place #(.x(80800),.y(58500)) 80800:58500 (.port(x_cn_12));
 port #(.basename(output-1.sym)) output-1.sym_6 (.int(x_nn_9));
-//T 76200 59400 9 10 1 0 0 0
-//T 76200 58900 9 10 1 0 0 0
-//T 76300 57500 9 10 1 0 0 0
-//T 81700 57500 9 10 1 0 0 0
-//T 81700 58400 9 10 1 0 0 0
+//T 76200 59400 9 10 1 0 0 1
+//VSync
+//T 76200 58900 9 10 1 0 0 1
+//HSync
+//T 76300 57500 9 10 1 0 0 1
+//GND
+//T 81700 57500 9 10 1 0 0 1
+//GND
+//T 81700 58400 9 10 1 0 0 1
+//CSync
 net #() net6 (.p(x_cn_11),.n(x_cn_3));
 net #() net7 (.p(x_cn_7),.n(x_cn_12));

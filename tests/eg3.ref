@@ -21,6 +21,7 @@ place #(.x(29600),.y(30100)) 29600:30100 (.port(x_nn_10));
 net #() C_H (.p(x_nn_11),.n(x_cn_2));
 place #(.x(29600),.y(28500)) 29600:28500 (.port(x_nn_11));
 //T 26400 27300 9 20 1 0 0 0 1
+//Half Adder
 7486 #(.basename(7486-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc86.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(2),.slotdef(4:12)) U100 (.A(x_cn_12),.B(x_cn_13),.Y(x_cn_14));
 place #(.x(23600),.y(25900)) 23600:25900 (.port(x_cn_12));
 place #(.x(23600),.y(25500)) 23600:25500 (.port(x_cn_13));
@@ -65,6 +66,7 @@ net #() C_H (.p(x_nn_36),.n(x_nn_37));
 place #(.x(32700),.y(23800)) 32700:23800 (.port(x_nn_36));
 place #(.x(33900),.y(23800)) 33900:23800 (.port(x_nn_37));
 //T 26500 21900 9 20 1 0 0 0 1
+//Full Adder
 net #() net20 (.p(x_nn_32),.n(x_nn_38));
 place #(.x(31000),.y(23300)) 31000:23300 (.port(x_nn_38));
 net #() net21 (.p(x_nn_38),.n(x_nn_39));
@@ -73,11 +75,17 @@ place #(.x(31000),.y(23600)) 31000:23600 (.port(x_nn_39));
 net #() net22 (.p(x_cn_18),.n(x_cn_14));
 net #() extranet23 (.p(x_cn_18),.n(x_nn_25));
 //T 33100 17700 9 20 1 0 0 0 1
+//Half and Full Adders
 //T 32000 17100 9 10 1 0 0 0 1
+//adders.sch
 //T 32500 16800 9 10 1 0 0 0 1
+//1
 //T 34100 16800 9 10 1 0 0 0 1
+//1
 //T 36100 17100 9 10 1 0 0 0 1
+//1
 //T 36100 16800 9 10 1 0 0 0 1
+//Ales Hvezda
 7432 #(.basename(7432-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc32.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(1),.slotdef(4:12)) U102 (.A(x_cn_40),.B(x_cn_41),.Y(x_nn_36));
 place #(.x(31400),.y(24000)) 31400:24000 (.port(x_cn_40));
 place #(.x(31400),.y(23600)) 31400:23600 (.port(x_cn_41));

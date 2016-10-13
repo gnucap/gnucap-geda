@@ -1139,11 +1139,10 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 	std::string type;   //stores type : should check device attribute..
 	//graphical=["v","L","G","B","V","A","H","T"]
 	//
-	// if (_mode==mCOMMENT){ untested();
-	// 	type = "dev_comment";
-	// 	reset = false;
-	// }
-	if (_placeq.size()){ untested();
+	if (_mode==mCOMMENT){ untested();
+		type = "dev_comment";
+		reset = false;
+	}else if (_placeq.size()){ untested();
 		assert(!_C);
 		type = "place";
 		reset = false;

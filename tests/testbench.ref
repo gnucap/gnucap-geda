@@ -1,11 +1,3 @@
-Device under test 
-^ ? Device: no match
-felix 
-^ ? felix: no match
-Testbench 
-^ ? Testbench: no match
-felix 
-^ ? felix: no match
 // This File is part of gnucap-geda 
 // (C) 2012 Felix Salfelder 
 // GPLv3 or later 
@@ -80,8 +72,10 @@ rail #(.basename(gnd-1.sym),.net(0)) 0 (.pin(x_nn_4),.rail(0));
 rail #(.basename(gnd-1.sym),.net(0)) 0 (.pin(x_nn_0),.rail(0));
 module DUT (1,2);
 //comment (incomplete) title-B.sym
-//T 50000 40700 9 10 1 0 0 0 1
-//T 53900 40100 9 10 1 0 0 0 1
+//T 50000 40700 9 10 1 0 0 0 1 
+//Device under test 
+//T 53900 40100 9 10 1 0 0 0 1 
+//felix 
 port #(.basename(spice-subcircuit-IO-1.sym),.pinseq(1),.pinlabel(1)) P1 (.int(x_cn_9),.ext(1));
 place #(.x(45900),.y(46800)) 45900:46800 (.port(x_cn_9));
 port #(.basename(spice-subcircuit-IO-1.sym),.pinseq(2),.pinlabel(2)) P2 (.int(x_cn_10),.ext(2));
@@ -94,8 +88,10 @@ net #() net7 (.p(x_cn_12),.n(x_cn_10));
 endmodule // DUT
 
 DUT #(.basename(resistor-2.sym),.source(dut.sch)) dut0 (.1(x_nn_1),.2(x_nn_8));
-//T 50000 40700 9 10 1 0 0 0 1
-//T 53900 40100 9 10 1 0 0 0 1
+//T 50000 40700 9 10 1 0 0 0 1 
+//Testbench 
+//T 53900 40100 9 10 1 0 0 0 1 
+//felix 
 net #() net8 (.p(x_nn_13),.n(x_nn_14));
 place #(.x(48800),.y(47900)) 48800:47900 (.port(x_nn_13));
 place #(.x(48800),.y(47200)) 48800:47200 (.port(x_nn_14));
