@@ -53,7 +53,7 @@ endmodule // LED
 
 vsource #(.dc(5.)) V1 (.p(n1),.n(n0));
 resistor #(.r( 1.)) R1 (.p(n2),.n(n0));
-resistor #(.r( 1.)) R1 (.p(n0),.n(0));
+resistor #(.r( 1.)) R2 (.p(n0),.n(0));
 module res_net.sch (a,b);
 //comment (incomplete) title-B.sym
 port #(.basename(passive-1.sym),.net(a)) a (.int(x_cn_0),.ext(a));
@@ -68,7 +68,7 @@ net #() net1 (.p(x_cn_1),.n(x_cn_2));
 endmodule // res_net.sch
 
 res_net.sch #() s1 (.a(n1),.b(n2));
-#           v(n0)      v(n1)      v(n2)      v(s1.R_1.r) i(R1)     
- 0.         124.02p    5.         2.5       -2.5        2.5       
+#           v(n2)      v(s1.R_1.r) i(R1)     
+ 0.         2.5       -2.5        2.5       
 vn2= 2.5
 iR1= 2.5
