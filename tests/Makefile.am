@@ -6,15 +6,6 @@ MODULE = ../src/.libs/lang_geda.so
 GNUCAP_ENV = export GUILE_WARN_DEPRECATED=no LD_LIBRARY_PATH=../src/.libs$(LD_LIBRARY_PATH:%=:%);
 GNUCAP = $(shell echo gnucap | sed -e '$(transform)')
 GNUCAP_GEDA = ../gnucap-geda
-EXTRA_DIST = \
-    gc_log_compiler \
-    sch_log_compiler \
-    nets.sch nets.ref spice_foo.sp \
-    dut.sch \
-    bogus.sch bogus.ref \
-	 gafrc \
-	 $(EG_TESTS:%.sch=%.ref) \
-	 $(ER_TESTS:%.sh=%.ref)
 
 AM_TESTS_ENVIRONMENT = \
     export PATH='../src:$(PATH)'\
@@ -99,11 +90,6 @@ TESTS = $(EG_TESTS) \
         $(ER_TESTS) \
         $(GC_TESTS) \
         $(CUSTOM_TESTS)
-EXTRA_DIST+= \
-	$(EG_TESTS)
-	$(ER_TESTS:%.sh=%.ref) \
-	$(CUSTOM_TESTS:%.sh=%.ref) \
-	$(GC_TESTS)
 
 # these require schematics
 SCHEMATICS = \
@@ -115,7 +101,6 @@ SCHEMATICS = \
 	d_gedasckt.5.sch
 
 $(SCHEMATICS:%.sch=%.out): %.out: $(PWD)/%.sch
-EXTRA_DIST+= $(SCHEMATICS)
 
 # this includes an extra netlist
 spice.out: $(PWD)/spice_foo.sp
@@ -183,6 +168,7 @@ $(PWD)/%.sp: $(abs_srcdir)/%.sp
 	$(GNUCAP) -a ../src/.libs/lang_geda.so < $< | grep '^[a-zA-Z0-9]*=' > $@
 
 res_net.out testbench.out: GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
+convert.out: $(PWD)/res_net.sch
 
 EXTRA_SED_ARG =
 EXTRA_DIFF_ARG =
@@ -277,3 +263,19 @@ $(OUTFILES) $(LOGFILES): .P
 	@:
 
 .PHONY: %.reg clean-examples .P
+
+EXTRA_DIST = \
+	gc_log_compiler \
+	sch_log_compiler \
+	nets.sch nets.ref spice_foo.sp \
+	dut.sch \
+	bogus.sch bogus.ref \
+	gafrc \
+	$(EG_TESTS:%.sch=%.ref) \
+	$(ER_TESTS:%.sh=%.ref) \
+	$(EG_TESTS) \
+	$(ER_TESTS:%.sh=%.ref) \
+	$(CUSTOM_TESTS:%.sh=%.ref) \
+	$(GC_TESTS) \
+	$(GC_TESTS:%.gc=%.ref) \
+	$(SCHEMATICS)
