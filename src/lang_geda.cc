@@ -148,6 +148,7 @@ class LANG_GEDA : public LANGUAGE { //
 	void parse_component(CS& cmd,COMPONENT* x);
 	std::vector<std::string*> parse_symbol_file(CARD* x, std::string basename) const;
 	DEV_DOT* parse_symbol_file(DEV_DOT*, const GEDA_SYMBOL&)const;
+	const std::string connect_place(const CARD* x, int cx, int cy)const;
 	const place::DEV_PLACE* find_place(const CARD* x, int xco, int yco)const;
 	const place::DEV_PLACE* find_place(const CARD* x, std::string name)const;
 	const place::DEV_PLACE* find_place(const CARD* x, std::string xco, std::string yco)const;
@@ -621,6 +622,19 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 /*--------------------------------------------------------------------------*/
 pair<int,int> componentposition(int* absxy, int* relxy, int angle, bool mirror);
 /*--------------------------------------------------------------------------*/
+const std::string LANG_GEDA::connect_place(const CARD* card, int newx, int newy)const
+{ untested();
+	const COMPONENT* port = find_place(card, newx, newy);
+	string portname = "incomplete";
+	if (!port){ untested();
+		portname = "cn_" + ::to_string(_nodenumber++);
+		_placeq.push( portinfo(portname, newx, newy) );
+		return std::string(std::string(INT_PREFIX) + portname);
+	}else{ untested();
+		return port->port_value(0);
+	}
+}
+/*--------------------------------------------------------------------------*/
 void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
 {
 	// "component" means instance of a subckt
@@ -706,20 +720,12 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
 		//delete (*i);
 		//setting new place devices for each node searching for .
 		//new__instance(cmd,NULL,Scope); //cmd : can create. Scope? how to get Scope? Yes!
-		const COMPONENT* port = find_place(x, newx, newy);
-		string portname = "incomplete";
-		if (!port){ untested();
-			portname = "cn_" + ::to_string(_nodenumber++);
-			_placeq.push( portinfo(portname, newx, newy) );
-			portname = string(INT_PREFIX) + portname;
-		}else{ untested();
-			portname = port->port_value(0);
-		}
+		std::string /*const&*/ portname(connect_place(x, newx, newy));
 		// port_by_name?!
 		try{
 			string p=i->label();
 			trace3("LANG_GEDA::parse_component setting port", p, portname, (x));
-			x->set_port_by_name(p, portname);
+			x->set_port_by_name(p, portname); // bug? nonconst portname...
 			assert(p==i->label());
 		}catch(Exception_No_Match){
 			try{
