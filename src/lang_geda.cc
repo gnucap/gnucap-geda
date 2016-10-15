@@ -154,7 +154,7 @@ class LANG_GEDA : public LANGUAGE { //
 	const place::DEV_PLACE* find_place(const CARD* x, std::string xco, std::string yco)const;
 	pair<int,int> find_place_(const CARD* x, std::string name)const;
 	string* find_place_string(const CARD* x, std::string name)const;
-	void connect(CARD *x, int x0, int y0, int x1, int y1)const;
+	void connect_net(CARD *net, int x0, int y0, int x1, int y1)const;
 	static void read_file(string, CARD_LIST* Scope, BASE_SUBCKT* owner=0);
 	static void read_spice(string, CARD_LIST* Scope, BASE_SUBCKT* owner=0);
 	static CARD_LIST::const_iterator find_nondevice(string name, CARD_LIST* Scope=0);
@@ -429,18 +429,21 @@ static bool in_order(int a, int b, int c)
 	return false;
 }
 /*--------------------------------------------------------------------------*/
-void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
+// connect a newly created net to possible intersecting items
+void LANG_GEDA::connect_net(CARD *netcard, int x0, int y0, int x1, int y1)const
 {
-	assert(x);
-	trace5("LANG_GEDA::connect", x->long_label(), x0, y0, x1, y1);
+	assert(netcard);
+	trace5("LANG_GEDA::connect", netcard->long_label(), x0, y0, x1, y1);
 	assert(x0!=x1 || y0!=y1);
-	CARD_LIST* scope = x->owner()?x->owner()->scope():x->scope();
+	CARD_LIST* scope = netcard->owner()?netcard->owner()->scope():netcard->scope();
 	for(CARD_LIST::const_iterator ci = scope->begin(); ci != scope->end(); ++ci) {
 		if(const DEV_NET* net=dynamic_cast<DEV_NET*>(*ci)){
-			// exclude external ports and rails (HACK)
+			// connect end points hitting other nets
 			if((*ci)->net_nodes()<2){ untested();
+				// not necessary, as there is a place adjacent to the port.
 				continue;
 			}else if((net->port_value(0)+"AA").substr(0, INT_PREFIX.length()) != INT_PREFIX) { untested();
+				// rail...?
 				continue;
 			}else if((net->port_value(1)+"AA").substr(0, INT_PREFIX.length()) != INT_PREFIX) { untested();
 				continue;
@@ -448,14 +451,14 @@ void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
 
 			std::string pv0 = net->port_value(0);
 			std::string pv1 = net->port_value(1);
-			// connect end points to existing nets
-			// (this will take ages.)
-			const place::DEV_PLACE* n1 = find_place(x, pv0);
+			// FIXME: faster...
+			const place::DEV_PLACE* n1 = find_place(net, pv0);
 			assert(n1);
-			const place::DEV_PLACE* n2 = find_place(x, pv1);
+			const place::DEV_PLACE* n2 = find_place(net, pv1);
 			assert(n2);
 			if (n1->x()==n2->x() && n1->y()==n2->y()) { unreachable();
-				error(bDANGER,"singular net in %s, %s-%s\n", x->long_label().c_str(),
+				// is this allowed in .sch?!
+				error(bDANGER,"singular net in %s, %s-%s\n", netcard->long_label().c_str(),
 						pv0.c_str(), pv1.c_str());
 			}else if (n1->x() == n2->x() && (y0 == y1)){
 				if (in_order( n2->y(), y1, n1->y())){
@@ -479,7 +482,7 @@ void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
 				}
 			}
 		}else if(const place::DEV_PLACE* pl=dynamic_cast<place::DEV_PLACE*>(*ci)){ untested();
-			// connect interior places
+			// connect places between end points
 			int _x = pl->x();
 			int _y = pl->y();
 			if (y0==y1){ // horizontal
@@ -566,7 +569,7 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 		x->set_port_by_index(j, portname);
 	}
 
-	connect(x, coord[0], coord[1], coord[2], coord[3]);
+	connect_net(x, coord[0], coord[1], coord[2], coord[3]);
 
 	if(_placeq.size() || _netq.size()){ untested();
 		//        unneccessary?
