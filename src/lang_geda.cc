@@ -418,28 +418,30 @@ const place::DEV_PLACE* LANG_GEDA::find_place(const CARD* x, int xco, int yco)co
 	return NULL;
 }
 /*--------------------------------------------------------------------------*/
-static bool in_order(int a, int b, int c){
+static bool in_order(int a, int b, int c)
+{
 	if (a<b){
 		return b<c;
 	}else if (b<a){
 		return c<b;
 	}
-	return 0;
+	return false;
 }
 /*--------------------------------------------------------------------------*/
 void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
 {
-	trace4("LANG_GEDA::connect", x0, y0, x1, y1);
+	assert(x);
+	trace5("LANG_GEDA::connect", x->long_label(), x0, y0, x1, y1);
 	assert(x0!=x1 || y0!=y1);
 	CARD_LIST* scope = x->owner()?x->owner()->scope():x->scope();
 	for(CARD_LIST::const_iterator ci = scope->begin(); ci != scope->end(); ++ci) {
 		if(const DEV_NET* net=dynamic_cast<DEV_NET*>(*ci)){
 			// exclude external ports and rails (HACK)
-			if((*ci)->net_nodes()<2){
+			if((*ci)->net_nodes()<2){ untested();
 				continue;
 			}else if((net->port_value(0)+"AA").substr(0, INT_PREFIX.length()) != INT_PREFIX) { untested();
 				continue;
-			}else if((net->port_value(1)+"AA").substr(0, INT_PREFIX.length()) != INT_PREFIX) {
+			}else if((net->port_value(1)+"AA").substr(0, INT_PREFIX.length()) != INT_PREFIX) { untested();
 				continue;
 			}
 
@@ -454,8 +456,7 @@ void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
 			if (n1->x()==n2->x() && n1->y()==n2->y()) { unreachable();
 				error(bDANGER,"singular net in %s, %s-%s\n", x->long_label().c_str(),
 						pv0.c_str(), pv1.c_str());
-			}
-			if (n1->x() == n2->x() && (y0 == y1)){
+			}else if (n1->x() == n2->x() && (y0 == y1)){
 				if (in_order( n2->y(), y1, n1->y())){
 					if (n1->x() == x0){
 						assert( y0 !=  n1->y());
@@ -465,7 +466,7 @@ void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
 						_netq.push( netinfo( x1, y1, n1->x(), n1->y(), 4 ));
 					}
 				}
-			} else if (n1->y() == n2->y() && (x0 == x1)){
+			}else if (n1->y() == n2->y() && (x0 == x1)){
 				if (in_order(n1->x(), x1, n2->x())){
 					if (n1->y() == y0){
 						assert( x0 !=  n1->x());
@@ -476,7 +477,7 @@ void LANG_GEDA::connect(CARD *x, int x0, int y0, int x1, int y1)const
 					}
 				}
 			}
-		} else if(const place::DEV_PLACE* pl=dynamic_cast<place::DEV_PLACE*>(*ci)){
+		}else if(const place::DEV_PLACE* pl=dynamic_cast<place::DEV_PLACE*>(*ci)){ untested();
 			// connect interior places
 			int _x = pl->x();
 			int _y = pl->y();
@@ -525,18 +526,19 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 		coord[3] = n.y1;
 		x->set_param_by_name("color", ::to_string(n.color));
 		_netq.pop();
-		x->set_label("extranet"+::to_string(_netnumber++));
-	} else { // parse
+		x->set_label("extranet" + ::to_string(_netnumber++));
+	}else{ untested();
+		// parse
 		parse_net_body=1;
-	   if (cmd.fullstring().c_str()[0] != 'N'){
+		if (cmd.fullstring().c_str()[0] != 'N'){
 			throw Exception_CS("expecting net declaration", cmd);
 		}
 		unsigned here=cmd.cursor();
 		// x0 y0 x1 y1 color
 		std::string parsedvalue[5];
 		int i=0;
-		while (i<5) {
-			if (cmd.is_alnum()){
+		while (i<5) { untested();
+			if (cmd.is_alnum()){ untested();
 				cmd>>" ">>parsedvalue[i];
 				if(i!=4) coord[i] = atoi(parsedvalue[i].c_str());
 			}else{untested();
@@ -546,18 +548,18 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 			}
 			++i;
 		}
-		x->set_param_by_name("color",parsedvalue[4]);
-		x->set_label("net"+::to_string(_netnumber++));
+		x->set_param_by_name("color", parsedvalue[4]);
+		x->set_label("net" + ::to_string(_netnumber++));
 	}
 
 	for(unsigned j=0; j<2; ++j){
 		const COMPONENT* port = find_place(x, coord[0+2*j], coord[1+2*j]);
 		string portname;
-		if(!port){
+		if(!port){ untested();
 			portname = "nn_" + ::to_string(_nodenumber++);
 			_placeq.push( portinfo(portname, coord[0+2*j], coord[1+2*j]) );
 			portname = string(INT_PREFIX) + portname;
-		}else{
+		}else{ untested();
 			portname = port->port_value(0);
 		}
 		x->set_port_by_index(j, portname);
@@ -565,20 +567,21 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 
 	connect(x, coord[0], coord[1], coord[2], coord[3]);
 
-	if(_placeq.size() || _netq.size()){
+	if(_placeq.size() || _netq.size()){ untested();
 		//        unneccessary?
 		trace1("queuing place", cmd.fullstring());
 		cmd.reset();
+	}else{untested();
 	}
 	//To check if there are any attributes
-	if(parse_net_body) { // rearrange.
+	if(parse_net_body) {untested();
 	try {
 		cmd.get_line("gnucap-geda>");
 	}catch(Exception_End_Of_Input&){
 		_gotline = false;
 		return;
 	}
-	std::string _paramvalue,_paramname,dump;
+	std::string paramvalue, paramname, dump;
 	if(cmd.match1('{')){
 		for (;;) {
 			cmd.get_line("gnucap-geda-net>");
@@ -588,13 +591,13 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 				if(cmd>>"T"){
 					cmd>>dump;
 				}else{
-					std::string _paramname=cmd.ctos("=","",""),_paramvalue;
-					cmd>>"=">>_paramvalue;
-					if (_paramname=="netname" && _paramvalue!="?"){
-						x->set_label(_paramvalue);
+					std::string paramname=cmd.ctos("=","",""),paramvalue;
+					cmd>>"=">>paramvalue;
+					if (paramname=="netname" && paramvalue!="?"){
+						x->set_label(paramvalue);
 					}else{ untested();
 						try{untested();
-							x->set_param_by_name(_paramname,_paramvalue);
+							x->set_param_by_name(paramname,paramvalue);
 						}catch(Exception_No_Match){ untested();
 						}
 					}
@@ -661,14 +664,14 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
 	}
 	// set parameters
 
-	for(GEDA_SYMBOL::const_iterator i = dev->begin(); i!=dev->end(); ++i) {
-		if (i->first == "device") {
+	for(GEDA_SYMBOL::const_iterator i=dev->begin(); i!=dev->end(); ++i) {
+		if (i->first == "device"){ untested();
 			x->set_dev_type( i->second );
-		} else if ( i->first == "refdes" && i->second != "?" ) {
+		}else if ( i->first == "refdes" && i->second != "?" ){ untested();
 			x->set_label(i->second);
-			//                else if (_paramname=="source")
-			//                    source = _paramvalue;
-		} else {
+			//                else if (paramname=="source")
+			//                    source = paramvalue;
+		}else{ untested();
 			try{
 				x->set_param_by_name(i->first, i->second);
 			} catch (Exception_No_Match){
@@ -682,7 +685,7 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
 			// this might lead to trouble...
 			x->set_label((*dev)["net"]);
 		}else{
-			x->set_label(basename+"_"+to_string(instance++));
+			x->set_label(basename + "_" + to_string(instance++));
 		}
 	}
 
@@ -705,11 +708,11 @@ void LANG_GEDA::parse_component(CS& cmd,COMPONENT* x)
 		//new__instance(cmd,NULL,Scope); //cmd : can create. Scope? how to get Scope? Yes!
 		const COMPONENT* port = find_place(x, newx, newy);
 		string portname = "incomplete";
-		if (!port){
+		if (!port){ untested();
 			portname = "cn_" + ::to_string(_nodenumber++);
 			_placeq.push( portinfo(portname, newx, newy) );
 			portname = string(INT_PREFIX) + portname;
-		} else {
+		}else{ untested();
 			portname = port->port_value(0);
 		}
 		// port_by_name?!
@@ -1044,17 +1047,16 @@ COMPONENT* LANG_GEDA::parse_instance(CS& cmd, COMPONENT* x)
 	cmd.reset();
 	parse_type(cmd, x); //parse type will parse the component type and set_dev_type
 	trace2("parse_instance", cmd.fullstring(), x->dev_type());
-	if (x->dev_type()=="net") {
+	if (x->dev_type()=="net"){ untested();
 		parse_net(cmd,x);
-	}else if(x->dev_type()=="place"){
+	}else if(x->dev_type()=="place"){ untested();
 		parse_place(cmd,x);
-	}else {
+	}else { untested();
 		parse_component(cmd,x);
 	}
 	//No warnings needed.
 	//cmd.check(bWARNING, "what's ins this?");
 	return x;
-
 }
 /*----------------------------------------------------------------------*/
 /*----------------------------------------------------------------------*/
@@ -1350,11 +1352,13 @@ static void print_node_xy(OMSTREAM& o,const COMPONENT* x,int _portindex)
 {
 	std::string _nodename=x->port_value(_portindex);
 	for(CARD_LIST::const_iterator ci=x->scope()->begin(); ci!=x->scope()->end(); ++ci) {
-		if((*ci)->dev_type()=="place"){
-			if(static_cast<COMPONENT*>(*ci)->port_value(0)==_nodename){
+		if((*ci)->dev_type()=="place"){ untested();
+			if(static_cast<COMPONENT*>(*ci)->port_value(0)==_nodename){untested();
 				trace0("Got some place!");
 				o << (*ci)->param_value(1) << " " << (*ci)->param_value(0) << " ";
+			}else{untested();
 			}
+		}else{untested();
 		}
 	}
 }
@@ -1365,38 +1369,38 @@ pair<int,int> componentposition(int* absxy, int* delxy, int angle, bool mirror)
 	int newy = absxy[1];
 	if(!mirror){
 		switch(angle){untested();
-			case 0:
+			case 0: untested();
 				newx -= delxy[0]; // -1  0
 				newy -= delxy[1]; //  0 -1
 				break;
-			case 90:
+			case 90: untested();
 				newx += delxy[1]; //  0  1
 				newy -= delxy[0]; // -1  0
 				break;
-			case 180:
+			case 180: untested();
 				newx += delxy[0]; //  1  0
 				newy += delxy[1]; //  0  1
 				break;
-			case 270:
+			case 270: untested();
 				newx -= delxy[1]; //  0 -1
 				newy += delxy[0]; //  1  0
 				break;
 		}
 	}else{
 		switch(angle){untested();
-			case 0:
+			case 0: untested();
 				newx += delxy[0]; //  1  0
 				newy -= delxy[1]; //  0 -1
 				break;
-			case 90:
+			case 90: untested();
 				newx += delxy[1]; //  0  1
 				newy += delxy[0]; //  1  0
 				break;
-			case 180:
+			case 180: untested();
 				newx -= delxy[0]; // -1  0
 				newy += delxy[1]; //  0  1
 				break;
-			case 270:
+			case 270: untested();
 				newx -= delxy[1]; //  0 -1
 				newy -= delxy[0]; // -1  0
 				break;
@@ -1418,20 +1422,22 @@ const place::DEV_PLACE* LANG_GEDA::find_place(const CARD* x, string name)const
 {
 	const CARD_LIST* scope = x->owner()?x->owner()->scope():x->scope();
 	for(CARD_LIST::const_iterator ci=scope->begin(); ci!=scope->end(); ++ci) {
-		if(const place::DEV_PLACE*p=dynamic_cast<const place::DEV_PLACE*>(*ci)){
-			if(p->port_value(0)==name){
+		if(const place::DEV_PLACE*p=dynamic_cast<const place::DEV_PLACE*>(*ci)){ untested();
+			if(p->port_value(0)==name){ untested();
 				return p;
+			}else{untested();
 			}
+		}else{untested();
 		}
 	}
-	throw(Exception_Cant_Find("place",name));
+	throw(Exception_Cant_Find("place", name));
 }
 /*--------------------------------------------------------------------------*/
-pair<int,int> LANG_GEDA::find_place_(const CARD* x, string name)const
+pair<int, int> LANG_GEDA::find_place_(const CARD* x, string name)const
 {
 	const place::DEV_PLACE*p = find_place(x,name);
 	assert(p);
-	pair<int,int> a;
+	pair<int, int> a;
 	a.first = p->x();
 	a.second = p->y();
 	trace2("LANG_GEDA::find_place_", p->x(), p->y());
@@ -1441,12 +1447,12 @@ pair<int,int> LANG_GEDA::find_place_(const CARD* x, string name)const
 string* LANG_GEDA::find_place_string(const CARD* x, std::string name)const
 {
 	std::string* a = new std::string[2];
-	try{
+	try{ untested();
 		pair<int,int> b = find_place_(x, name);
 		a[0] = to_string(b.first);
 		a[1] = to_string(b.second);
 		return a;
-	}catch(Exception_Cant_Find){
+	}catch(Exception_Cant_Find){ untested();
 		return NULL;
 	}
 }
@@ -1558,7 +1564,7 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
 		// could not match symbol pin to places (!?)
 	}
 	o << xy << " " << "1" << " " << _angle << " "
-		<< _mirror << " " << basename<< "\n";
+	  << _mirror << " " << basename<< "\n";
 	//map those with the absolute positions of nodes and place the device
 	//such that it is in between the nodes.
 	//std::vector<std::string*> coord = parse_symbol_file(static_cast<COMPONENT*>(x) , basename);
@@ -1571,13 +1577,13 @@ void LANG_GEDA::print_component(OMSTREAM& o, const COMPONENT* x)
 	bool _parameters=false;
 	bool _label=false;
 	bool _devtype=false;
-	if(x->short_label()!=""){
+	if(x->short_label()!=""){ untested();
 		_label=true;
 	}
-	if(x->param_count()>6){
+	if(x->param_count()>6){ untested();
 		_parameters=true;
 	}
-	if(x->dev_type()!="" && x->dev_type().substr(0,DUMMY_PREFIX.length())!=DUMMY_PREFIX){
+	if(x->dev_type()!="" && x->dev_type().substr(0,DUMMY_PREFIX.length())!=DUMMY_PREFIX){ untested();
 		_devtype=true;
 	}
 	if (_label or _parameters or _devtype){
@@ -1770,12 +1776,11 @@ void LANG_GEDA::read_file(string f, CARD_LIST* Scope, MODEL_SUBCKT* owner)
 	OPT::language = &lang_geda;
 	///
 
-	try{
-		for(;;){
+	try{ untested();
+		for(;;){ untested();
 			// new__instance. but _gotline hack
 			lang_geda.parse_item_(cmd, owner, Scope);
 		}
-
 	}catch (Exception_CS&){ untested();
 		/// gnucap-uf bug
 		OPT::language = oldlang;

@@ -196,7 +196,7 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 		assert(model->n_(i-1).e_() == model->n_(i-1).t_());
 		trace3("port", i, usernumber, partno);
 
-		if(port[partno]!=INVALID_NODE) { untested();
+		if(port[partno]!=(unsigned)INVALID_NODE) { untested();
 			delete port;
 			throw Exception(long_label() + ": cannot connect ports \"" +
 					_parent->n_(partno-1).n_()->short_label() + "\" and \"" +
@@ -213,25 +213,27 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 	{
 		assert(_part->find_set(0)==0);
 		// self test: verify that port node numbering is correct
-		for (unsigned port = 0; port < (unsigned)model->net_nodes(); ++port) {
-			assert(model->n_(port).e_() <= (uint_t)num_nodes_in_subckt);
-			//assert(model->n_(port).e_() == port+1);
-			trace4("ports", port, model->n_(port).short_label(),
-					model->n_(port).e_(), n_(port).t_());
+		for (unsigned j = 0; j < (unsigned)model->net_nodes(); ++j) {
+			assert(model->n_(j).e_() <= (uint_t)num_nodes_in_subckt);
+			//assert(model->n_(j).e_() == j+1);
+			trace4("ports", j, model->n_(j).short_label(),
+					model->n_(j).e_(), n_(j).t_());
 		}
 		{
-			unsigned seek=0; // model->net_nodes();
+			// fill _map. local nodes in model to user_number
+			// _map[0] = 0 (ground)
+			unsigned seek = 0; // model->net_nodes();
 			trace1("seek", seek);
 			for (unsigned i=1; i <= num_nodes_in_subckt; ++i) { itested();
 				trace3("num", i, _part->find_set(i), port[_part->find_set(i)]);
 				if(port[_part->find_set(i)]!=(unsigned)INVALID_NODE){ itested();
 					_map[i] = port[_part->find_set(i)];
 					trace3("port", i, _part->find_set(i), _map[i]);
-				}else if(_part->find_set(i)<=seek){ itested();
+				}else if(_map[_part->find_set(i)]<=seek){ itested();
 					trace3("internal, exists", i, _map[i], seek);
 					_map[i] = _map[_part->find_set(i)];
 				}else{
-					seek = i;
+					seek = _map[i];
 					_map[i] = CKT_BASE::_sim->newnode_subckt();
 					trace4("internal, new", i, _map[i], seek, _sim->_total_nodes);
 				}
@@ -262,8 +264,8 @@ void DEV_GEDA_SUBCKT::collapse_nodes(const NODE* a, const NODE* b)
 	assert(i<num_nodes_in_subckt+1);
 	assert(j<num_nodes_in_subckt+2);
 
-	assert(_part);
 	trace2("collapse", i, j);
+	assert(_part);
 	_part->union_set(i, j);
 }
 /*--------------------------------------------------------------------------*/
