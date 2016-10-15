@@ -155,6 +155,8 @@ class LANG_GEDA : public LANGUAGE { //
 	pair<int,int> find_place_(const CARD* x, std::string name)const;
 	string* find_place_string(const CARD* x, std::string name)const;
 	void connect_net(CARD *net, int x0, int y0, int x1, int y1)const;
+	void connect(int x0, int y0, int x1, int y1,
+					       int n1x, int n1y, int n2x, int n2y) const;
 	static void read_file(string, CARD_LIST* Scope, BASE_SUBCKT* owner=0);
 	static void read_spice(string, CARD_LIST* Scope, BASE_SUBCKT* owner=0);
 	static CARD_LIST::const_iterator find_nondevice(string name, CARD_LIST* Scope=0);
@@ -429,16 +431,46 @@ static bool in_order(int a, int b, int c)
 	return false;
 }
 /*--------------------------------------------------------------------------*/
+//queue an extranet if x0 y0 or x1 y1 is between n1--n2
+// only works if there is a net n1--n2
+void LANG_GEDA::connect(int x0, int y0, int x1, int y1,
+		int n1x, int n1y, int n2x, int n2y) const
+{
+	if (n1x == n2x && (y0 == y1)){ untested();
+		// found a horizontal net.
+		if (in_order( n2y, y1, n1y)){ untested();
+			if (n1x == x0){ untested();
+				assert( y0 !=  n1y);
+				_netq.push( netinfo( x0, y0, n1x, n1y, 4 ));
+			} else if (n2x == x1){ untested();
+				assert( y1 !=  n1y);
+				_netq.push( netinfo( x1, y1, n1x, n1y, 4 ));
+			}
+		}
+	}else if (n1y == n2y && (x0 == x1)){ untested();
+		// found a vertical net.
+		if (in_order(n1x, x1, n2x)){ untested();
+			if (n1y == y0){ untested();
+				assert(x0 !=  n1x);
+				_netq.push( netinfo( x0, y0, n1x, n1y, 4 ));
+			} else if (n2y == y1){ untested();
+				assert( x1 !=  n1x);
+				_netq.push( netinfo( x1, y1, n1x, n1y, 4 ));
+			}
+		}
+	}
+}
+/*--------------------------------------------------------------------------*/
 // connect a newly created net to possible intersecting items
 void LANG_GEDA::connect_net(CARD *netcard, int x0, int y0, int x1, int y1)const
 {
 	assert(netcard);
 	trace5("LANG_GEDA::connect", netcard->long_label(), x0, y0, x1, y1);
-	assert(x0!=x1 || y0!=y1);
+	assert(x0!=x1 || y0!=y1); // hmm report error instead?
 	CARD_LIST* scope = netcard->owner()?netcard->owner()->scope():netcard->scope();
 	for(CARD_LIST::const_iterator ci = scope->begin(); ci != scope->end(); ++ci) {
 		if(const DEV_NET* net=dynamic_cast<DEV_NET*>(*ci)){
-			// connect end points hitting other nets
+			// connect end points of netcard hitting other nets
 			if((*ci)->net_nodes()<2){ untested();
 				// not necessary, as there is a place adjacent to the port.
 				continue;
@@ -460,27 +492,10 @@ void LANG_GEDA::connect_net(CARD *netcard, int x0, int y0, int x1, int y1)const
 				// is this allowed in .sch?!
 				error(bDANGER,"singular net in %s, %s-%s\n", netcard->long_label().c_str(),
 						pv0.c_str(), pv1.c_str());
-			}else if (n1->x() == n2->x() && (y0 == y1)){
-				if (in_order( n2->y(), y1, n1->y())){
-					if (n1->x() == x0){
-						assert( y0 !=  n1->y());
-						_netq.push( netinfo( x0, y0, n1->x(), n1->y(), 4 ));
-					} else if (n2->x() == x1){
-						assert( y1 !=  n1->y());
-						_netq.push( netinfo( x1, y1, n1->x(), n1->y(), 4 ));
-					}
-				}
-			}else if (n1->y() == n2->y() && (x0 == x1)){
-				if (in_order(n1->x(), x1, n2->x())){
-					if (n1->y() == y0){
-						assert( x0 !=  n1->x());
-						_netq.push( netinfo( x0, y0, n1->x(), n1->y(), 4 ));
-					} else if (n2->y() == y1){
-						assert( x1 !=  n1->x());
-						_netq.push( netinfo( x1, y1, n1->x(), n1->y(), 4 ));
-					}
-				}
+			}else{ untested();
+				connect(x0, y0, x1, y1, n1->x(), n1->y(), n2->x(), n2->y());
 			}
+
 		}else if(const place::DEV_PLACE* pl=dynamic_cast<place::DEV_PLACE*>(*ci)){ untested();
 			// connect places between end points
 			int _x = pl->x();
