@@ -447,6 +447,9 @@ void LANG_GEDA::connect(int x0, int y0, int x1, int y1,
 	assert(x0<=x1);
 	trace4("",x0-n1x,n2y-n1y, y0-n1y,n2x-n1x);
 
+	int Yl = min(y0, y1);
+	int Yh = max(y0, y1);
+
 	if ( x0 == n1x && y0 == n1y) { untested();
 		// stupid. should not be here
 	}else if ( x1 == n1x && y1 == n1y) { untested();
@@ -455,10 +458,14 @@ void LANG_GEDA::connect(int x0, int y0, int x1, int y1,
 		// stupid. should not be here
 	}else if ( x1 == n2x && y1 == n2y) { untested();
 		// stupid. should not be here
-	}else if (  x1 <= n1x && x1 <= n2x){ untested();
+	}else if ( x1 < n1x && x1 < n2x){ untested();
 		// net is too far right
-	}else if (  x0 >= n1x && x0 >= n2x){ untested();
+	}else if ( x0 > n1x && x0 > n2x){ untested();
 		// net is too far left
+	}else if ( Yh < n1y && Yh < n2y){ untested();
+		// net is too far up
+	}else if ( Yl > n1y && Yl > n2y){ untested();
+		// net is too far down
 	}else if (y0 == y1 && x0 == x1){ untested();
 		// connect a pin to the interior of a net
 		incomplete();
@@ -543,25 +550,14 @@ void LANG_GEDA::connect_net(CARD *netcard, int x0, int y0, int x1, int y1)const
 			// connect places between end points
 			int _x = pl->x();
 			int _y = pl->y();
-			if (y0==y1){ // horizontal
-				if( in_order( x1, _x, x0) && _y==y0 ){
+
+			if(x0!=x1 && !in_order( x1, _x, x0)){ untested();
+			}else if(y0!=y1 && !in_order( y1, _y, y0)){ untested();
+			}else if( on_line(_x, _y, x0, y0, x1, y1)) {untested();
 					unsigned col = 5;
 					// connect place to 1st endpoint.
-					assert(x0!=_x);
 					_netq.push( netinfo( x0, y0, _x, _y, col ));
-				}
-				else{
-				}
-			}else if (x0==x1){
-				if( in_order( y1, _y, y0) && _x==x0 ){
-					unsigned col = 5;
-					// connect place to 1st endpoint.
-					assert(y0!=_y);
-					_netq.push( netinfo( x0, y0, _x, _y, col ));
-				}else{
-				}
-			}
-			else{untested();
+			}else{untested();
 			}
 		}
 	}
@@ -627,7 +623,11 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 		x->set_port_by_index(j, portname);
 	}
 
-	connect_net(x, coord[0], coord[1], coord[2], coord[3]);
+	if(x->short_label().substr(0, 8)=="extranet"){ untested();
+		// HACK HACK HACK
+	}else{ untested();
+		connect_net(x, coord[0], coord[1], coord[2], coord[3]);
+	}
 
 	if(_placeq.size() || _netq.size()){ untested();
 		//        unneccessary?
