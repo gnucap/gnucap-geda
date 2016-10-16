@@ -64,14 +64,14 @@ CARD* MODEL_GEDA_SUBCKT::clone_instance()const
 /*--------------------------------------------------------------------------*/
 void MODEL_GEDA_SUBCKT::set_port_by_index(uint_t num, std::string& ext_name)
 {
-  if (num < max_nodes()) { untested();
+  if (num < max_nodes()) {
     _n[num].new_node(ext_name, this);
 	 trace4("MODEL_GEDA_SUBCKT::set_port_by_index", long_label(), num, ext_name, _n[num].t_());
 
-    if (num+1 > _net_nodes) { untested();
+    if (num+1 > _net_nodes) {
       // make the list bigger
       _net_nodes = num+1;
-    }else{ untested();
+    }else{
       // it's already big enough, probably assigning out of order
     }
   }else{ untested();
@@ -118,13 +118,13 @@ void DEV_GEDA_SUBCKT::apply_map(unsigned* map)
 	assert(cl);
 
 	for (CARD_LIST::iterator ci = cl->begin(); ci != cl->end(); ++ci) {
-		if ((**ci).is_device()) { untested();
+		if ((**ci).is_device()) {
 			for (uint_t ii=0;  ii<(**ci).net_nodes(); ++ii) {
 				trace3("apply", (*ci)->long_label(), ii, (**ci).net_nodes()); //  (**ci).n_(ii).e_());
 				trace3("apply", ii, _map[(**ci).n_(ii).e_()], (**ci).n_(ii).e_());
 				(**ci).n_(ii).map_subckt_node((uint_t*)map, this); //  _ttt = map[e_()];
 			}
-		}else{ untested();
+		}else{
 //			assert(dynamic_cast<MODEL_CARD*>(*ci));
 		}
 	}
@@ -144,7 +144,7 @@ std::string DEV_GEDA_SUBCKT::port_name(uint_t i)const {
 }
 /*--------------------------------------------------------------------------*/
 void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
-{ untested();
+{
 	assert(model);
 	assert(model->subckt());
 	assert(model->subckt()->nodes());
@@ -165,7 +165,7 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 		trace4("model port", long_label(), i, model->n_(i-1).t_(), n_(i-1).t_());
 		if(n_(i-1).t_()==INVALID_NODE){ incomplete();
 			// port has never been connected
-		}else{ untested();
+		}else{
 			trace1("..", n_(i-1).e_());
 		}
 		trace2("model port", (this), (model));
@@ -196,7 +196,7 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 		assert(model->n_(i-1).e_() == model->n_(i-1).t_());
 		trace3("port", i, usernumber, partno);
 
-		if(port[partno]!=(unsigned)INVALID_NODE) { untested();
+		if(port[partno]!=(unsigned)INVALID_NODE) {
 			delete port;
 			throw Exception(long_label() + ": cannot connect ports \"" +
 					_parent->n_(partno-1).n_()->short_label() + "\" and \"" +
@@ -318,7 +318,7 @@ void DEV_GEDA_SUBCKT::expand()
 	if(_map){
 		incomplete();
 		delete[] _map;
-	}else{ untested();
+	}else{
 	}
 	_map = new unsigned[num_nodes_in_subckt];
 	for(unsigned i=0; i<num_nodes_in_subckt; ++i){
@@ -334,7 +334,7 @@ void DEV_GEDA_SUBCKT::expand()
 
 	try{
 		map_subckt_nodes(_parent);
-	}catch(Exception){ untested();
+	}catch(Exception){
 		error(bDEBUG, "something went wrong in map_sckt_nodes %s\n", long_label().c_str());
 		incomplete();
 //		delete[] _subckt;
@@ -350,7 +350,7 @@ void DEV_GEDA_SUBCKT::expand()
 }
 /*--------------------------------------------------------------------------*/
 void DEV_GEDA_SUBCKT::precalc_last()
-{ untested();
+{
   BASE_SUBCKT::precalc_last();
 
   COMMON_PARAMLIST* c = prechecked_cast<COMMON_PARAMLIST*>(mutable_common());

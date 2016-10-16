@@ -117,28 +117,27 @@ public: // override virtual
   CARD_LIST*	   scope()		{assert(subckt()); return subckt();}
   const CARD_LIST* scope()const		{assert(subckt()); return subckt();}
 private: // no-ops for prototype
-  bool is_device()const	{untested(); return false;}
-  void precalc_first(){untested();}
-  void expand(){untested();}
-  void precalc_last(){untested();}
+  bool is_device()const	{return false;}
+  void precalc_first(){}
+  void expand(){}
+  void precalc_last(){}
   void map_nodes(){
-    untested();
     trace1("map_nodes base", long_label());
   }
-  void tr_begin(){untested();}
-  void tr_load(){untested();}
-  TIME_PAIR tr_review(){untested(); return TIME_PAIR(NEVER, NEVER);}
-  void tr_accept(){untested();}
-  void tr_advance(){untested();}
+  void tr_begin(){}
+  void tr_load(){}
+  TIME_PAIR tr_review(){return TIME_PAIR(NEVER, NEVER);}
+  void tr_accept(){}
+  void tr_advance(){}
   void tr_restore(){untested();}
-  void tr_regress(){untested();}
-  void dc_advance(){untested();}
+  void tr_regress(){}
+  void dc_advance(){}
   void ac_begin(){untested();}
   void do_ac(){untested();}
   void ac_load(){untested();}
-  bool do_tr(){untested(); return true;}
+  bool do_tr(){return true;}
   bool tr_needs_eval()const{untested(); return false;}
-  void tr_queue_eval(){untested();}
+  void tr_queue_eval(){}
   std::string port_name(uint_t)const {return "";}
 };
 /*--------------------------------------------------------------------------*/

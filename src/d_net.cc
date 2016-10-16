@@ -117,12 +117,12 @@ void DEV_NET::tr_load()
 		// hmm should not get here...?
 		return;
 	}
-  double d = _g0 - _g1;
-  _g1 = _g0;
-  if (d != 0.) {
-    _sim->_aa.load_symmetric(_n[0].m_(), _n[1].m_(), d);
-  }else{ untested();
-  }
+	double d = _g0 - _g1;
+	_g1 = _g0;
+	if (d != 0.) {
+		_sim->_aa.load_symmetric(_n[0].m_(), _n[1].m_(), d);
+	}else{
+	}
 }
 /*--------------------------------------------------------------------------*/
 double DEV_NET::tr_probe_num(const std::string& x)const
