@@ -1,7 +1,5 @@
-load f_random.so
 load lang_geda.so
 // load lang_adms.so
-load c_debug.so
 options trace
 spice
 .param amplitude = 1
@@ -16,18 +14,7 @@ spice
 
 .options language=verilog
 
-param mcvth = agauss(0,1)
-eval mcvth
-param mcmu = agauss(0,1)
-
-
 spice
-
-.parameter l = 9u
-.parameter w = 9u
-.parameter dvth = {mcvth*(0.55e-08/sqrt(l*w))}
-.parameter du = {mcmu*(5e-9/sqrt(l*w))}
-.parameter vth0 = {0.366+dvth}
 
 .model cmosn  nmos ( level=1  vto= 0.8  kp= 41.5964u  gamma= 0.863074
 + phi= 0.6  cbd= 0.  cbs= 0.  pb= 0.7

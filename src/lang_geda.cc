@@ -155,6 +155,7 @@ class LANG_GEDA : public LANGUAGE { //
 	pair<int,int> find_place_(const CARD* x, std::string name)const;
 	string* find_place_string(const CARD* x, std::string name)const;
 	void connect_net(CARD *net, int x0, int y0, int x1, int y1)const;
+	void connect_to_net(const CARD *place, int x0, int y0)const;
 	void connect(int x0, int y0, int x1, int y1,
 					       int n1x, int n1y, int n2x, int n2y) const;
 	static void read_file(string, CARD_LIST* Scope, BASE_SUBCKT* owner=0);
@@ -471,8 +472,10 @@ void LANG_GEDA::connect(int x0, int y0, int x1, int y1,
 		// net is too far down
 	}else if (y0 == y1 && x0 == x1){ untested();
 		// connect a pin to the interior of a net
-		incomplete();
-
+		if( on_line(x0, y0, n1x, n1y, n2x, n2y)){ untested();
+			_netq.push( netinfo( x0, y0, n1x, n1y, 4 ));
+		}else{ untested();
+		}
 	}else if( (n2y-n1y)*(x1-x0) == (y1-y0)*(n2x-n1x) ) {
 		// same angle, don't do anything
 	}else if( on_line(x0, y0, n1x, n1y, n2x, n2y)){
@@ -509,7 +512,44 @@ void LANG_GEDA::connect(int x0, int y0, int x1, int y1,
 	}
 }
 /*--------------------------------------------------------------------------*/
-// connect a newly created net to possible intersecting items
+// connect a newly created place to possibly incident items
+void LANG_GEDA::connect_to_net(const CARD *place, int x0, int y0)const
+{ untested();
+	assert(place);
+	trace3("LANG_GEDA::connect", place->long_label(), x0, y0);
+	CARD_LIST const* scope = place->owner()?place->owner()->scope():place->scope();
+	for(CARD_LIST::const_iterator ci = scope->begin(); ci != scope->end(); ++ci) { untested();
+		if(const DEV_NET* net=dynamic_cast<DEV_NET*>(*ci)){ untested();
+			// connect end points of place hitting other nets
+			if((*ci)->net_nodes()<2){ untested();
+				// not necessary, as there is a place adjacent to the port.
+				continue;
+			}else if((net->port_value(0)+"AA").substr(0, INT_PREFIX.length()) != INT_PREFIX) { untested();
+				// rail...?
+				continue;
+			}else if((net->port_value(1)+"AA").substr(0, INT_PREFIX.length()) != INT_PREFIX) { untested();
+				continue;
+			}
+
+			std::string pv0 = net->port_value(0);
+			std::string pv1 = net->port_value(1);
+			// FIXME: faster...
+			const place::DEV_PLACE* n1 = find_place(net, pv0);
+			assert(n1);
+			const place::DEV_PLACE* n2 = find_place(net, pv1);
+			assert(n2);
+			if (n1->x()==n2->x() && n1->y()==n2->y()) { unreachable();
+				// is this allowed in .sch?!
+				error(bDANGER,"singular net in %s, %s-%s\n", place->long_label().c_str(),
+						pv0.c_str(), pv1.c_str());
+			}else{ untested();
+				connect(x0, y0, x0, y0, n1->x(), n1->y(), n2->x(), n2->y());
+			}
+		}
+	}
+}
+/*--------------------------------------------------------------------------*/
+// connect a newly created net to possibly incident items
 void LANG_GEDA::connect_net(CARD *netcard, int x0, int y0, int x1, int y1)const
 {
 	if(x0>x1){
@@ -690,9 +730,10 @@ const std::string LANG_GEDA::connect_place(const CARD* card, int newx, int newy)
 {
 	const COMPONENT* port = find_place(card, newx, newy);
 	string portname = "incomplete";
-	if (!port){
+	if (!port){ untested();
 		portname = "cn_" + ::to_string(_nodenumber++);
 		_placeq.push( portinfo(portname, newx, newy) ); // BUG: need to check.
+		connect_to_net(card, newx, newy);
 		return std::string(std::string(INT_PREFIX) + portname);
 	}else{
 		return port->port_value(0);

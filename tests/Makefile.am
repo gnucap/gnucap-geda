@@ -60,9 +60,6 @@ DISTCLEANFILES = $(EG_TESTS:%.sch=%.gc) $(ER_TESTS:%.sh=%.gc)
 
 XFAIL_TESTS =
 
-# almost...
-XFAIL_TESTS += connect.6.sch d_gedasckt.6.gc
-
 # empty line in comment, breaks counter.
 XFAIL_TESTS += comment.1.sch
 
