@@ -15,5 +15,6 @@ place #(.x(45200),.y(49000)) 45200:49000 (.port(x_cn_5));
 net #() net0 (.p(x_cn_1),.n(x_cn_4));
 rail #(.basename(gnd-1.sym),.net(GND:1)) GND:1 (.pin(x_cn_6),.rail(GND:1));
 place #(.x(44300),.y(48100)) 44300:48100 (.port(x_cn_6));
-net #() net1 (.p(x_cn_0),.n(x_cn_2));
-net #() net2 (.p(x_cn_3),.n(x_cn_5));
+net #() extranet1 (.p(x_cn_6),.n(x_cn_1));
+net #() net2 (.p(x_cn_0),.n(x_cn_2));
+net #() net3 (.p(x_cn_3),.n(x_cn_5));

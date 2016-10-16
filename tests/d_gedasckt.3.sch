@@ -1,0 +1,31 @@
+v 20130925 2
+C 40000 40000 0 0 0 title-B.sym
+N 45400 46200 45400 46000 4
+C 42900 46800 1 270 0 voltage-3.sym
+{
+T 43600 46600 5 8 0 0 270 0 1
+device=VOLTAGE_SOURCE
+T 43400 46500 5 10 1 1 270 0 1
+refdes=Vlow
+T 42400 46300 5 10 1 1 0 0 1
+value=vdd
+}
+C 43300 45900 1 180 0 5V-minus-1.sym
+{
+T 43300 45900 5 10 1 0 0 0 1
+refdes=lowrail
+}
+C 43100 46700 1 0 0 passive-1.sym
+{
+T 44000 46900 5 10 1 0 0 0 1
+net=gnd2
+T 43300 47400 5 10 0 0 0 0 1
+device=port
+T 44000 46800 5 10 1 1 0 1 1
+value=PASSIVE
+}
+C 45600 46000 1 180 0 5V-minus-1.sym
+{
+T 45600 46000 5 10 1 0 0 0 1
+refdes=proberail
+}

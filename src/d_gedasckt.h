@@ -51,6 +51,13 @@ private: // from DEV_SUBCKT
   std::string   value_name()const	{return "#";}
   // std::string   dev_type()const
   uint_t	max_nodes()const	{return PORTS_PER_SUBCKT;}
+#ifdef NDEBUG
+  void map_nodes(){
+    untested();
+    trace3("map_nodes", long_label(), net_nodes(), matrix_nodes());
+    BASE_SUBCKT::map_nodes();
+  }
+#endif
   uint_t	min_nodes()const	{return 0;}
   uint_t	matrix_nodes()const	{return 0;}
 public: //HACK
@@ -105,31 +112,32 @@ public: // override virtual
   char id_letter()const	{untested();return '\0';}
   CARD* clone_instance()const;
   CARD* clone()const		{return new MODEL_GEDA_SUBCKT(*this);}
-  //void		map_nodes()		{}
   void set_port_by_index(uint_t num, std::string& ext_name);
   bool		makes_own_scope()const  {return true;}
   CARD_LIST*	   scope()		{assert(subckt()); return subckt();}
   const CARD_LIST* scope()const		{assert(subckt()); return subckt();}
 private: // no-ops for prototype
-  bool is_device()const	{untested(); return false;}
-  void precalc_first(){untested();}
-  void expand(){untested();}
-  void precalc_last(){untested();}
-  void map_nodes(){untested();}
-  void tr_begin(){untested();}
-  void tr_load(){untested();}
-  TIME_PAIR tr_review(){untested(); return TIME_PAIR(NEVER, NEVER);}
-  void tr_accept(){untested();}
-  void tr_advance(){untested();}
+  bool is_device()const	{return false;}
+  void precalc_first(){}
+  void expand(){}
+  void precalc_last(){}
+  void map_nodes(){
+    trace1("map_nodes base", long_label());
+  }
+  void tr_begin(){}
+  void tr_load(){}
+  TIME_PAIR tr_review(){return TIME_PAIR(NEVER, NEVER);}
+  void tr_accept(){}
+  void tr_advance(){}
   void tr_restore(){untested();}
-  void tr_regress(){untested();}
-  void dc_advance(){untested();}
+  void tr_regress(){}
+  void dc_advance(){}
   void ac_begin(){untested();}
   void do_ac(){untested();}
   void ac_load(){untested();}
-  bool do_tr(){untested(); return true;}
+  bool do_tr(){return true;}
   bool tr_needs_eval()const{untested(); return false;}
-  void tr_queue_eval(){untested();}
+  void tr_queue_eval(){}
   std::string port_name(uint_t)const {return "";}
 };
 /*--------------------------------------------------------------------------*/

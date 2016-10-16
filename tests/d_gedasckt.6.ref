@@ -1,0 +1,108 @@
+>>>>>spice 
+>>>>>.param amplitude = 1 
+>>>>>.param offset 0 
+>>>>>.param vdd=2 
+>>>>>.options fulldamp 
+.options fulldamp 
+         ^ ? what's this?
+>>>>>.options nobypass 
+>>>>>.param bias=.01m 
+>>>>>.options language=verilog 
+>>>>>spice 
+>>>>>.model cmosn  nmos ( level=1  vto= 0.8  kp= 41.5964u  gamma= 0.863074  phi= 0.6  cbd= 0.  cbs= 0.  pb= 0.7  cgso= 218.971p  cgdo= 218.971p  cgbo= 0.  rsh= 0.  cj= 384.4u  mj= 0.4884  cjsw= 527.2p  mjsw= 0.3002  js= 0.  tox= 41.8n  nsub= 15.3142E+15  nss= 1.E+12  tpg=1  xj= 400.n  ld= 265.073n  uo= 503.521  kf= 0.  af= 1.  fc= 0.5  lambda=.01) 
+>>>>>.model cmosp  pmos ( level=1  vto=-0.844345  kp= 41.5964u  gamma= 0.863074  phi= 0.6  rd= 0.  rs= 0.  cbd= 0.  cbs= 0.  is= 0  pb= 0.7  cgso= 218.971p  cgdo= 218.971p  cgbo= 0.  rsh= 0.  cj= 384.4u  mj= 0.4884  cjsw= 527.2p  mjsw= 0.3002  js= 0.  tox= 41.8n  nsub= 15.3142E+15  nss= 1.E+12  tpg=1  xj= 400.n  ld= 265.073n  uo= 503.521  kf= 0.  af= 1.  fc= 0.5 lambda=.01) 
+>>>>>.verilog 
+>>>>>module VOLTAGE_SOURCE(1, 2); 
+>>>>>parameter value=1; 
+>>>>>geda "d_gedasckt.6.sch" module device="amp" 
+reading file d_gedasckt.6.sch
+>>>>>list 
+cmosp: rsh - rs - rd conflict: using rsh
+cmosp: is - js conflict
+//*.options reltol=1e-5 
+//*.options abstol=1E-11 
+paramset cmosn nmos1;\
+ .level=1; .kp=41.5964u; .vto=0.8; .gamma=0.863074; .phi=0.6; .lambda=.01; .tox=41.8n; .nsub=15.3142E+15; .nss=1.E+12; .xj=400.n; .uo=503.521; .tpg=1; .tnom=NA( 27.); .fc=0.5; .pb=0.7; .cj=384.4u; .mj=0.4884; .cjsw=527.2p; .mjsw=0.3002; .is=NA( 10.f); .js=0.; .rsh=0.; .cbd=0.; .cbs=0.; .cgso=218.971p; .cgdo=218.971p; .cgbo=0.; .ld=265.073n;\
+endparmset
+
+paramset cmosp pmos1;\
+ .level=1; .kp=41.5964u; .vto=-0.844345; .gamma=0.863074; .phi=0.6; .lambda=.01; .tox=41.8n; .nsub=15.3142E+15; .nss=1.E+12; .xj=400.n; .uo=503.521; .tpg=1; .tnom=NA( 27.); .fc=0.5; .pb=0.7; .cj=384.4u; .mj=0.4884; .cjsw=527.2p; .mjsw=0.3002; .is=0; .js=0.; .rsh=0.; .rd=0.; .rs=0.; .cbd=0.; .cbs=0.; .cgso=218.971p; .cgdo=218.971p; .cgbo=0.; .ld=265.073n;\
+endparmset
+
+//*V1 nin 0 pulse ( iv=0.0 pv=-0.5 rise=1e-5 fall=4e-5 width=5e-5  period=1e-4 ) 
+vsource #(sin.offset( 0.), .amplitude(amplitude), .frequency( 10.K), .delay( 0.), .damping(NA( 0.)), .phase( 0.)) V1 (.p(nin),.n(0));
+module VOLTAGE_SOURCE (1,2);
+vsource #(.dc(value)) v (.p(1),.n(2));
+endmodule // VOLTAGE_SOURCE
+
+module amp (gnd2,nin,nout);
+//comment (incomplete) title-B.sym
+net #() nin (.p(x_nn_0),.n(x_nn_1));
+place #(.x(45600),.y(45800)) 45600:45800 (.port(x_nn_0));
+place #(.x(44600),.y(45800)) 44600:45800 (.port(x_nn_1));
+VOLTAGE_SOURCE #(.basename(voltage-3.sym),.value(vdd)) Vhigh (.1(x_cn_2),.2(x_cn_3));
+place #(.x(41300),.y(46500)) 41300:46500 (.port(x_cn_2));
+place #(.x(41300),.y(45600)) 41300:45600 (.port(x_cn_3));
+net #() net1 (.p(x_cn_3),.n(x_nn_4));
+place #(.x(41300),.y(45000)) 41300:45000 (.port(x_nn_4));
+rail #(.basename(5V-plus-1.sym),.net(+5V:1)) highrail (.pin(x_cn_5),.rail(+5V:1));
+place #(.x(41300),.y(48100)) 41300:48100 (.port(x_cn_5));
+net #() net2 (.p(x_cn_5),.n(x_cn_2));
+rail #(.basename(5V-plus-1.sym),.net(+5V:1)) otherrail (.pin(x_cn_6),.rail(+5V:1));
+place #(.x(44400),.y(48300)) 44400:48300 (.port(x_cn_6));
+net #() net3 (.p(x_cn_6),.n(x_nn_7));
+place #(.x(44400),.y(47700)) 44400:47700 (.port(x_nn_7));
+port #(.basename(passive-1.sym),.net(gnd2)) gnd2 (.int(x_nn_4),.ext(gnd2));
+port #(.basename(input-1.sym),.net(nin)) nin (.int(x_nn_1),.ext(nin));
+port #(.basename(output-2.sym),.net(nout)) POUT (.int(x_cn_8),.ext(nout));
+place #(.x(41300),.y(47400)) 41300:47400 (.port(x_cn_8));
+net #() extranet4 (.p(x_cn_8),.n(x_cn_5));
+endmodule // amp
+
+amp #(.bias(bias),.vdd(vdd)) myamp (.gnd2(0),.nin(nin),.nout(nout));
+nodelist 
+^ ? nodelist: no match
+>>>>>spice 
+>>>>>.print op v(nin) v(nout)  v(myamp.*rail)  v(myamp.POUT) 
+cmosp: rsh - rs - rd conflict: using rsh
+cmosp: is - js conflict
+collapse myamp: x_nn_0 (1), x_nn_1(2)
+collapse myamp: x_cn_3 (4), x_nn_4(5)
+collapse myamp: x_cn_5 (6), +5V:1(7)
+collapse myamp: x_cn_5 (6), x_cn_2(3)
+collapse myamp: x_cn_6 (8), +5V:1(7)
+collapse myamp: x_cn_6 (8), x_nn_7(9)
+collapse myamp: x_nn_4 (5), gnd2(10)
+collapse myamp: x_nn_1 (2), nin(11)
+collapse myamp: x_cn_8 (12), nout(13)
+collapse myamp: x_cn_8 (12), x_cn_5(6)
+myamp: map_subckt_nodes net: 3 sckt: 13
+myamp: map_subckt_nodes connected components 3
+collapse myamp: x_nn_0 (1), x_nn_1(2)
+collapse myamp: x_cn_3 (4), x_nn_4(5)
+collapse myamp: x_cn_5 (6), +5V:1(7)
+collapse myamp: x_cn_5 (6), x_cn_2(3)
+collapse myamp: x_cn_6 (8), +5V:1(7)
+collapse myamp: x_cn_6 (8), x_nn_7(9)
+collapse myamp: x_nn_4 (5), gnd2(10)
+collapse myamp: x_nn_1 (2), nin(11)
+collapse myamp: x_cn_8 (12), nout(13)
+collapse myamp: x_cn_8 (12), x_cn_5(6)
+myamp.Vhigh: map_subckt_nodes net: 2 sckt: 2
+myamp.Vhigh: map_subckt_nodes connected components 2
+>>>>>.op trace=n 
+cmosp: rsh - rs - rd conflict: using rsh
+cmosp: is - js conflict
+collapse myamp: x_nn_0 (1), x_nn_1(2)
+collapse myamp: x_cn_3 (4), x_nn_4(5)
+collapse myamp: x_cn_5 (6), +5V:1(7)
+collapse myamp: x_cn_5 (6), x_cn_2(3)
+collapse myamp: x_cn_6 (8), +5V:1(7)
+collapse myamp: x_cn_6 (8), x_nn_7(9)
+collapse myamp: x_nn_4 (5), gnd2(10)
+collapse myamp: x_nn_1 (2), nin(11)
+collapse myamp: x_cn_8 (12), nout(13)
+collapse myamp: x_cn_8 (12), x_cn_5(6)
+#           v(nin)     v(nout)    v(myamp.highrail) v(myamp.otherrail) v(myamp.POUT)
+ 27.        0.         2.         2.         2.         2.        
+>>>>>.end 

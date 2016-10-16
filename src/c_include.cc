@@ -37,7 +37,7 @@ public:
   void do_it(CS& cmd, CARD_LIST* Scope)
   {
     unsigned here = cmd.cursor();
-    string directory = GNUCAP_GEDA_PKGINCLUDEDIR;
+    std::string directory = GNUCAP_GEDA_PKGINCLUDEDIR;
     try {
       std::string file_name;
       cmd >> file_name;

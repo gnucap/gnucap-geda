@@ -40,5 +40,6 @@ rail #(.basename(gnd-1.sym),.net(GND:1)) GND:1 (.pin(x_cn_12),.rail(GND:1));
 port #(.basename(input-1.sym),.pinlabel(Vi)) input-1.sym_0 (.int(x_cn_9));
 port #(.basename(output-1.sym),.pinlabel(Vo)) output-1.sym_1 (.int(x_cn_19));
 place #(.x(48700),.y(46600)) 48700:46600 (.port(x_cn_19));
-net #() net9 (.p(x_nn_15),.n(x_cn_5));
-net #() extranet10 (.p(x_nn_15),.n(x_cn_14));
+net #() extranet9 (.p(x_cn_19),.n(x_cn_4));
+net #() net10 (.p(x_nn_15),.n(x_cn_5));
+net #() extranet11 (.p(x_nn_15),.n(x_cn_14));

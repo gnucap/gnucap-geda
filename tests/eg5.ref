@@ -1,7 +1,9 @@
 //v 20071231 1
 //comment (incomplete) title-B.sym
 //T 50300 40700 9 20 1 0 0 0 1
+//Ganzbot 2008
 //T 54100 40200 9 20 1 0 0 0 1
+//Jeremy Gillick
 RESISTOR #(.basename(resistor-1.sym),.class(DISCRETE),.pins(2)) 270 (.1(x_cn_0),.2(x_cn_1));
 place #(.x(53500),.y(45200)) 53500:45200 (.port(x_cn_0));
 place #(.x(54400),.y(45200)) 54400:45200 (.port(x_cn_1));
@@ -97,6 +99,7 @@ net #() net21 (.p(x_nn_45),.n(x_nn_46));
 place #(.x(46400),.y(50000)) 46400:50000 (.port(x_nn_46));
 //B 48500 46400 1300 1800 3 0 0 0 -1 -1 0 -1 -1 -1 -1 -1
 //T 48500 48300 9 10 1 0 0 0 1
+//Multi-Color LED
 2N2222 #(.basename(2N2222-1.sym)) Q? (.3(x_cn_49),.1(x_cn_47),.2(x_cn_48));
 place #(.x(50700),.y(46000)) 50700:46000 (.port(x_cn_47));
 place #(.x(50200),.y(46600)) 50200:46600 (.port(x_cn_48));
@@ -144,7 +147,6 @@ net #() net43 (.p(x_cn_21),.n(x_nn_67));
 place #(.x(52700),.y(50000)) 52700:50000 (.port(x_nn_67));
 net #() extranet44 (.p(x_cn_21),.n(x_nn_39));
 net #() extranet45 (.p(x_cn_21),.n(x_nn_46));
-net #() extranet46 (.p(x_cn_21),.n(x_nn_39));
 module !_header3-1.sym (1,2,3);
 endmodule // !_header3-1.sym
 
@@ -155,27 +157,30 @@ HEADER3 #(.basename(header3-1.sym),.class(IO),.pins(3)) J? (.1(x_cn_70),.2(x_cn_
 place #(.x(54200),.y(49900)) 54200:49900 (.port(x_cn_70));
 place #(.x(53800),.y(49900)) 53800:49900 (.port(x_cn_71));
 place #(.x(53400),.y(49900)) 53400:49900 (.port(x_cn_72));
-net #() net47 (.p(x_cn_38),.n(x_cn_70));
-net #() net48 (.p(x_cn_37),.n(x_cn_68));
-net #() net49 (.p(x_cn_71),.n(x_cn_69));
-net #() net50 (.p(x_nn_66),.n(x_cn_72));
-net #() net51 (.p(x_nn_73),.n(x_nn_74));
+net #() net46 (.p(x_cn_38),.n(x_cn_70));
+net #() net47 (.p(x_cn_37),.n(x_cn_68));
+net #() net48 (.p(x_cn_71),.n(x_cn_69));
+net #() net49 (.p(x_nn_66),.n(x_cn_72));
+net #() net50 (.p(x_nn_73),.n(x_nn_74));
 place #(.x(53800),.y(49600)) 53800:49600 (.port(x_nn_73));
 place #(.x(52700),.y(49600)) 52700:49600 (.port(x_nn_74));
-net #() extranet52 (.p(x_nn_73),.n(x_cn_71));
-net #() net53 (.p(x_nn_74),.n(x_nn_67));
+net #() extranet51 (.p(x_nn_73),.n(x_cn_71));
+net #() net52 (.p(x_nn_74),.n(x_nn_67));
 //T 53300 50700 9 10 1 0 0 0 1
+//Right Servo
 //T 53400 48200 9 10 1 0 0 0 1
+//Left Servo
 RESISTOR #(.basename(resistor-1.sym),.class(DISCRETE),.pins(2)) 270 (.1(x_nn_55),.2(x_cn_75));
 place #(.x(54400),.y(46000)) 54400:46000 (.port(x_cn_75));
 RESISTOR #(.basename(resistor-1.sym),.class(DISCRETE),.pins(2)) 270 (.1(x_nn_58),.2(x_cn_76));
 place #(.x(54400),.y(47300)) 54400:47300 (.port(x_cn_76));
-net #() net54 (.p(x_cn_76),.n(x_nn_57));
-net #() net55 (.p(x_cn_75),.n(x_nn_54));
+net #() net53 (.p(x_cn_76),.n(x_nn_57));
+net #() net54 (.p(x_cn_75),.n(x_nn_54));
 RESISTOR #(.basename(resistor-1.sym),.class(DISCRETE),.pins(2)) 270 (.1(x_nn_44),.2(x_cn_77));
 place #(.x(47900),.y(47200)) 47900:47200 (.port(x_cn_77));
-net #() net56 (.p(x_cn_77),.n(x_nn_78));
+net #() net55 (.p(x_cn_77),.n(x_nn_78));
 place #(.x(48700),.y(47200)) 48700:47200 (.port(x_nn_78));
-net #() extranet57 (.p(x_nn_78),.n(x_cn_40));
-net #() net58 (.p(x_cn_31),.n(x_nn_29));
+net #() extranet56 (.p(x_nn_78),.n(x_cn_40));
+net #() net57 (.p(x_cn_31),.n(x_nn_29));
 //T 49000 46200 9 10 1 0 0 0 1
+//Eye

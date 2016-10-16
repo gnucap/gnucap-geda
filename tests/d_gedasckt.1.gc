@@ -1,0 +1,42 @@
+*load c_debug.so
+options trace
+spice
+* V1 nin 0 1
+.verilog
+
+module NMOS_TRANSISTOR (D,G,S,B);
+endmodule // NMOS_TRANSISTOR
+
+module VOLTAGE_SOURCE (1,2);
+vsource #(.dc(value)) v (.p(1),.n(2));
+endmodule // VOLTAGE_SOURCE
+
+module amp (ngnd);
+NMOS_TRANSISTOR #(.basename(nmos-1.sym),.description(NMOS),.numslots(0),.symversion(0.1)) N2 (.D(x_cn_1),.G(x_cn_2),.S(x_cn_3),.B(x_cn_0));
+place #(.x(44400),.y(44500)) 44400:44500 (.port(x_cn_0));
+place #(.x(44800),.y(44700)) 44800:44700 (.port(x_cn_1));
+place #(.x(44400),.y(45200)) 44400:45200 (.port(x_cn_2));
+place #(.x(44000),.y(44700)) 44000:44700 (.port(x_cn_3));
+VOLTAGE_SOURCE #(.basename(voltage-3.sym),.value(vdd)) Vlow (.1(x_cn_4),.2(x_cn_5));
+place #(.x(41300),.y(45000)) 41300:45000 (.port(x_cn_4));
+place #(.x(41300),.y(44100)) 41300:44100 (.port(x_cn_5));
+rail #(.basename(5V-minus-1.sym),.net(-5V:1)) lowrail (.pin(x_cn_5),.rail(-5V:1));
+port #(.basename(passive-1.sym),.net(ngnd)) ngnd (.int(x_cn_4),.ext(ngnd));
+rail #(.basename(5V-minus-1.sym),.net(-5V:1)) -5V:1 (.pin(x_cn_0),.rail(-5V:1));
+endmodule // amp
+
+amp #(.vdd(3.3)) myamp (.ngnd(0));
+
+//amp #(.vdd(3.3)) myamp(.nin(0), .nout(0), .ngnd(0));
+
+list
+
+spice
+.print op v(nin) v(v1)
++ v(myamp.lowrail)
++ ev(myamp.Vlow.v)
++ v(myamp.Vlow.v)
++ i(myamp.Vlow.v)
+
+.op
+.end

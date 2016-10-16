@@ -1,0 +1,56 @@
+load lang_geda.so
+// load lang_adms.so
+options trace
+spice
+.param amplitude = 1
+.param offset 0
+.param vdd=2
+*.options reltol=1e-5
+.options fulldamp
+*.options abstol=1E-11
+.options nobypass
+
+.param bias=.01m
+
+.options language=verilog
+
+spice
+
+.model cmosn  nmos ( level=1  vto= 0.8  kp= 41.5964u  gamma= 0.863074
++ phi= 0.6  cbd= 0.  cbs= 0.  pb= 0.7
++ cgso= 218.971p  cgdo= 218.971p  cgbo= 0.  rsh= 0.  cj= 384.4u  mj= 0.4884
++ cjsw= 527.2p  mjsw= 0.3002  js= 0.  tox= 41.8n  nsub= 15.3142E+15
++ nss= 1.E+12  tpg=1  xj= 400.n  ld= 265.073n  uo= 503.521
++ kf= 0.  af= 1.  fc= 0.5  lambda=.01)
+
+.model cmosp  pmos ( level=1  vto=-0.844345  kp= 41.5964u  gamma= 0.863074
++ phi= 0.6  rd= 0.  rs= 0.  cbd= 0.  cbs= 0.  is= 0  pb= 0.7
++ cgso= 218.971p  cgdo= 218.971p  cgbo= 0.  rsh= 0.  cj= 384.4u  mj= 0.4884
++ cjsw= 527.2p  mjsw= 0.3002  js= 0.  tox= 41.8n  nsub= 15.3142E+15
++ nss= 1.E+12  tpg=1  xj= 400.n  ld= 265.073n  uo= 503.521
++ kf= 0.  af= 1.  fc= 0.5 lambda=.01)
+
+
+*V1 nin 0 pulse ( iv=0.0 pv=-0.5 rise=1e-5 fall=4e-5 width=5e-5  period=1e-4 )
+
+V1 nin 0 sin ( offset=0 phase=0 amplitude=amplitude frequency=1e4 delay=0)
+
+.verilog
+module VOLTAGE_SOURCE(1, 2);
+	parameter value=1;
+	vsource #(.dc(value)) v(1, 2);
+endmodule
+geda "d_gedasckt.6.sch" module device="amp"
+
+amp #(.bias(bias), .vdd(vdd)) myamp(.nin(nin), .nout(nout), .gnd2(0));
+
+list
+nodelist
+
+spice
+.print op v(nin) v(nout)
++ v(myamp.*rail)
++ v(myamp.POUT)
+
+.op trace=n
+.end

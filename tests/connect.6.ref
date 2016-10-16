@@ -1,0 +1,11 @@
+//v 20130925 2
+net #() net0 (.p(x_nn_0),.n(x_nn_1));
+place #(.x(27000),.y(73000)) 27000:73000 (.port(x_nn_0));
+place #(.x(25000),.y(69000)) 25000:69000 (.port(x_nn_1));
+module !_port1-1.sym (unknown_pin_1);
+endmodule // !_port1-1.sym
+
+PORT1 #(.basename(port1-1.sym),.net(PORT1:1)) PORT1:1 (.unknown_pin_1(x_cn_2));
+place #(.x(26000),.y(71000)) 26000:71000 (.port(x_cn_2));
+net #() extranet1 (.p(x_cn_2),.n(x_nn_0));
+//}

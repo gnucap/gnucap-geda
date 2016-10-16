@@ -1,3 +1,56 @@
+// This File is part of gnucap-geda 
+// (C) 2012 Felix Salfelder 
+// GPLv3 or later 
+// mapping geda-symbols to actual devices 
+// "analog" section 
+module CAPACITOR (1,2);
+capacitor #(.c(value)) c (.p(1),.n(2));
+endmodule // CAPACITOR
+
+module POLARIZED_CAPACITOR (p,n);
+// nothing yet 
+endmodule // POLARIZED_CAPACITOR
+
+module RESISTOR (1,2);
+resistor #(.r(value)) r (.p(1),.n(2));
+endmodule // RESISTOR
+
+module BATTERY (n,p);
+vsource #(.dc(value)) v (.p(n),.n(p));
+endmodule // BATTERY
+
+module VOLTAGE_SOURCE (1,2);
+vsource #(.dc(value)) v (.p(1),.n(2));
+endmodule // VOLTAGE_SOURCE
+
+module CURRENT_SOURCE (1,2);
+isource #(.dc(value)) i (.p(p),.n(n));
+endmodule // CURRENT_SOURCE
+
+module BC547 (1,2,3,4);
+// nothing yet 
+endmodule // BC547
+
+module TRANSFORMER (1,2,3,4,5,6,7);
+// not yet 
+endmodule // TRANSFORMER
+
+module NMOS_TRANSISTOR (D,G,S,B);
+// not yet 
+endmodule // NMOS_TRANSISTOR
+
+module PMOS_TRANSISTOR (D,G,S,B);
+// not yet 
+endmodule // PMOS_TRANSISTOR
+
+module NPN_TRANSISTOR (C,B,E);
+// later.. 
+endmodule // NPN_TRANSISTOR
+
+module LED (CATHODE,ANODE);
+// nothing 
+endmodule // LED
+
 //comment (incomplete) title-B.sym
 net #() net0 (.p(x_nn_0),.n(x_nn_1));
 place #(.x(46100),.y(45200)) 46100:45200 (.port(x_nn_0));
@@ -18,10 +71,11 @@ net #() extranet5 (.p(x_nn_7),.n(x_nn_5));
 rail #(.basename(gnd-1.sym),.net(0)) 0 (.pin(x_nn_4),.rail(0));
 rail #(.basename(gnd-1.sym),.net(0)) 0 (.pin(x_nn_0),.rail(0));
 module DUT (1,2);
-//v 20130925 2
 //comment (incomplete) title-B.sym
-//T 50000 40700 9 10 1 0 0 0 1
-//T 53900 40100 9 10 1 0 0 0 1
+//T 50000 40700 9 10 1 0 0 0 1 
+//Device under test 
+//T 53900 40100 9 10 1 0 0 0 1 
+//felix 
 port #(.basename(spice-subcircuit-IO-1.sym),.pinseq(1),.pinlabel(1)) P1 (.int(x_cn_9),.ext(1));
 place #(.x(45900),.y(46800)) 45900:46800 (.port(x_cn_9));
 port #(.basename(spice-subcircuit-IO-1.sym),.pinseq(2),.pinlabel(2)) P2 (.int(x_cn_10),.ext(2));
@@ -34,14 +88,15 @@ net #() net7 (.p(x_cn_12),.n(x_cn_10));
 endmodule // DUT
 
 DUT #(.basename(resistor-2.sym),.source(dut.sch)) dut0 (.1(x_nn_1),.2(x_nn_8));
-//T 50000 40700 9 10 1 0 0 0 1
-//T 53900 40100 9 10 1 0 0 0 1
+//T 50000 40700 9 10 1 0 0 0 1 
+//Testbench 
+//T 53900 40100 9 10 1 0 0 0 1 
+//felix 
 net #() net8 (.p(x_nn_13),.n(x_nn_14));
 place #(.x(48800),.y(47900)) 48800:47900 (.port(x_nn_13));
 place #(.x(48800),.y(47200)) 48800:47200 (.port(x_nn_14));
 net #() extranet9 (.p(x_nn_13),.n(x_nn_5));
-net #() extranet10 (.p(x_nn_13),.n(x_nn_7));
-net #() net11 (.p(x_nn_15),.n(x_nn_16));
+net #() net10 (.p(x_nn_15),.n(x_nn_16));
 place #(.x(48800),.y(45200)) 48800:45200 (.port(x_nn_15));
 place #(.x(48800),.y(46300)) 48800:46300 (.port(x_nn_16));
 rail #(.basename(gnd-1.sym),.net(0)) 0 (.pin(x_nn_15),.rail(0));

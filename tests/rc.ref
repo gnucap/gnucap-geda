@@ -1,3 +1,60 @@
+// This File is part of gnucap-geda 
+// (C) 2012 Felix Salfelder 
+// GPLv3 or later 
+// mapping geda-symbols to actual devices 
+// "analog" section 
+module CAPACITOR (1,2);
+capacitor #(.c(value)) c (.p(1),.n(2));
+endmodule // CAPACITOR
+
+module POLARIZED_CAPACITOR (p,n);
+// nothing yet 
+endmodule // POLARIZED_CAPACITOR
+
+module RESISTOR (1,2);
+resistor #(.r(value)) r (.p(1),.n(2));
+endmodule // RESISTOR
+
+module BATTERY (n,p);
+vsource #(.dc(value)) v (.p(n),.n(p));
+endmodule // BATTERY
+
+module VOLTAGE_SOURCE (1,2);
+vsource #(.dc(value)) v (.p(1),.n(2));
+endmodule // VOLTAGE_SOURCE
+
+module CURRENT_SOURCE (1,2);
+isource #(.dc(value)) i (.p(p),.n(n));
+endmodule // CURRENT_SOURCE
+
+module BC547 (1,2,3,4);
+// nothing yet 
+endmodule // BC547
+
+module TRANSFORMER (1,2,3,4,5,6,7);
+// not yet 
+endmodule // TRANSFORMER
+
+module NMOS_TRANSISTOR (D,G,S,B);
+// not yet 
+endmodule // NMOS_TRANSISTOR
+
+module PMOS_TRANSISTOR (D,G,S,B);
+// not yet 
+endmodule // PMOS_TRANSISTOR
+
+module NPN_TRANSISTOR (C,B,E);
+// later.. 
+endmodule // NPN_TRANSISTOR
+
+module LED (CATHODE,ANODE);
+// nothing 
+endmodule // LED
+
+vsource #(pulse.iv( 0.), .pv( 1.), .delay( 0.), .rise( 0.001), .fall(NA( 0.)), .width( 0.01), .period(NA( Inf))) V1 (.p(n1),.n(n0));
+resistor #(.r( 1.)) R1 (.p(n0),.n(0));
+//*.load lang_geda.so 
+module rc.sch (INPUT:1,nout,PASSIVE:1);
 //comment (incomplete) title-B.sym
 net #() net0 (.p(x_nn_0),.n(x_nn_1));
 place #(.x(47300),.y(46600)) 47300:46600 (.port(x_nn_0));
@@ -20,36 +77,29 @@ net #() extranet4 (.p(x_cn_5),.n(x_nn_1));
 endmodule // rc.sch
 
 rc.sch #() sch1 (.INPUT:1(n1),.nout(n2),.PASSIVE:1(n0));
-#           v(n0)      v(n1)      v(n2)      r(sch1.R1.r) c(sch1.C1.c)
- 0.         0.         0.         0.         4.K        1.u       
-#Time       v(n0)      v(n1)      v(n2)      v(sch1.C1.c) v(sch1.R1.r)
- 0.         0.         0.         0.         0.         0.        
- 1.3889E-6  12.E-15    0.0013889  482.09E-9 -482.09E-9  0.0013884 
- 2.7778E-6  24.E-15    0.0027778  1.2052E-6 -1.2052E-6  0.0027766 
- 5.0548E-6  79.E-15    0.0050548  3.4333E-6 -3.4333E-6  0.0050514 
- 7.3319E-6  205.E-15   0.0073319  6.956E-6  -6.956E-6   0.007325  
- 31.713E-6 -322.E-15   0.031713   125.55E-6 -125.55E-6  0.031588  
- 81.386E-6  775.E-15   0.081386   821.9E-6  -821.9E-6   0.080564  
- 184.06E-6  531.E-15   0.18406    0.0041647 -0.0041647  0.17989   
- 357.88E-6  2.758E-12  0.35788    0.015512  -0.015512   0.34237   
- 634.53E-6 -7.466E-12  0.63453    0.047647  -0.047647   0.58689   
- 0.001      855.E-15   1.         0.11489   -0.11489    0.88511   
- 0.0015588  2.943E-12  1.         0.23047   -0.23047    0.76953   
- 0.0019204 -17.92E-12  1.         0.29703   -0.29703    0.70297   
- 0.002282  -9.849E-12  1.         0.35783   -0.35783    0.64217   
- 0.0030524 -15.39E-12  1.         0.47064   -0.47064    0.52936   
- 0.0044647 -19.63E-12  1.         0.6295    -0.6295     0.3705    
- 0.005877  -6.556E-12  1.         0.74069   -0.74069    0.25931   
- 0.0078945 -20.31E-12  1.         0.84514   -0.84514    0.15486   
- 0.0099121 -30.73E-12  1.         0.90752   -0.90752    0.092482  
- 0.011     -27.88E-12  1.         0.92966   -0.92966    0.07034   
- 0.014     -35.28E-12  1.703E-9   0.6953    -0.6953    -0.6953    
- 0.014009  -694.E-15   1.7335E-9  0.69366   -0.69366   -0.69366   
- 0.014019  -692.E-15   1.7294E-9  0.69203   -0.69203   -0.69203   
- 0.014026  -691.E-15   1.7264E-9  0.69083   -0.69083   -0.69083   
- 0.014033  -690.E-15   1.7234E-9  0.68963   -0.68963   -0.68963   
- 0.015525  -473.E-15   1.1817E-9  0.47285   -0.47285   -0.47285   
- 0.017016  -324.E-15   810.2E-12  0.32422   -0.32422   -0.32422   
- 0.018508  -222.E-15   555.5E-12  0.2223    -0.2223    -0.2223    
- 0.02      -152.E-15   380.9E-12  0.15243   -0.15243   -0.15243   
-vn2= 0.11489288116746
+#         v(n0)    v(n1)    v(n2)    r(sch1.R1.r) c(sch1.C1.c) ev(sch1.C1.c)
+ 0.       0.       0.       0.       4.K      1.u      1.u     
+#Time     v(n1)    v(n2)   
+ 0.       0.       0.      
+ 0.001    1.       0.115   
+ 0.002    1.       0.311   
+ 0.003    1.       0.464   
+ 0.004    1.       0.583   
+ 0.005    1.       0.675   
+ 0.006    1.       0.748   
+ 0.007    1.       0.804   
+ 0.008    1.       0.847   
+ 0.009    1.       0.881   
+ 0.01     1.       0.908   
+ 0.011    2.06E-9  0.817   
+ 0.012    1.59E-9  0.636   
+ 0.013    1.24E-9  0.494   
+ 0.014    961.E-12 0.384   
+ 0.015    747.E-12 0.299   
+ 0.016    581.E-12 0.233   
+ 0.017    452.E-12 0.181   
+ 0.018    352.E-12 0.141   
+ 0.019    273.E-12 0.109   
+ 0.02     213.E-12 0.0851  
+vn2= 0.11
+vn2= 0.67

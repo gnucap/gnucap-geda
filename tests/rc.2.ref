@@ -1,0 +1,82 @@
+// This File is part of gnucap-geda 
+// (C) 2012 Felix Salfelder 
+// GPLv3 or later 
+// mapping geda-symbols to actual devices 
+// "analog" section 
+module CAPACITOR (1,2);
+capacitor #(.c(value)) c (.p(1),.n(2));
+endmodule // CAPACITOR
+
+module POLARIZED_CAPACITOR (p,n);
+// nothing yet 
+endmodule // POLARIZED_CAPACITOR
+
+module RESISTOR (1,2);
+resistor #(.r(value)) r (.p(1),.n(2));
+endmodule // RESISTOR
+
+module BATTERY (n,p);
+vsource #(.dc(value)) v (.p(n),.n(p));
+endmodule // BATTERY
+
+module VOLTAGE_SOURCE (1,2);
+vsource #(.dc(value)) v (.p(1),.n(2));
+endmodule // VOLTAGE_SOURCE
+
+module CURRENT_SOURCE (1,2);
+isource #(.dc(value)) i (.p(p),.n(n));
+endmodule // CURRENT_SOURCE
+
+module BC547 (1,2,3,4);
+// nothing yet 
+endmodule // BC547
+
+module TRANSFORMER (1,2,3,4,5,6,7);
+// not yet 
+endmodule // TRANSFORMER
+
+module NMOS_TRANSISTOR (D,G,S,B);
+// not yet 
+endmodule // NMOS_TRANSISTOR
+
+module PMOS_TRANSISTOR (D,G,S,B);
+// not yet 
+endmodule // PMOS_TRANSISTOR
+
+module NPN_TRANSISTOR (C,B,E);
+// later.. 
+endmodule // NPN_TRANSISTOR
+
+module LED (CATHODE,ANODE);
+// nothing 
+endmodule // LED
+
+vsource #(pulse.iv( 0.), .pv( 1.), .delay( 0.), .rise( 0.001), .fall(NA( 0.)), .width( 0.01), .period(NA( Inf))) V1 (.p(n1),.n(n0));
+resistor #(.r( 1.)) R1 (.p(n0),.n(0));
+//*.load lang_geda.so 
+module rcsch (INPUT:1,nout,PASSIVE:1);
+//comment (incomplete) title-B.sym
+net #() net0 (.p(x_nn_0),.n(x_nn_1));
+place #(.x(47300),.y(46600)) 47300:46600 (.port(x_nn_0));
+place #(.x(47300),.y(47300)) 47300:47300 (.port(x_nn_1));
+port #(.basename(input-2.sym),.net(INPUT:1)) INPUT:1 (.int(x_cn_2),.ext(INPUT:1));
+place #(.x(44900),.y(47300)) 44900:47300 (.port(x_cn_2));
+port #(.basename(output-2.sym),.net(nout)) nout (.int(x_cn_3),.ext(nout));
+place #(.x(53500),.y(47300)) 53500:47300 (.port(x_cn_3));
+RESISTOR #(.basename(resistor-2.sym),.value(4k)) R1 (.1(x_cn_4),.2(x_cn_5));
+place #(.x(45500),.y(47300)) 45500:47300 (.port(x_cn_4));
+place #(.x(46400),.y(47300)) 46400:47300 (.port(x_cn_5));
+net #() net1 (.p(x_cn_4),.n(x_cn_2));
+net #() net2 (.p(x_nn_6),.n(x_nn_7));
+place #(.x(47300),.y(45200)) 47300:45200 (.port(x_nn_6));
+place #(.x(47300),.y(45700)) 47300:45700 (.port(x_nn_7));
+port #(.basename(passive-1.sym),.net(PASSIVE:1)) PASSIVE:1 (.int(x_nn_6),.ext(PASSIVE:1));
+CAPACITOR #(.basename(capacitor-1.sym),.description(capacitor),.numslots(0),.symversion(0.1),.value(oneu)) C1 (.1(x_nn_7),.2(x_nn_0));
+net #() teetop (.p(x_cn_5),.n(x_cn_3));
+net #() extranet4 (.p(x_cn_5),.n(x_nn_1));
+endmodule // rcsch
+
+rcsch #(.oneu(oneu)) sch1 (.INPUT:1(n1),.nout(n2),.PASSIVE:1(n0));
+#         v(n0)    v(n1)    v(n2)    r(sch1.R1.r) c(sch1.C1.c) ev(sch1.C1.c)
+ 0.       0.       0.       0.       4.K      1.u      1.u     
+vn2= 0.675

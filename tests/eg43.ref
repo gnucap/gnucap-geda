@@ -10,27 +10,34 @@ net #() net2 (.p(x_nn_4),.n(x_nn_5));
 place #(.x(48100),.y(47500)) 48100:47500 (.port(x_nn_4));
 place #(.x(48100),.y(47400)) 48100:47400 (.port(x_nn_5));
 //T 51800 40900 9 16 1 0 0 0 1
+//Inverter Gate
 //T 50100 40400 9 10 1 0 0 0 1
+//inverter.sch
 //T 50500 40100 9 10 1 0 0 0 1
+//1
 //T 52200 40100 9 10 1 0 0 0 1
+//1
 //T 54200 40400 9 10 1 0 0 0 1
+//1
 //T 54300 40100 9 10 1 0 0 0 1
+//Facundo J Ferrer
 //comment (incomplete) spice-subcircuit-LL-1.sym
 port #(.basename(spice-subcircuit-IO-1.sym)) P1 (.int(x_cn_6));
 place #(.x(49100),.y(46200)) 49100:46200 (.port(x_cn_6));
 port #(.basename(spice-subcircuit-IO-1.sym)) P4 (.int(x_cn_7));
 place #(.x(47500),.y(46300)) 47500:46300 (.port(x_cn_7));
+net #() extranet3 (.p(x_cn_7),.n(x_nn_0));
 port #(.basename(spice-subcircuit-IO-1.sym)) P2 (.int(x_nn_4));
 port #(.basename(spice-subcircuit-IO-1.sym)) P3 (.int(x_cn_8));
 place #(.x(48100),.y(44700)) 48100:44700 (.port(x_cn_8));
 //comment (incomplete) spice-model-1.sym
 //comment (incomplete) spice-model-1.sym
-net #() net3 (.p(x_nn_3),.n(x_nn_9));
+net #() net4 (.p(x_nn_3),.n(x_nn_9));
 place #(.x(48400),.y(47400)) 48400:47400 (.port(x_nn_9));
-net #() net4 (.p(x_nn_9),.n(x_nn_5));
-net #() net5 (.p(x_nn_10),.n(x_cn_8));
+net #() net5 (.p(x_nn_9),.n(x_nn_5));
+net #() net6 (.p(x_nn_10),.n(x_cn_8));
 place #(.x(48400),.y(44700)) 48400:44700 (.port(x_nn_10));
-net #() net6 (.p(x_nn_11),.n(x_cn_6));
+net #() net7 (.p(x_nn_11),.n(x_cn_6));
 place #(.x(48100),.y(46200)) 48100:46200 (.port(x_nn_11));
 NMOS_TRANSISTOR #(.basename(asic-nmos-1.sym),.description(low),.l(3u),.model-name(nmos4),.w(1u)) M2 (.D(x_cn_13),.G(x_nn_0),.S(x_cn_14),.B(x_cn_12));
 place #(.x(48200),.y(45600)) 48200:45600 (.port(x_cn_12));
@@ -38,9 +45,9 @@ place #(.x(48100),.y(46100)) 48100:46100 (.port(x_cn_13));
 place #(.x(48100),.y(45100)) 48100:45100 (.port(x_cn_14));
 PMOS_TRANSISTOR #(.basename(asic-pmos-1.sym),.description(low),.l(1u),.model-name(pmos4),.w(10u)) M1 (.D(x_cn_15),.G(x_nn_1),.S(x_nn_5),.B(x_nn_2));
 place #(.x(48100),.y(46400)) 48100:46400 (.port(x_cn_15));
-net #() net7 (.p(x_cn_13),.n(x_cn_15));
-net #() extranet8 (.p(x_cn_13),.n(x_nn_11));
-net #() net9 (.p(x_nn_10),.n(x_nn_16));
+net #() net8 (.p(x_cn_13),.n(x_cn_15));
+net #() extranet9 (.p(x_cn_13),.n(x_nn_11));
+net #() net10 (.p(x_nn_10),.n(x_nn_16));
 place #(.x(48400),.y(45600)) 48400:45600 (.port(x_nn_16));
-net #() net10 (.p(x_nn_16),.n(x_cn_12));
-net #() net11 (.p(x_cn_8),.n(x_cn_14));
+net #() net11 (.p(x_nn_16),.n(x_cn_12));
+net #() net12 (.p(x_cn_8),.n(x_cn_14));

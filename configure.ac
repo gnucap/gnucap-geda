@@ -82,9 +82,13 @@ CXXFLAGS+=" -Wall -pedantic"
 gnucap=$(which gnucap)
 AC_SUBST([gnucap])
 
-AC_CONFIG_FILES([Makefile tests/Makefile
-                 src/Makefile
-                 include/Makefile])
+AC_CONFIG_FILES([
+	Makefile
+	tests/Makefile
+	tests/gafrc
+	src/Makefile
+	include/Makefile
+])
 
 AC_CONFIG_FILES([gnucap-geda], [chmod +x gnucap-geda])
 

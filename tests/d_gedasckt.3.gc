@@ -1,0 +1,55 @@
+*load f_random.so
+load lang_geda.so
+options trace
+spice
+.param amplitude = 1
+.param offset 0
+.param vdd=0.9
+
+.param bias=.1m
+
+.options language=verilog
+
+spice
+
+V1 nin 0 1
+
+.verilog
+module NMOS_TRANSISTOR(D G S B);
+endmodule
+module VOLTAGE_SOURCE(1, 2);
+	parameter value=1;
+	vsource #(.dc(value)) v(1, 2);
+endmodule
+// include endstufe_sf.v
+// use .sch instead?
+geda "d_gedasckt.3.sch" module device="amp"
+
+//amp #() myamp(nin, nout, 0);
+// amp #(.bias(.01m), .vdd(3.3)) myamp(.nin(0), .nout(0), .gnd2(0));
+amp #(.bias(.01m), .vdd(3.3)) myamp(.gnd2(0));
+
+list
+
+spice
+.print op v(nin) v(v1)
++ v(myamp.highrail)
++ v(myamp.lowrail)
++ ev(myamp.Vlow.v)
++ v(myamp.Vlow.v)
++ i(myamp.Vlow.v)
+
+.op
+.end
+.print tran v(nin) v(v1)
++ vg(myamp.N1.m)
++ vg(myamp.P1.m)
++ vg(myamp.N2.m)
++ vg(myamp.P2.m)
++ v(myamp.somerail) v(myamp.RL.r) v(nout)
++ vd(myamp.N2.m)
++ vs(myamp.N2.m)
++ vb(myamp.N2.m)
+
+.tran 0 1e-4 trace=n
+.end
