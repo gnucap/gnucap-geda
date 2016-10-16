@@ -372,19 +372,22 @@ std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
 }
 /*--------------------------------------------------------------------------*/
 //place <nodename> x y
-void LANG_GEDA::parse_place(CS& cmd, COMPONENT* x)
+void LANG_GEDA::parse_place(CS& cmd, COMPONENT* place)
 {
-	trace2("parse_place", x->long_label(), cmd.fullstring());
-	assert(x);
+	trace2("parse_place", place->long_label(), cmd.fullstring());
+	assert(place);
 	assert(find_type_in_string(cmd)=="place");
 	if( _placeq.size() ){
 		portinfo p = _placeq.front();
-		x->set_param_by_name("x", to_string(p.x));
-		x->set_param_by_name("y", to_string(p.y));
+		place->set_param_by_name("x", to_string(p.x));
+		place->set_param_by_name("y", to_string(p.y));
 		string portname = string(INT_PREFIX) + p.name;
-		x->set_port_by_index(0, portname);
+		place->set_port_by_index(0, portname);
 		_placeq.pop();
-		x->set_label( to_string(p.x)+":"+to_string(p.y) );
+		place->set_label( to_string(p.x)+":"+to_string(p.y) );
+
+//		incomplete();
+//		connect_to_net(place, p.x, p.y);
 
 		cmd.reset();
 	} else if ( cmd.umatch("place") ) {untested();
@@ -392,11 +395,11 @@ void LANG_GEDA::parse_place(CS& cmd, COMPONENT* x)
 		cmd>>"place";
 		std::string _portname,_x,_y;
 		cmd>>" ">>_portname>>" ">>_x>>" ">>_y;
-		x->set_param_by_name("x",_x);
-		x->set_param_by_name("y",_y);
+		place->set_param_by_name("x",_x);
+		place->set_param_by_name("y",_y);
 		string portname = string(INT_PREFIX) + "np_" + _portname;
-		x->set_port_by_index(0, portname);
-		x->set_label( _x + ":" + _y);
+		place->set_port_by_index(0, portname);
+		place->set_label( _x + ":" + _y);
 	} else {untested();
 		trace1("parse_place, huh?", cmd.fullstring());
 		unreachable();
@@ -689,7 +692,7 @@ const std::string LANG_GEDA::connect_place(const CARD* card, int newx, int newy)
 	string portname = "incomplete";
 	if (!port){ untested();
 		portname = "cn_" + ::to_string(_nodenumber++);
-		_placeq.push( portinfo(portname, newx, newy) );
+		_placeq.push( portinfo(portname, newx, newy) ); // BUG: need to check.
 		return std::string(std::string(INT_PREFIX) + portname);
 	}else{ untested();
 		return port->port_value(0);
