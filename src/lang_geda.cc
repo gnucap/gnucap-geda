@@ -433,11 +433,42 @@ static bool in_order(int a, int b, int c)
 /*--------------------------------------------------------------------------*/
 //queue an extranet if x0 y0 or x1 y1 is between n1--n2
 // only works if there is a net n1--n2
+// TODO: avoid recursion more efficiently
 void LANG_GEDA::connect(int x0, int y0, int x1, int y1,
 		int n1x, int n1y, int n2x, int n2y) const
 {
-	if (n1x == n2x && (y0 == y1)){ untested();
-		// found a horizontal net.
+	trace8("connect", x0, y0, x1, y1, n1x, n1y, n2x, n2y);
+	assert(x0<=x1);
+	trace4("",x0-n1x,n2y-n1y, y0-n1y,n2x-n1x);
+
+	if ( x0 == n1x && y0 == n1y) { untested();
+		// stupid. should not be here
+	}else if ( x1 == n1x && y1 == n1y) { untested();
+		// stupid. should not be here
+	}else if ( x0 == n2x && y0 == n2y) { untested();
+		// stupid. should not be here
+	}else if ( x1 == n2x && y1 == n2y) { untested();
+		// stupid. should not be here
+	}else if (  x1 <= n1x && x1 <= n2x){ untested();
+		// net is too far right
+	}else if (  x0 >= n1x && x0 >= n2x){ untested();
+		// net is too far left
+	}else if (y0 == y1 && x0 == x1){ untested();
+		// connect a pin to the interior of a net
+		incomplete();
+
+	}else if( (n2y-n1y)*(x1-x0) == (y1-y0)*(n2x-n1x) ) { untested();
+		// same angle, don't do anything
+	}else if( (x0-n1x)*(n2y-n1y) == (y0-n1y)*(n2x-n1x)  ){ untested();
+		// x0,y0 is on net
+		assert(x0!=n1x || y0!=n1y);
+		_netq.push( netinfo( x0, y0, n1x, n1y, 4 ));
+	}else if( (x1-n1x)*(n2y-n1y) == (y1-n1y)*(n2x-n1x)  ){ untested();
+		// x1,y1 is on net
+		assert(x1!=n1x || y1!=n1y);
+		_netq.push( netinfo( x1, y1, n1x, n1y, 4 ));
+	}else if (n1x == n2x && (y0 == y1)){ untested();
+		// new net is horizontal, found a vertical net
 		if (in_order( n2y, y1, n1y)){ untested();
 			if (n1x == x0){ untested();
 				assert( y0 !=  n1y);
@@ -448,7 +479,7 @@ void LANG_GEDA::connect(int x0, int y0, int x1, int y1,
 			}
 		}
 	}else if (n1y == n2y && (x0 == x1)){ untested();
-		// found a vertical net.
+		// new net is vertical. found a horizontal net.
 		if (in_order(n1x, x1, n2x)){ untested();
 			if (n1y == y0){ untested();
 				assert(x0 !=  n1x);
@@ -458,12 +489,18 @@ void LANG_GEDA::connect(int x0, int y0, int x1, int y1,
 				_netq.push( netinfo( x1, y1, n1x, n1y, 4 ));
 			}
 		}
+	}else{ untested();
 	}
 }
 /*--------------------------------------------------------------------------*/
 // connect a newly created net to possible intersecting items
 void LANG_GEDA::connect_net(CARD *netcard, int x0, int y0, int x1, int y1)const
 {
+	if(x0>x1){ untested();
+		std::swap(x0, x1);
+		std::swap(y0, y1);
+	}else{ untested();
+	}
 	assert(netcard);
 	trace5("LANG_GEDA::connect", netcard->long_label(), x0, y0, x1, y1);
 	assert(x0!=x1 || y0!=y1); // hmm report error instead?
