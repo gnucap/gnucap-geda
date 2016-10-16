@@ -1,0 +1,13 @@
+//v 20130925 2
+//comment (incomplete) title-B.sym
+net #() net0 (.p(x_nn_0),.n(x_nn_1));
+place #(.x(46500),.y(45000)) 46500:45000 (.port(x_nn_0));
+place #(.x(47500),.y(44000)) 47500:44000 (.port(x_nn_1));
+net #() net1 (.p(x_nn_2),.n(x_nn_3));
+place #(.x(46500),.y(44000)) 46500:44000 (.port(x_nn_2));
+place #(.x(47500),.y(45000)) 47500:45000 (.port(x_nn_3));
+net #() net2 (.p(x_nn_4),.n(x_nn_5));
+place #(.x(47000),.y(44000)) 47000:44000 (.port(x_nn_4));
+place #(.x(47000),.y(44500)) 47000:44500 (.port(x_nn_5));
+net #() extranet3 (.p(x_nn_5),.n(x_nn_0));
+net #() extranet4 (.p(x_nn_5),.n(x_nn_2));

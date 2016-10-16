@@ -32,7 +32,7 @@ place #(.x(43100),.y(46800)) 43100:46800 (.port(x_cn_2));
 place #(.x(43100),.y(45900)) 43100:45900 (.port(x_cn_3));
 rail #(.basename(5V-minus-1.sym),.net(-5V:1)) lowrail (.pin(x_cn_3),.rail(-5V:1));
 port #(.basename(passive-1.sym),.net(gnd2)) gnd2 (.int(x_cn_2),.ext(gnd2));
-rail #(.basename(5V-minus-1.sym),.net(-5V:1)) -5V:1 (.pin(x_nn_1),.rail(-5V:1));
+rail #(.basename(5V-minus-1.sym),.net(-5V:1)) proberail (.pin(x_nn_1),.rail(-5V:1));
 endmodule // amp
 
 //amp #() myamp(nin, nout, 0); 

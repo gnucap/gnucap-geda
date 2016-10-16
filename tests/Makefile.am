@@ -21,6 +21,14 @@ SCH_LOG_COMPILER = $(top_srcdir)/tests/sch_log_compiler
 AM_TESTS_FD_REDIRECT = 9>&2
 EG_TESTS = \
 	comment.1.sch \
+	connect.1.sch \
+	connect.2.sch \
+	connect.3.sch \
+	connect.4.sch \
+	connect.5.sch \
+	connect.6.sch \
+	connect.7.sch \
+	D_Latch.sch \
 	eg1.sch \
            eg1a.sch \
            eg15.sch \
@@ -52,6 +60,9 @@ DISTCLEANFILES = $(EG_TESTS:%.sch=%.gc) $(ER_TESTS:%.sh=%.gc)
 
 XFAIL_TESTS =
 
+# almost...
+XFAIL_TESTS += connect.6.sch d_gedasckt.6.gc
+
 # empty line in comment, breaks counter.
 XFAIL_TESTS += comment.1.sch
 
@@ -69,19 +80,11 @@ XFAIL_TESTS += eg34b.sch
 XFAIL_TESTS += d_gedasckt.5.gc
 
 GC_TESTS = \
+	$(SCHEMATICS:%.sch=%.gc) \
 	convert.gc \
 	d_gedasckt.1.gc \
-	d_gedasckt.2.gc \
-	d_gedasckt.3.gc \
-	d_gedasckt.4.gc \
-	d_gedasckt.5.gc \
+	error.1.gc \
 	notfound.gc \
-	rc.2.gc \
-	rc.gc \
-	res.gc \
-	res_net.gc \
-	short.gc rail.gc spice.gc \
-	testbench.gc \
 	verilog.gc \
 	verilog_place.gc
 
@@ -91,14 +94,21 @@ TESTS = $(EG_TESTS) \
         $(GC_TESTS) \
         $(CUSTOM_TESTS)
 
-# these require schematics
+# each of these induce a test.
 SCHEMATICS = \
-	testbench.sch spice.sch rail.sch res_net.sch short.sch res.sch rc.sch \
-	rc.2.sch \
 	d_gedasckt.2.sch \
 	d_gedasckt.3.sch \
 	d_gedasckt.4.sch \
-	d_gedasckt.5.sch
+	d_gedasckt.5.sch \
+	d_gedasckt.6.sch \
+	spice.sch \
+	rail.sch \
+	short.sch \
+	res_net.sch \
+	rc.2.sch \
+	rc.sch \
+	res.sch \
+	testbench.sch
 
 $(SCHEMATICS:%.sch=%.out): %.out: $(PWD)/%.sch
 

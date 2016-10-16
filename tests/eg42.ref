@@ -89,7 +89,6 @@ net #() extranet24 (.p(x_cn_11),.n(x_cn_12));
 net #() vcc (.p(x_cn_39),.n(x_nn_44));
 place #(.x(69800),.y(55200)) 69800:55200 (.port(x_nn_44));
 net #() extranet26 (.p(x_nn_44),.n(x_cn_11));
-net #() extranet27 (.p(x_nn_44),.n(x_cn_12));
 net #() gnd (.p(x_cn_38),.n(x_cn_42));
 net #() vcc (.p(x_cn_20),.n(x_nn_43));
-net #() net30 (.p(x_cn_18),.n(x_cn_41));
+net #() net29 (.p(x_cn_18),.n(x_cn_41));

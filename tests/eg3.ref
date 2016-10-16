@@ -73,7 +73,7 @@ net #() net21 (.p(x_nn_38),.n(x_nn_39));
 place #(.x(31000),.y(23600)) 31000:23600 (.port(x_nn_39));
 7408 #(.basename(7408-1.sym),.description(4),.documentation(http://www-s.ti.com/sc/ds/sn74hc08.pdf),.footprint(DIP14),.net(GND:7),.numslots(4),.slot(2),.slotdef(4:12)) U101 (.A(x_nn_26),.B(x_nn_29),.Y(x_nn_31));
 net #() net22 (.p(x_cn_18),.n(x_cn_14));
-net #() extranet23 (.p(x_cn_18),.n(x_nn_25));
+net #() extranet23 (.p(x_cn_14),.n(x_nn_25));
 //T 33100 17700 9 20 1 0 0 0 1
 //Half and Full Adders
 //T 32000 17100 9 10 1 0 0 0 1
@@ -93,15 +93,15 @@ net #() net24 (.p(x_cn_41),.n(x_nn_39));
 net #() net25 (.p(x_cn_17),.n(x_cn_40));
 net #() Y_H (.p(x_cn_13),.n(x_nn_42));
 place #(.x(21500),.y(25500)) 21500:25500 (.port(x_nn_42));
-net #() extranet27 (.p(x_cn_13),.n(x_nn_34));
+net #() extranet27 (.p(x_nn_42),.n(x_nn_34));
 net #() X_H (.p(x_cn_12),.n(x_nn_43));
 place #(.x(21500),.y(25900)) 21500:25900 (.port(x_nn_43));
-net #() extranet29 (.p(x_cn_12),.n(x_nn_33));
+net #() extranet29 (.p(x_nn_43),.n(x_nn_33));
 net #() Z_H (.p(x_nn_23),.n(x_nn_44));
 place #(.x(21500),.y(22900)) 21500:22900 (.port(x_nn_44));
 net #() Y_H (.p(x_cn_4),.n(x_nn_45));
 place #(.x(24700),.y(29900)) 24700:29900 (.port(x_nn_45));
-net #() extranet32 (.p(x_cn_4),.n(x_nn_9));
+net #() extranet32 (.p(x_nn_45),.n(x_nn_9));
 net #() X_H (.p(x_cn_3),.n(x_nn_46));
 place #(.x(24700),.y(30300)) 24700:30300 (.port(x_nn_46));
-net #() extranet34 (.p(x_cn_3),.n(x_nn_7));
+net #() extranet34 (.p(x_nn_46),.n(x_nn_7));

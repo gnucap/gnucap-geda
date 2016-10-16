@@ -25,3 +25,7 @@ T 44000 46800 5 10 1 1 0 1 1
 value=PASSIVE
 }
 C 45600 46000 1 180 0 5V-minus-1.sym
+{
+T 45600 46000 5 10 1 0 0 0 1
+refdes=proberail
+}
