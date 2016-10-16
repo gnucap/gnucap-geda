@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.67])
-AC_INIT([gnucap-geda], [0.0.3-rc2], [felix@salfelder.org])
+AC_INIT([gnucap-geda], [0.0.3-rc3], [felix@salfelder.org])
 # AC_CONFIG_SRCDIR([lang_geda.cc])
 AC_CONFIG_HEADERS([config.h])
 

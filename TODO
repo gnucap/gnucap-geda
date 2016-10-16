@@ -11,11 +11,10 @@ For lang_geda (gEDA plugin)
 - print heirarchical schematic in a useful way
 
 **gnucap issues (0.36), (*)=fixed/hacked/worked\ around for gnucap-uf
-- port declaration order (*)
--global nodes?
+- global nodes?
 - precalc_first is 'printing parameter <basename> has no value' (*)
 
 **optional/later/unimportant
--support more gEDA symbols
--more nets/ports (node numbering && behaviour)
--Hack a button/option into gschem to get a netlist in verilog from gnucap
+- support more gEDA symbols
+- more nets/ports (node numbering && behaviour)
+- Hack a button/option into gschem to get a netlist in verilog from gnucap
