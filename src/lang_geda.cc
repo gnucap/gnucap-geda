@@ -431,6 +431,12 @@ static bool in_order(int a, int b, int c)
 	return false;
 }
 /*--------------------------------------------------------------------------*/
+static bool on_line(int x1, int y1,
+		int n1x, int n1y, int n2x, int n2y)
+{
+	return ((x1-n1x)*(n2y-n1y)) == ((y1-n1y)*(n2x-n1x));
+}
+/*--------------------------------------------------------------------------*/
 //queue an extranet if x0 y0 or x1 y1 is between n1--n2
 // only works if there is a net n1--n2
 // TODO: avoid recursion more efficiently
@@ -459,11 +465,11 @@ void LANG_GEDA::connect(int x0, int y0, int x1, int y1,
 
 	}else if( (n2y-n1y)*(x1-x0) == (y1-y0)*(n2x-n1x) ) { untested();
 		// same angle, don't do anything
-	}else if( (x0-n1x)*(n2y-n1y) == (y0-n1y)*(n2x-n1x)  ){ untested();
+	}else if( on_line(x0, y0, n1x, n1y, n2x, n2y)){ untested();
 		// x0,y0 is on net
 		assert(x0!=n1x || y0!=n1y);
 		_netq.push( netinfo( x0, y0, n1x, n1y, 4 ));
-	}else if( (x1-n1x)*(n2y-n1y) == (y1-n1y)*(n2x-n1x)  ){ untested();
+	}else if( on_line(x1, y1, n1x, n1y, n2x, n2y)){ untested();
 		// x1,y1 is on net
 		assert(x1!=n1x || y1!=n1y);
 		_netq.push( netinfo( x1, y1, n1x, n1y, 4 ));
