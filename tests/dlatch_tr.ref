@@ -1,0 +1,293 @@
+reading file D_Latch.sch
+cmosp: rsh - rs - rd conflict: using rsh
+cmosp: is - js conflict
+paramset cmosn nmos1;\
+ .level=1; .kp=41.5964u; .vto=0.8; .gamma=0.863074; .phi=0.6; .lambda=.01; .tox=41.8n; .nsub=15.3142E+15; .nss=1.E+12; .xj=400.n; .uo=503.521; .tpg=1; .tnom=NA( 27.); .fc=0.5; .pb=0.7; .cj=384.4u; .mj=0.4884; .cjsw=527.2p; .mjsw=0.3002; .is=NA( 10.f); .js=0.; .rsh=0.; .cbd=0.; .cbs=0.; .cgso=218.971p; .cgdo=218.971p; .cgbo=0.; .ld=265.073n;\
+endparmset
+
+paramset cmosp pmos1;\
+ .level=1; .kp=41.5964u; .vto=-0.844345; .gamma=0.863074; .phi=0.6; .lambda=.01; .tox=41.8n; .nsub=15.3142E+15; .nss=1.E+12; .xj=400.n; .uo=503.521; .tpg=1; .tnom=NA( 27.); .fc=0.5; .pb=0.7; .cj=384.4u; .mj=0.4884; .cjsw=527.2p; .mjsw=0.3002; .is=0; .js=0.; .rsh=0.; .rd=0.; .rs=0.; .cbd=0.; .cbs=0.; .cgso=218.971p; .cgdo=218.971p; .cgbo=0.; .ld=265.073n;\
+endparmset
+
+module NMOS_TRANSISTOR (D,G,S,B);
+cmosn #(.l(l),.w(w)) m (.d(D),.g(G),.s(S),.b(B));
+endmodule // NMOS_TRANSISTOR
+
+module PMOS_TRANSISTOR (D,G,S,B);
+cmosp #(.l(l),.w(w)) m (.d(D),.g(G),.s(S),.b(B));
+endmodule // PMOS_TRANSISTOR
+
+module dlatch (D,\_D\_,CLK,\_Q\_,V+,V-,Q);
+//comment (incomplete) title-B.sym
+PMOS_TRANSISTOR #(.basename(asic-pmos-1.sym),.description(low),.l(1u),.model-name(pmos4),.w(2u)) M4 (.D(x_cn_1),.G(x_cn_2),.S(x_cn_3),.B(x_cn_0));
+place #(.x(47100),.y(48600)) 47100:48600 (.port(x_cn_0));
+place #(.x(47000),.y(48100)) 47000:48100 (.port(x_cn_1));
+place #(.x(46400),.y(48600)) 46400:48600 (.port(x_cn_2));
+place #(.x(47000),.y(49100)) 47000:49100 (.port(x_cn_3));
+PMOS_TRANSISTOR #(.basename(asic-pmos-1.sym),.description(low),.l(1u),.model-name(pmos4),.w(2u)) M3 (.D(x_cn_5),.G(x_cn_6),.S(x_cn_7),.B(x_cn_4));
+place #(.x(44700),.y(48600)) 44700:48600 (.port(x_cn_4));
+place #(.x(44800),.y(48100)) 44800:48100 (.port(x_cn_5));
+place #(.x(45400),.y(48600)) 45400:48600 (.port(x_cn_6));
+place #(.x(44800),.y(49100)) 44800:49100 (.port(x_cn_7));
+net #() net0 (.p(x_cn_6),.n(x_nn_8));
+place #(.x(45800),.y(48600)) 45800:48600 (.port(x_nn_8));
+net #() net1 (.p(x_nn_8),.n(x_nn_9));
+place #(.x(45800),.y(47800)) 45800:47800 (.port(x_nn_9));
+net #() net2 (.p(x_nn_9),.n(x_nn_10));
+place #(.x(47000),.y(47800)) 47000:47800 (.port(x_nn_10));
+net #() net3 (.p(x_nn_11),.n(x_cn_1));
+place #(.x(47000),.y(47400)) 47000:47400 (.port(x_nn_11));
+net #() extranet4 (.p(x_nn_11),.n(x_nn_10));
+net #() net5 (.p(x_nn_12),.n(x_nn_13));
+place #(.x(44600),.y(49200)) 44600:49200 (.port(x_nn_12));
+place #(.x(47200),.y(49200)) 47200:49200 (.port(x_nn_13));
+net #() net6 (.p(x_nn_14),.n(x_nn_15));
+place #(.x(44800),.y(48000)) 44800:48000 (.port(x_nn_14));
+place #(.x(46100),.y(48000)) 46100:48000 (.port(x_nn_15));
+net #() net7 (.p(x_nn_15),.n(x_nn_16));
+place #(.x(46100),.y(48600)) 46100:48600 (.port(x_nn_16));
+net #() net8 (.p(x_nn_17),.n(x_cn_5));
+place #(.x(44800),.y(47400)) 44800:47400 (.port(x_nn_17));
+net #() extranet9 (.p(x_nn_17),.n(x_nn_14));
+net #() net10 (.p(x_cn_2),.n(x_nn_16));
+net #() net11 (.p(x_cn_4),.n(x_nn_18));
+place #(.x(44600),.y(48600)) 44600:48600 (.port(x_nn_18));
+NMOS_TRANSISTOR #(.basename(asic-nmos-1.sym),.description(low),.l(1u),.model-name(nmos4),.w(1u)) M1 (.D(x_nn_17),.G(x_cn_20),.S(x_cn_21),.B(x_cn_19));
+place #(.x(44900),.y(46900)) 44900:46900 (.port(x_cn_19));
+place #(.x(44200),.y(46900)) 44200:46900 (.port(x_cn_20));
+place #(.x(44800),.y(46400)) 44800:46400 (.port(x_cn_21));
+NMOS_TRANSISTOR #(.basename(asic-nmos-1.sym),.description(low),.l(1u),.model-name(nmos4),.w(1u)) M2 (.D(x_nn_11),.G(x_cn_23),.S(x_cn_24),.B(x_cn_22));
+place #(.x(46900),.y(46900)) 46900:46900 (.port(x_cn_22));
+place #(.x(47600),.y(46900)) 47600:46900 (.port(x_cn_23));
+place #(.x(47000),.y(46400)) 47000:46400 (.port(x_cn_24));
+net #() net12 (.p(x_cn_22),.n(x_nn_25));
+place #(.x(46800),.y(46900)) 46800:46900 (.port(x_nn_25));
+net #() net13 (.p(x_nn_25),.n(x_nn_26));
+place #(.x(46800),.y(46200)) 46800:46200 (.port(x_nn_26));
+net #() net14 (.p(x_nn_27),.n(x_nn_28));
+place #(.x(44800),.y(46200)) 44800:46200 (.port(x_nn_27));
+place #(.x(47000),.y(46200)) 47000:46200 (.port(x_nn_28));
+net #() extranet15 (.p(x_nn_27),.n(x_nn_26));
+net #() net16 (.p(x_nn_28),.n(x_cn_24));
+net #() net17 (.p(x_cn_19),.n(x_nn_29));
+place #(.x(45000),.y(46900)) 45000:46900 (.port(x_nn_29));
+net #() net18 (.p(x_nn_29),.n(x_nn_30));
+place #(.x(45000),.y(46200)) 45000:46200 (.port(x_nn_30));
+net #() extranet19 (.p(x_nn_30),.n(x_nn_27));
+net #() extranet20 (.p(x_nn_30),.n(x_nn_27));
+net #() net21 (.p(x_nn_27),.n(x_cn_21));
+NMOS_TRANSISTOR #(.basename(asic-nmos-1.sym),.description(low),.l(1u),.model-name(nmos4),.w(8u)) M5 (.D(x_cn_32),.G(x_cn_33),.S(x_cn_34),.B(x_cn_31));
+place #(.x(46000),.y(45300)) 46000:45300 (.port(x_cn_31));
+place #(.x(45900),.y(45800)) 45900:45800 (.port(x_cn_32));
+place #(.x(45300),.y(45300)) 45300:45300 (.port(x_cn_33));
+place #(.x(45900),.y(44800)) 45900:44800 (.port(x_cn_34));
+net #() net22 (.p(x_cn_32),.n(x_nn_35));
+place #(.x(45900),.y(46200)) 45900:46200 (.port(x_nn_35));
+net #() extranet23 (.p(x_nn_35),.n(x_nn_27));
+net #() extranet24 (.p(x_nn_35),.n(x_nn_27));
+net #() net25 (.p(x_cn_31),.n(x_nn_36));
+place #(.x(46100),.y(45300)) 46100:45300 (.port(x_nn_36));
+net #() net26 (.p(x_nn_37),.n(x_nn_36));
+place #(.x(46100),.y(44600)) 46100:44600 (.port(x_nn_37));
+net #() net27 (.p(x_cn_34),.n(x_nn_38));
+place #(.x(45900),.y(44500)) 45900:44500 (.port(x_nn_38));
+net #() net28 (.p(x_nn_39),.n(x_nn_37));
+place #(.x(45900),.y(44600)) 45900:44600 (.port(x_nn_39));
+net #() extranet29 (.p(x_nn_39),.n(x_cn_34));
+//T 40800 50500 9 10 1 0 0 0 1 
+//D LATCH 
+port #(.basename(in-1.sym)) D (.int(x_cn_20),.ext(D));
+port #(.basename(in-1.sym)) \_D\_ (.int(x_cn_23),.ext(\_D\_));
+port #(.basename(in-1.sym)) CLK (.int(x_cn_33),.ext(CLK));
+port #(.basename(out-1.sym)) \_Q\_ (.int(x_cn_40),.ext(\_Q\_));
+place #(.x(44400),.y(48000)) 44400:48000 (.port(x_cn_40));
+net #() net30 (.p(x_nn_18),.n(x_nn_12));
+net #() net31 (.p(x_cn_7),.n(x_nn_41));
+place #(.x(44800),.y(49200)) 44800:49200 (.port(x_nn_41));
+net #() extranet32 (.p(x_nn_41),.n(x_nn_12));
+net #() net33 (.p(x_nn_13),.n(x_nn_42));
+place #(.x(47200),.y(48600)) 47200:48600 (.port(x_nn_42));
+net #() net34 (.p(x_nn_42),.n(x_cn_0));
+net #() net35 (.p(x_cn_3),.n(x_nn_43));
+place #(.x(47000),.y(49200)) 47000:49200 (.port(x_nn_43));
+net #() extranet36 (.p(x_nn_43),.n(x_nn_12));
+port #(.basename(in-1.sym)) V+ (.int(x_cn_44),.ext(V+));
+place #(.x(45900),.y(49400)) 45900:49400 (.port(x_cn_44));
+rail #(.basename(vee-1.sym),.net(Vee:1)) Vee:1 (.pin(x_nn_38),.rail(Vee:1));
+port #(.basename(in-1.sym)) V- (.int(x_cn_45),.ext(V-));
+place #(.x(48400),.y(45600)) 48400:45600 (.port(x_cn_45));
+net #() net37 (.p(x_nn_46),.n(x_cn_45));
+place #(.x(48700),.y(45600)) 48700:45600 (.port(x_nn_46));
+rail #(.basename(vee-1.sym),.net(Vee:1)) Vee:1 (.pin(x_cn_47),.rail(Vee:1));
+place #(.x(48700),.y(45400)) 48700:45400 (.port(x_cn_47));
+net #() net38 (.p(x_cn_47),.n(x_nn_46));
+net #() net39 (.p(x_cn_44),.n(x_nn_48));
+place #(.x(45900),.y(49200)) 45900:49200 (.port(x_nn_48));
+net #() extranet40 (.p(x_nn_48),.n(x_nn_12));
+net #() extranet41 (.p(x_nn_48),.n(x_nn_43));
+port #(.basename(out-1.sym)) Q (.int(x_cn_49),.ext(Q));
+place #(.x(47400),.y(47800)) 47400:47800 (.port(x_cn_49));
+net #() net42 (.p(x_cn_49),.n(x_nn_10));
+net #() extranet43 (.p(x_nn_10),.n(x_nn_11));
+net #() net44 (.p(x_nn_14),.n(x_cn_40));
+net #() extranet45 (.p(x_nn_14),.n(x_nn_17));
+endmodule // dlatch
+
+// list 
+dlatch #() mydlatch (.D(d),.\_D\_(xd),.CLK(clk),.\_Q\_(xq),.V+(vdd),.V-(0),.Q(q));
+cmosp: rsh - rs - rd conflict: using rsh
+cmosp: is - js conflict
+.model cmosn nmos1 ( level=1 kp=41.5964u vto=0.8 gamma=0.863074 phi=0.6 lambda=.01 tox=41.8n nsub=15.3142E+15 nss=1.E+12 xj=400.n uo=503.521 tpg=1 tnom=NA( 27.) fc=0.5 pb=0.7 cj=384.4u mj=0.4884 cjsw=527.2p mjsw=0.3002 is=NA( 10.f) js=0. rsh=0. cbd=0. cbs=0. cgso=218.971p cgdo=218.971p cgbo=0. ld=265.073n)
+.model cmosp pmos1 ( level=1 kp=41.5964u vto=-0.844345 gamma=0.863074 phi=0.6 lambda=.01 tox=41.8n nsub=15.3142E+15 nss=1.E+12 xj=400.n uo=503.521 tpg=1 tnom=NA( 27.) fc=0.5 pb=0.7 cj=384.4u mj=0.4884 cjsw=527.2p mjsw=0.3002 is=0 js=0. rsh=0. rd=0. rs=0. cbd=0. cbs=0. cgso=218.971p cgdo=218.971p cgbo=0. ld=265.073n)
+.subckt NMOS_TRANSISTOR ( D G S B )
+m ( D G S B )  cmosn  l=l w=w
+.ends NMOS_TRANSISTOR
+.subckt PMOS_TRANSISTOR ( D G S B )
+m ( D G S B )  cmosp  l=l w=w
+.ends PMOS_TRANSISTOR
+.subckt dlatch ( D \_D\_ CLK \_Q\_ V+ V- Q )
+*v 20130925 2 
+*comment (incomplete) title-B.sym
+M4 ( x_cn_1 x_cn_2 x_cn_3 x_cn_0 )  PMOS_TRANSISTOR  basename=asic-pmos-1.sym description=low l=1u model-name=pmos4 w=2u
+47100:48600 ( x_cn_0 )  place  x=47100 y=48600
+47000:48100 ( x_cn_1 )  place  x=47000 y=48100
+46400:48600 ( x_cn_2 )  place  x=46400 y=48600
+47000:49100 ( x_cn_3 )  place  x=47000 y=49100
+M3 ( x_cn_5 x_cn_6 x_cn_7 x_cn_4 )  PMOS_TRANSISTOR  basename=asic-pmos-1.sym description=low l=1u model-name=pmos4 w=2u
+44700:48600 ( x_cn_4 )  place  x=44700 y=48600
+44800:48100 ( x_cn_5 )  place  x=44800 y=48100
+45400:48600 ( x_cn_6 )  place  x=45400 y=48600
+44800:49100 ( x_cn_7 )  place  x=44800 y=49100
+net0 ( x_cn_6 x_nn_8 ) 
+45800:48600 ( x_nn_8 )  place  x=45800 y=48600
+net1 ( x_nn_8 x_nn_9 ) 
+45800:47800 ( x_nn_9 )  place  x=45800 y=47800
+net2 ( x_nn_9 x_nn_10 ) 
+47000:47800 ( x_nn_10 )  place  x=47000 y=47800
+net3 ( x_nn_11 x_cn_1 ) 
+47000:47400 ( x_nn_11 )  place  x=47000 y=47400
+extranet4 ( x_nn_11 x_nn_10 )  net 
+net5 ( x_nn_12 x_nn_13 ) 
+44600:49200 ( x_nn_12 )  place  x=44600 y=49200
+47200:49200 ( x_nn_13 )  place  x=47200 y=49200
+net6 ( x_nn_14 x_nn_15 ) 
+44800:48000 ( x_nn_14 )  place  x=44800 y=48000
+46100:48000 ( x_nn_15 )  place  x=46100 y=48000
+net7 ( x_nn_15 x_nn_16 ) 
+46100:48600 ( x_nn_16 )  place  x=46100 y=48600
+net8 ( x_nn_17 x_cn_5 ) 
+44800:47400 ( x_nn_17 )  place  x=44800 y=47400
+extranet9 ( x_nn_17 x_nn_14 )  net 
+net10 ( x_cn_2 x_nn_16 ) 
+net11 ( x_cn_4 x_nn_18 ) 
+44600:48600 ( x_nn_18 )  place  x=44600 y=48600
+M1 ( x_nn_17 x_cn_20 x_cn_21 x_cn_19 )  NMOS_TRANSISTOR  basename=asic-nmos-1.sym description=low l=1u model-name=nmos4 w=1u
+44900:46900 ( x_cn_19 )  place  x=44900 y=46900
+44200:46900 ( x_cn_20 )  place  x=44200 y=46900
+44800:46400 ( x_cn_21 )  place  x=44800 y=46400
+M2 ( x_nn_11 x_cn_23 x_cn_24 x_cn_22 )  NMOS_TRANSISTOR  basename=asic-nmos-1.sym description=low l=1u model-name=nmos4 w=1u
+46900:46900 ( x_cn_22 )  place  x=46900 y=46900
+47600:46900 ( x_cn_23 )  place  x=47600 y=46900
+47000:46400 ( x_cn_24 )  place  x=47000 y=46400
+net12 ( x_cn_22 x_nn_25 ) 
+46800:46900 ( x_nn_25 )  place  x=46800 y=46900
+net13 ( x_nn_25 x_nn_26 ) 
+46800:46200 ( x_nn_26 )  place  x=46800 y=46200
+net14 ( x_nn_27 x_nn_28 ) 
+44800:46200 ( x_nn_27 )  place  x=44800 y=46200
+47000:46200 ( x_nn_28 )  place  x=47000 y=46200
+extranet15 ( x_nn_27 x_nn_26 )  net 
+net16 ( x_nn_28 x_cn_24 ) 
+net17 ( x_cn_19 x_nn_29 ) 
+45000:46900 ( x_nn_29 )  place  x=45000 y=46900
+net18 ( x_nn_29 x_nn_30 ) 
+45000:46200 ( x_nn_30 )  place  x=45000 y=46200
+extranet19 ( x_nn_30 x_nn_27 )  net 
+extranet20 ( x_nn_30 x_nn_27 )  net 
+net21 ( x_nn_27 x_cn_21 ) 
+M5 ( x_cn_32 x_cn_33 x_cn_34 x_cn_31 )  NMOS_TRANSISTOR  basename=asic-nmos-1.sym description=low l=1u model-name=nmos4 w=8u
+46000:45300 ( x_cn_31 )  place  x=46000 y=45300
+45900:45800 ( x_cn_32 )  place  x=45900 y=45800
+45300:45300 ( x_cn_33 )  place  x=45300 y=45300
+45900:44800 ( x_cn_34 )  place  x=45900 y=44800
+net22 ( x_cn_32 x_nn_35 ) 
+45900:46200 ( x_nn_35 )  place  x=45900 y=46200
+extranet23 ( x_nn_35 x_nn_27 )  net 
+extranet24 ( x_nn_35 x_nn_27 )  net 
+net25 ( x_cn_31 x_nn_36 ) 
+46100:45300 ( x_nn_36 )  place  x=46100 y=45300
+net26 ( x_nn_37 x_nn_36 ) 
+46100:44600 ( x_nn_37 )  place  x=46100 y=44600
+net27 ( x_cn_34 x_nn_38 ) 
+45900:44500 ( x_nn_38 )  place  x=45900 y=44500
+net28 ( x_nn_39 x_nn_37 ) 
+45900:44600 ( x_nn_39 )  place  x=45900 y=44600
+extranet29 ( x_nn_39 x_cn_34 )  net 
+*T 40800 50500 9 10 1 0 0 0 1 
+*D LATCH 
+D ( x_cn_20 D )  port  basename=in-1.sym
+\_D\_ ( x_cn_23 \_D\_ )  port  basename=in-1.sym
+CLK ( x_cn_33 CLK )  port  basename=in-1.sym
+\_Q\_ ( x_cn_40 \_Q\_ )  port  basename=out-1.sym
+44400:48000 ( x_cn_40 )  place  x=44400 y=48000
+net30 ( x_nn_18 x_nn_12 ) 
+net31 ( x_cn_7 x_nn_41 ) 
+44800:49200 ( x_nn_41 )  place  x=44800 y=49200
+extranet32 ( x_nn_41 x_nn_12 )  net 
+net33 ( x_nn_13 x_nn_42 ) 
+47200:48600 ( x_nn_42 )  place  x=47200 y=48600
+net34 ( x_nn_42 x_cn_0 ) 
+net35 ( x_cn_3 x_nn_43 ) 
+47000:49200 ( x_nn_43 )  place  x=47000 y=49200
+extranet36 ( x_nn_43 x_nn_12 )  net 
+V+ ( x_cn_44 V+ )  port  basename=in-1.sym
+45900:49400 ( x_cn_44 )  place  x=45900 y=49400
+Vee:1 ( x_nn_38 Vee:1 )  rail  basename=vee-1.sym net=Vee:1
+V- ( x_cn_45 V- )  port  basename=in-1.sym
+48400:45600 ( x_cn_45 )  place  x=48400 y=45600
+net37 ( x_nn_46 x_cn_45 ) 
+48700:45600 ( x_nn_46 )  place  x=48700 y=45600
+Vee:1 ( x_cn_47 Vee:1 )  rail  basename=vee-1.sym net=Vee:1
+48700:45400 ( x_cn_47 )  place  x=48700 y=45400
+net38 ( x_cn_47 x_nn_46 ) 
+net39 ( x_cn_44 x_nn_48 ) 
+45900:49200 ( x_nn_48 )  place  x=45900 y=49200
+extranet40 ( x_nn_48 x_nn_12 )  net 
+extranet41 ( x_nn_48 x_nn_43 )  net 
+Q ( x_cn_49 Q )  port  basename=out-1.sym
+47400:47800 ( x_cn_49 )  place  x=47400 y=47800
+net42 ( x_cn_49 x_nn_10 ) 
+extranet43 ( x_nn_10 x_nn_11 )  net 
+net44 ( x_nn_14 x_cn_40 ) 
+extranet45 ( x_nn_14 x_nn_17 )  net 
+.ends dlatch
+*// list 
+mydlatch ( d xd clk xq vdd 0 q )  dlatch 
+v1 ( vdd 0 )  DC  5.
+vd ( d 0 )  DC  0.
+vnd ( xd 0 )  DC  5.
+vck ( clk 0 ) pulse iv= 0. pv= 5. delay= 0.2 rise= 0.1 fall= 0.099 width= 0.1 period=NA( Inf)
+cmosp: rsh - rs - rd conflict: using rsh
+cmosp: is - js conflict
+cmosp: rsh - rs - rd conflict: using rsh
+cmosp: is - js conflict
+#         v(clk)   v(d)     v(q)     v(vdd)   v(xd)    v(xq)   
+open circuit: internal node 4
+ 27.      0.       0.       4.16     5.       5.       4.16    
+cmosp: rsh - rs - rd conflict: using rsh
+cmosp: is - js conflict
+cmosp: rsh - rs - rd conflict: using rsh
+cmosp: is - js conflict
+#Time     ev(vck)  v(q)    
+open circuit: internal node 4
+ 0.       0.       4.16    
+ 0.1      0.       4.16    
+ 0.2      0.       4.16    
+ 0.3      5.      -0.049   
+ 0.4      5.      -0.049   
+ 0.5      0.       1.44    
+ 0.6      0.       1.45    
+ 0.7      0.       1.46    
+ 0.8      0.       1.46    
+ 0.9      0.       1.45    
+ 1.       0.       1.46    
