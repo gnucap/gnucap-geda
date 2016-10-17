@@ -1,0 +1,21 @@
+reading file buf.1.sch
+mybuf.P2.local_cmosp: rsh - rs - rd conflict: using rsh
+mybuf.P2.local_cmosp: is - js conflict
+mybuf.P2.local_cmosp: rsh - rs - rd conflict: using rsh
+mybuf.P2.local_cmosp: is - js conflict
+mybuf.P2.local_cmosp: rsh - rs - rd conflict: using rsh
+mybuf.P2.local_cmosp: is - js conflict
+#         v(nin)   v(V1)    v(mybuf.GROUND) v(nout)  v(mybuf.highrail) v(mybuf.lowrail) ev(mybuf.Vlow.v) v(mybuf.Vlow.v) i(mybuf.Vlow.v)
+open circuit: internal node 3
+ 27.      0.       0.       0.       1.89     5.      -5.       5.       5.      -10.u    
+mybuf.P2.local_cmosp: rsh - rs - rd conflict: using rsh
+mybuf.P2.local_cmosp: is - js conflict
+mybuf.P2.local_cmosp: rsh - rs - rd conflict: using rsh
+mybuf.P2.local_cmosp: is - js conflict
+options numdgt=3 
+^ ? O: no match
+mybuf.P2.local_cmosp: rsh - rs - rd conflict: using rsh
+mybuf.P2.local_cmosp: is - js conflict
+open circuit: internal node 3
+int((10 * m0))=-6.
+int(m1)= 4.
