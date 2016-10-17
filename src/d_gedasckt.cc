@@ -185,11 +185,8 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 		trace3("normalized map", i, _part->find_set(i), port[i]);
 	}
 
-	error(bTRACE, "%s: map_subckt_nodes connected components %d\n",
-			long_label().c_str(),
-			_part->count_sets(elt_iter(1), elt_iter(num_nodes_in_subckt+1)));
 //
-   
+	unsigned connected_ports=0;
 	for(unsigned i=1; i<=(unsigned)model->net_nodes(); ++i){
 		unsigned usernumber = model->n_(i-1).t_();
 		unsigned partno=_part->find_set(usernumber);
@@ -201,8 +198,11 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 			throw Exception(long_label() + ": cannot connect ports \"" +
 					_parent->n_(partno-1).n_()->short_label() + "\" and \"" +
 					_parent->n_(i-1).n_()->short_label() + "\"");
-		}else{
+		}else if(n_(i-1).t_() != INVALID_NODE){
+			++connected_ports;
 			port[partno] = n_(i-1).t_();
+			trace2("port conn", i, _parent->n_(i-1).n_()->short_label());
+		}else{
 		}
 	}
 
@@ -223,23 +223,33 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 			// fill _map. local nodes in model to user_number
 			// _map[0] = 0 (ground)
 			unsigned seek = 0; // model->net_nodes();
+			_num_cc = connected_ports;
 			trace1("seek", seek);
 			for (unsigned i=1; i <= num_nodes_in_subckt; ++i) { itested();
 				trace3("num", i, _part->find_set(i), port[_part->find_set(i)]);
+				assert(_part->find_set(i)); // no gnd?
 				if(port[_part->find_set(i)]!=(unsigned)INVALID_NODE){ itested();
 					_map[i] = port[_part->find_set(i)];
 					trace3("port", i, _part->find_set(i), _map[i]);
-				}else if(_map[_part->find_set(i)]<=seek){ itested();
+				}else if(_part->find_set(i)<=seek){ itested();
 					trace3("internal, exists", i, _map[i], seek);
 					_map[i] = _map[_part->find_set(i)];
 				}else{
+					assert(i==_map[i]);
 					seek = _map[i];
 					_map[i] = CKT_BASE::_sim->newnode_subckt();
 					trace4("internal, new", i, _map[i], seek, _sim->_total_nodes);
+					++_num_cc;
 				}
 			}
 		}
 	}
+	trace2("ncc", _num_cc, _part->count_sets(elt_iter(1), elt_iter(num_nodes_in_subckt+1)));
+	assert(_num_cc == _part->count_sets(elt_iter(1), elt_iter(num_nodes_in_subckt+1)));
+
+	error(bTRACE, "%s: map_subckt_nodes connected components %d\n",
+			long_label().c_str(), _num_cc);
+
 	delete[] port;
 	// "map" now contains a translation list,
 	// from subckt local numbers to matrix index numbers
@@ -369,7 +379,7 @@ void DEV_GEDA_SUBCKT::set_port_by_index(uint_t num, std::string& ext_name)
 }
 /*--------------------------------------------------------------------------*/
 double DEV_GEDA_SUBCKT::tr_probe_num(const std::string& x)const
-{itested();
+{
   if (Umatch(x, "p ")) {untested();
     double power = 0.;
     assert(subckt());
@@ -394,6 +404,8 @@ double DEV_GEDA_SUBCKT::tr_probe_num(const std::string& x)const
       power += CARD::probe(*ci,"PS");
     }
     return power;
+  }else if (Umatch(x, "ncc ")) {
+	  return _num_cc;
   }else{itested();
     return COMPONENT::tr_probe_num(x);
   }

@@ -30,19 +30,20 @@ EG_TESTS = \
 	connect.7.sch \
 	D_Latch.sch \
 	eg1.sch \
-           eg1a.sch \
-           eg15.sch \
-           eg2.sch \
-           eg2b.sch \
-           eg25.sch \
-           eg26.sch \
-           eg3.sch \
-           eg34.sch \
-           eg34b.sch \
-           eg4.sch \
-           eg42.sch \
-           eg43.sch \
-           eg5.sch
+	eg1a.sch \
+	eg15.sch \
+	eg2.sch \
+	eg2b.sch \
+	eg25.sch \
+	eg26.sch \
+	eg3.sch \
+	eg34.sch \
+	eg34b.sch \
+	eg4.sch \
+	eg42.sch \
+	eg43.sch \
+	eg5.sch
+
 ER_TESTS = eg1_recon.sh \
            eg15_recon.sh \
            eg2_recon.sh \
@@ -73,12 +74,10 @@ XFAIL_TESTS += eg26_recon.gc
 # a Text element starting with a component name confuses find_type_in_string
 XFAIL_TESTS += eg34b.sch
 
-# incomplete
-XFAIL_TESTS += d_gedasckt.5.gc
-
 GC_TESTS = \
 	$(SCHEMATICS:%.sch=%.gc) \
 	convert.gc \
+	dlatch_tr.gc \
 	d_gedasckt.1.gc \
 	error.1.gc \
 	notfound.gc \
@@ -98,6 +97,9 @@ SCHEMATICS = \
 	d_gedasckt.4.sch \
 	d_gedasckt.5.sch \
 	d_gedasckt.6.sch \
+	d_gedasckt.7.sch \
+	buf.1.sch \
+	buf.2.sch \
 	spice.sch \
 	rail.sch \
 	short.sch \
@@ -112,6 +114,7 @@ $(SCHEMATICS:%.sch=%.out): %.out: $(PWD)/%.sch
 # this includes an extra netlist
 spice.out: $(PWD)/spice_foo.sp
 testbench.out: $(PWD)/dut.sch
+dlatch_tr.out: $(PWD)/D_Latch.sch
 
 $(ER_TESTS) $(CUSTOM_TESTS): %.sh: %.ref
 	@echo "#!/bin/sh" > $@

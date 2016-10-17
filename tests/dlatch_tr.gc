@@ -1,0 +1,51 @@
+options debug
+options numdgt=2
+spice
+
+.model cmosn  nmos ( level=1  vto= 0.8  kp= 41.5964u  gamma= 0.863074
++ phi= 0.6  cbd= 0.  cbs= 0.  pb= 0.7
++ cgso= 218.971p  cgdo= 218.971p  cgbo= 0.  rsh= 0.  cj= 384.4u  mj= 0.4884
++ cjsw= 527.2p  mjsw= 0.3002  js= 0.  tox= 41.8n  nsub= 15.3142E+15
++ nss= 1.E+12  tpg=1  xj= 400.n  ld= 265.073n  uo= 503.521
++ kf= 0.  af= 1.  fc= 0.5  lambda=.01)
+
+.model cmosp  pmos ( level=1  vto=-0.844345  kp= 41.5964u  gamma= 0.863074
++ phi= 0.6  rd= 0.  rs= 0.  cbd= 0.  cbs= 0.  is= 0  pb= 0.7
++ cgso= 218.971p  cgdo= 218.971p  cgbo= 0.  rsh= 0.  cj= 384.4u  mj= 0.4884
++ cjsw= 527.2p  mjsw= 0.3002  js= 0.  tox= 41.8n  nsub= 15.3142E+15
++ nss= 1.E+12  tpg=1  xj= 400.n  ld= 265.073n  uo= 503.521
++ kf= 0.  af= 1.  fc= 0.5 lambda=.01)
+
+.verilog
+module NMOS_TRANSISTOR(D G S B);
+parameter l
+parameter w
+cmosn #(.l(l), .w(w)) m(D,G,S,B);
+endmodule
+
+module PMOS_TRANSISTOR(D G S B);
+parameter l
+parameter w
+cmosp #(.l(l), .w(w)) m(D,G,S,B);
+endmodule
+
+geda "D_Latch.sch" module device="dlatch"
+// list
+
+dlatch #() mydlatch(d,xd,clk,xq,vdd,0,q);
+list
+
+spice
+v1 vdd 0 5
+
+vd d 0 0
+vnd xd 0 5
+vck clk 0 pulse iv=0 pv=5 rise=.1 fall=.099 width=.1 delay=.2
+
+.list
+
+.print op v(nodes)
+.op trace=n
+.print tran ev(vck) v(q)
+.tran 0 1 .1
+.end
