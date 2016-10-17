@@ -14,13 +14,9 @@ d_{net,port,rail,place,gedasckt}.cc implement various geda related devices.
 these express extra semantics of instances found in geda schematics.
 
 ------------
-In order to load lang_geda as a plugin, compile as follows:
-g++ -DHAVE_GEDA -shared -fPIC -o lang_geda.so lang_geda.cc \
-   d_net.cc d_place.cc  $(pkg-config --cflags gtk+-2.0 --libs libgeda)
-
-load as follows
+install, then load as follows
 -------------
-gnucap>load ./lang_geda.so
+gnucap>load lang_geda.so
 -------------
 
 this package now provides (some) component implementations for (some) geda symbols.
