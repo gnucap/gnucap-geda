@@ -176,11 +176,11 @@ void DEV_PORT::set_port_by_index(uint_t i, string& name)
 	DEV_NET::set_port_by_index(i, name);
 
 	std::string portname;
-	if(pinlabel.has_hard_value()){ untested();
+	if(pinlabel.has_hard_value()){
 		portname = pinlabel.string();
-	}else if(net.has_hard_value()){ untested();
+	}else if(net.has_hard_value()){
 		portname = net.string();
-	}else{ untested();
+	}else{
 	//	portname = name;
 		portname = short_label();
 	}

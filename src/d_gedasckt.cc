@@ -198,11 +198,11 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 			throw Exception(long_label() + ": cannot connect ports \"" +
 					_parent->n_(partno-1).n_()->short_label() + "\" and \"" +
 					_parent->n_(i-1).n_()->short_label() + "\"");
-		}else if(n_(i-1).t_() != INVALID_NODE){ untested();
+		}else if(n_(i-1).t_() != INVALID_NODE){
 			++connected_ports;
 			port[partno] = n_(i-1).t_();
 			trace2("port conn", i, _parent->n_(i-1).n_()->short_label());
-		}else{ untested();
+		}else{
 		}
 	}
 
@@ -379,7 +379,7 @@ void DEV_GEDA_SUBCKT::set_port_by_index(uint_t num, std::string& ext_name)
 }
 /*--------------------------------------------------------------------------*/
 double DEV_GEDA_SUBCKT::tr_probe_num(const std::string& x)const
-{ untested();
+{
   if (Umatch(x, "p ")) {untested();
     double power = 0.;
     assert(subckt());
@@ -404,7 +404,7 @@ double DEV_GEDA_SUBCKT::tr_probe_num(const std::string& x)const
       power += CARD::probe(*ci,"PS");
     }
     return power;
-  }else if (Umatch(x, "ncc ")) {untested();
+  }else if (Umatch(x, "ncc ")) {
 	  return _num_cc;
   }else{itested();
     return COMPONENT::tr_probe_num(x);
