@@ -100,6 +100,7 @@ private:
   unsigned *_map;
   const MODEL_GEDA_SUBCKT* _parent;
   node_t _nodes[PORTS_PER_SUBCKT];
+  unsigned _num_cc; // number connected components
 };
 /*--------------------------------------------------------------------------*/
 class INTERFACE MODEL_GEDA_SUBCKT : public DEV_GEDA_SUBCKT {
