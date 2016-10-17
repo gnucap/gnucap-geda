@@ -1,4 +1,3 @@
-load f_random.so
 load lang_geda.so
 load lang_adms.so
 load c_debug.so
@@ -11,11 +10,6 @@ spice
 .param bias=.1m
 
 .options language=verilog
-
-param mcvth = agauss(0,1)
-eval mcvth
-param mcmu = agauss(0,1)
-
 
 spice
 
