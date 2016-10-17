@@ -29,6 +29,7 @@ spice
 + ev(myamp.Vlow.v)
 + v(myamp.Vlow.v)
 + i(myamp.Vlow.v)
++ ncc(myamp)
 
 .op
 .end

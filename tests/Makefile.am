@@ -97,6 +97,9 @@ SCHEMATICS = \
 	d_gedasckt.4.sch \
 	d_gedasckt.5.sch \
 	d_gedasckt.6.sch \
+	d_gedasckt.7.sch \
+	buf.1.sch \
+	buf.2.sch \
 	spice.sch \
 	rail.sch \
 	short.sch \
