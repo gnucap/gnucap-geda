@@ -161,12 +161,15 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 	// _map maps nodes to nets.
 	// some of them are external
 	// namely model->n_(i).t_() for i < net_nodes()
-	for (unsigned i=1; i <= (unsigned)model->net_nodes(); ++i) {
+	for (unsigned i=1; i <= (unsigned)model->net_nodes(); ++i) { untested();
 		trace4("model port", long_label(), i, model->n_(i-1).t_(), n_(i-1).t_());
-		if(n_(i-1).t_()==INVALID_NODE){ incomplete();
-			// port has never been connected
-		}else{
+		if(n_(i-1).t_()!=INVALID_NODE){
 			trace1("..", n_(i-1).e_());
+		}else{ incomplete();
+			error(bPICKY, "%s: port #%d (%s) never connected\n",
+					long_label().c_str(), i,
+					port_name(i-1).c_str());
+		}else{
 		}
 		trace2("model port", (this), (model));
 //		unsigned usernumber = model->n_(i-1).t_();
