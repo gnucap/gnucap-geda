@@ -1,0 +1,24 @@
+options picky
+
+spice
+.subckt RESISTOR ( 1 2 )
+r ( 1 2 )  resistor value
+.ends RESISTOR
+
+.verilog
+
+module VOLTAGE_SOURCE ( 1 2 )
+vsource #(value) v( 1 2 )
+endmodule VOLTAGE_SOURCE
+
+geda auto_top.2.sch
+
+
+spice
+.options insensitive=0
+
+* .mstat
+
+.dc
+
+.end

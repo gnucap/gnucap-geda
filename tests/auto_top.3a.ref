@@ -1,0 +1,5 @@
+reading file auto_top.3a.sch
+reading file auto_dut.3a.sch
+dut0: port #3 (3) autoconnect to toprail
+#           i(V1.v)   
+ 0.        -1.9997    

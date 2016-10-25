@@ -1,0 +1,102 @@
+dut0: port #3 (3) never connected
+*// This File is part of gnucap-geda 
+*// (C) 2012 Felix Salfelder 
+*// GPLv3 or later 
+*// mapping geda-symbols to actual devices 
+*// "analog" section 
+.subckt CAPACITOR ( 1 2 )
+c ( 1 2 )  capacitor value
+.ends CAPACITOR
+.subckt POLARIZED_CAPACITOR ( p n )
+*// nothing yet 
+.ends POLARIZED_CAPACITOR
+.subckt RESISTOR ( 1 2 )
+r ( 1 2 )  resistor value
+.ends RESISTOR
+.subckt BATTERY ( n p )
+v ( n p )  vsource value
+.ends BATTERY
+.subckt VOLTAGE_SOURCE ( 1 2 )
+v ( 1 2 )  vsource value
+.ends VOLTAGE_SOURCE
+.subckt CURRENT_SOURCE ( 1 2 )
+i ( p n )  isource value
+.ends CURRENT_SOURCE
+.subckt BC547 ( 1 2 3 4 )
+*// nothing yet 
+.ends BC547
+.subckt TRANSFORMER ( 1 2 3 4 5 6 7 )
+*// not yet 
+.ends TRANSFORMER
+.subckt NMOS_TRANSISTOR ( D G S B )
+.model cmosn_local nmos1 ( level=1 kp=41.5964u vto=0.8 gamma=0.863074 phi=0.6 lambda=.01 tox=41.8n nsub=15.3142E+15 nss=1.E+12 xj=400.n uo=503.521 tpg=1 tnom=NA( 27.) fc=0.5 pb=0.7 cj=384.4u mj=0.4884 cjsw=527.2p pbsw=NA( NA) mjsw=0.3002 is=NA( 10.f) js=0. rsh=0. cbd=0. cbs=0. cgso=218.971p cgdo=218.971p cgbo=0. ld=265.073n)
+m ( D G S B )  cmosn_local  l=l w=w
+.ends NMOS_TRANSISTOR
+.subckt PMOS_TRANSISTOR ( D G S B )
+.model local_cmosp pmos1 ( level=1 kp=41.5964u vto=-0.8 gamma=0.863074 phi=0.6 lambda=.01 tox=41.8n nsub=15.3142E+15 nss=1.E+12 xj=400.n uo=503.521 tpg=1 tnom=NA( 27.) fc=0.5 pb=0.7 cj=384.4u mj=0.4884 cjsw=527.2p pbsw=NA( NA) mjsw=0.3002 is=0 js=0. rsh=0. rd=0. rs=0. cbd=0. cbs=0. cgso=218.971p cgdo=218.971p cgbo=0. ld=265.073n)
+m ( D G S B )  local_cmosp  l=l w=w
+.ends PMOS_TRANSISTOR
+.subckt NPN_TRANSISTOR ( C B E )
+*// later.. 
+.ends NPN_TRANSISTOR
+.subckt LED ( CATHODE ANODE )
+*// nothing 
+.ends LED
+*v 20130925 2 
+*comment (incomplete) title-B.sym
+net0 ( x_nn_0 x_nn_1 )  net 
+46100:45200 ( x_nn_0 )  place  x=46100 y=45200
+46100:46300 ( x_nn_1 )  place  x=46100 y=46300
+V1 ( x_cn_2 x_cn_3 )  VOLTAGE_SOURCE  basename=voltage-3.sym value=1
+43900:46900 ( x_cn_2 )  place  x=43900 y=46900
+43900:46000 ( x_cn_3 )  place  x=43900 y=46000
+net1 ( x_nn_4 x_cn_3 )  net 
+43900:45200 ( x_nn_4 )  place  x=43900 y=45200
+net2 ( x_cn_2 x_nn_5 )  net 
+43900:47900 ( x_nn_5 )  place  x=43900 y=47900
+nhi ( x_nn_5 x_nn_6 )  net 
+49300:47900 ( x_nn_6 )  place  x=49300 y=47900
+net4 ( x_nn_7 x_nn_8 )  net 
+46100:47900 ( x_nn_7 )  place  x=46100 y=47900
+46100:47200 ( x_nn_8 )  place  x=46100 y=47200
+extranet5 ( x_nn_7 x_nn_5 )  net 
+0 ( x_nn_4 0 )  rail  basename=gnd-1.sym net=0
+0 ( x_nn_0 0 )  rail  basename=gnd-1.sym net=0
+.subckt DUT ( 1 2 3 )
+*v 20130925 2 
+*comment (incomplete) title-B.sym
+*T 50000 40700 9 10 1 0 0 0 1 
+*Device under test 
+*T 53900 40100 9 10 1 0 0 0 1 
+*felix 
+P1 ( x_cn_9 1 )  port  basename=spice-subcircuit-IO-1.sym pinseq=1 pinlabel=1
+45900:46800 ( x_cn_9 )  place  x=45900 y=46800
+P2 ( x_cn_10 2 )  port  basename=spice-subcircuit-IO-1.sym pinseq=2 pinlabel=2
+47900:46800 ( x_cn_10 )  place  x=47900 y=46800
+R1 ( x_cn_11 x_cn_12 )  RESISTOR  basename=resistor-1.sym class=DISCRETE pins=2 value=1
+46400:46800 ( x_cn_11 )  place  x=46400 y=46800
+47300:46800 ( x_cn_12 )  place  x=47300 y=46800
+net6 ( x_cn_11 x_cn_9 )  net 
+net7 ( x_cn_12 x_cn_10 )  net 
+P3 ( x_cn_13 3 )  port  basename=spice-subcircuit-IO-1.sym pinseq=3 pinlabel=3
+48000:45600 ( x_cn_13 )  place  x=48000 y=45600
+R1 ( x_cn_14 x_cn_15 )  RESISTOR  basename=resistor-1.sym class=DISCRETE pins=2 value=1
+46500:45600 ( x_cn_14 )  place  x=46500 y=45600
+47400:45600 ( x_cn_15 )  place  x=47400 y=45600
+net8 ( x_nn_16 x_nn_17 )  net 
+46100:46800 ( x_nn_16 )  place  x=46100 y=46800
+46100:45600 ( x_nn_17 )  place  x=46100 y=45600
+extranet9 ( x_nn_16 x_cn_11 )  net 
+net10 ( x_nn_17 x_cn_14 )  net 
+net11 ( x_cn_15 x_cn_13 )  net 
+.ends DUT
+dut0 ( x_nn_1 x_nn_8 )  DUT  basename=resistor-2.sym source=auto_dut.1.sch
+*T 50000 40700 9 10 1 0 0 0 1 
+*Testbench 
+*T 53900 40100 9 10 1 0 0 0 1 
+*felix 
+a ( x_nn_6 )  port  basename=spice-subcircuit-IO-1.sym pinlabel=a
+* .mstat 
+dut0: port #3 (3) never connected
+#          
+ 0.        

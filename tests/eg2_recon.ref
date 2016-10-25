@@ -1,4 +1,6 @@
-v 20110115 2
+Q1: port #4 (4) never connected
+Q2: port #4 (4) never connected
+v 20110115 2 
 C 46400 44400 1 0 0 resistor-1.sym
 {
 T 46400 44400 5 10 0 1 0 0 1

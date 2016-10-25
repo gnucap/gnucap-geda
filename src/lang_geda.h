@@ -20,5 +20,11 @@
  */
 
 // nodes with names prefixed by this are considered internal.
-#define INT_PREFIX "_%"
+#define INT_PREFIX string("x_")
+
+/*--------------------------------------------------------------------------*/
+namespace geda{ //
+typedef enum {dnOPEN, dnGND, dnAUTO} dn_t;
+extern std::string int_prefix;
+}
 /*--------------------------------------------------------------------------*/

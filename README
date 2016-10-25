@@ -24,3 +24,28 @@ e.g. if you use "analog" symbols from geda, use "`gedalib analog.v" to load the
 implementations. (this is slightly in flux/under construction).
 
 this gnucap-module package works best with unstable gnucap (or gnucap-uf).
+
+--------
+note on default connections. (not to be confused with global nets. global nets
+are mad).
+
+there's a schematic behind a symbol, it can have more ports than the symbol
+has. there are some options to handle this. we use a "default_value" attribute
+for port instances and a "default_connect" option for symbols.
+
+(this mechanism does not handle ports with pins in the symbol, but without a
+connection in the schematic. those are just "open", as indicated by the red
+higlighted open ends in the schematic.).
+
+a symbol instance has an attribute "default_connect". it defaults to the
+"default_connect" option passed to the geda command (which defaults to
+"open"). these are the possible values.
+- "open". leave open
+- "auto", connect those ports with "default_value" attribute to the net in
+  symbol scope with this name.
+- "promiscuous". as "auto", but use the port name if "default_value" is not
+  set. see [1].
+- "ground". connect to ground, 0
+- maybe later: "global". don't know how to represent.
+
+[1] the "port name" is the first available out of "net" and "refdes". otherwise it is the internal name of the wire end.

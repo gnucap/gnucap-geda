@@ -1,0 +1,14 @@
+options picky
+
+geda auto_top.1.sch
+
+verilog
+
+spice
+.options insensitive=0
+
+* .mstat
+.list
+.dc
+
+.end
