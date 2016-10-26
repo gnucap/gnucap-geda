@@ -172,7 +172,7 @@ void DEV_PORT::set_port_by_index(uint_t i, std::string& name)
 {
 	trace2("DEV_PORT::set_port_by_index", i, name);
 
-	if(i){ untested();
+	if(i){
 		// reachable when parsing non-gschem netlist
 		// containing ports with 2 connections.
 		return;
@@ -196,10 +196,10 @@ void DEV_PORT::set_port_by_index(uint_t i, std::string& name)
 		unsigned portpos = o->net_nodes();
 		CARD_LIST empty;
 
-		if(_pinseq.has_hard_value()){ untested();
+		if(_pinseq.has_hard_value()){
 			// ouch.
 			portpos = atoi(_pinseq.string().c_str())-1;
-		} else { untested();
+		} else {
 			// rely on pinlabel?
 		}
 
@@ -214,14 +214,14 @@ void DEV_PORT::set_port_by_index(uint_t i, std::string& name)
 			}else{
 			}
 		}
-		if(done){ untested();
-		}else{ untested();
+		if(done){
+		}else{
 			// new port
-			if(MODEL_GEDA_SUBCKT* o = dynamic_cast<MODEL_GEDA_SUBCKT*>(owner())){ untested();
+			if(MODEL_GEDA_SUBCKT* o = dynamic_cast<MODEL_GEDA_SUBCKT*>(owner())){
 				std::string default_value="";
 				if(_default_value.has_hard_value()){
 					default_value=_default_value.string();
-				}else{untested();
+				}else{
 				}
 				trace2("port", _default_value, default_value);
 				o->set_port_by_index(portpos, portname, default_value);

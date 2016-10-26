@@ -1069,7 +1069,7 @@ MODEL_SUBCKT* LANG_GEDA::parse_module(CS& cmd, MODEL_SUBCKT* x)
 	if(_C->has_key("source")){
 		GEDA_SYMBOL* tmp=_C;
 		_C = NULL;
-		if(MODEL_GEDA_SUBCKT* X = dynamic_cast<MODEL_GEDA_SUBCKT*>(x)){ untested();
+		if(MODEL_GEDA_SUBCKT* X = dynamic_cast<MODEL_GEDA_SUBCKT*>(x)){
 			trace1("found a source thing", _defconn);
 			X->set_defconn(_defconn);
 		}
@@ -1403,7 +1403,7 @@ std::string LANG_GEDA::find_type_in_string(CS& cmd)const
 	//trace2("find_type_in_string", cmd.fullstring(),type);
 	if(reset){
 		cmd.reset(here);
-	}else{itested();
+	}else{
 	}
 	return type;    // returns the type of the string
 }
@@ -1944,7 +1944,7 @@ class CMD_C : public CMD { //
 		COMPONENT* new_compon = prechecked_cast<COMPONENT*>(clone);
 
 		// hmm hack
-		if(MODEL_GEDA_SUBCKT* X = dynamic_cast<MODEL_GEDA_SUBCKT*>(new_compon)){ untested();
+		if(MODEL_GEDA_SUBCKT* X = dynamic_cast<MODEL_GEDA_SUBCKT*>(new_compon)){
 			X->set_defconn(lang_geda._defconn);
 		}
 
