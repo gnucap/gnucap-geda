@@ -307,6 +307,8 @@ EXTRA_DIST = \
 	auto_top.2.sch \
 	auto_dut.3.sch \
 	auto_top.3.sch \
+	auto_dut.3a.sch \
+	auto_dut.3b.sch \
 	bogus.sch bogus.ref \
 	gafrc \
 	$(EG_TESTS:%.sch=%.ref) \
