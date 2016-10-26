@@ -1,16 +1,15 @@
 For lang_geda (gEDA plugin)
 
 **TODO (In the order of preference)
-- handle unconnected ports (currently: open)
-- default port values (how?)
-- global nets (via default values?)
+- read submodules during expand, not parse.
 - rearrange !_-prefixed declarations
 - gEDA style commands
 - Create augmented verilog netlist from a verilog netlist
-- replace extranet by multiport net (needed?)
+- replace extranet by multiport net (requires better node-contraction?)
+- global nets (via default values?)
 
 **don't know how
-- print hierarchical schematic in a useful way
+- handle hierarchical schematic in a useful way
 
 **gnucap issues (0.36), (*)=fixed/hacked/worked\ around for gnucap-uf
 - precalc_first is 'printing parameter <basename> has no value' (*)
