@@ -25,6 +25,7 @@
 #include <e_paramlist.h>
 #include <e_subckt.h>
 #include <boost/pending/disjoint_sets.hpp>
+#include <lang_geda.h>
 //#include <m_part.h>
 
 #ifndef HAVE_UINT_T
@@ -36,7 +37,7 @@ typedef int uint_t;
 /*--------------------------------------------------------------------------*/
 class MODEL_GEDA_SUBCKT;
 /*--------------------------------------------------------------------------*/
-class DEV_GEDA_SUBCKT : public BASE_SUBCKT {
+class INTERFACE DEV_GEDA_SUBCKT : public BASE_SUBCKT {
   friend class MODEL_GEDA_SUBCKT;
 private:
   explicit	DEV_GEDA_SUBCKT(const DEV_GEDA_SUBCKT&);
@@ -74,6 +75,7 @@ private:
   int param_count_dont_print()const {return common()->COMMON_COMPONENT::param_count();}
 
   std::string port_name(uint_t i)const;
+  std::string port_default(uint_t i)const;
   CARD*	clone()const		{return new DEV_GEDA_SUBCKT(*this);}
 public:
   void set_port_by_index(uint_t num, std::string& ext_name);
@@ -95,6 +97,7 @@ public:
   }
 #endif
 private:
+  void default_connect(const CARD* model);
   void set_parent(const MODEL_GEDA_SUBCKT* p);
   PARTITION *_part;
   unsigned *_map;
@@ -113,7 +116,7 @@ public: // override virtual
   char id_letter()const	{untested();return '\0';}
   CARD* clone_instance()const;
   CARD* clone()const		{return new MODEL_GEDA_SUBCKT(*this);}
-  void set_port_by_index(uint_t num, std::string& ext_name);
+  void set_port_by_index(uint_t num, std::string& ext_name, std::string default_net="");
   bool		makes_own_scope()const  {return true;}
   CARD_LIST*	   scope()		{assert(subckt()); return subckt();}
   const CARD_LIST* scope()const		{assert(subckt()); return subckt();}
@@ -139,7 +142,14 @@ private: // no-ops for prototype
   bool do_tr(){return true;}
   bool tr_needs_eval()const{untested(); return false;}
   void tr_queue_eval(){}
-  std::string port_name(uint_t)const {return "";}
+  std::string port_name(uint_t)const {return "";} // hmm why ""?
+private:
+  std::vector<std::string> _defaults;
+  std::string _defconn; // PARAMETER<string>...?
+public: // hmm, friends?
+  std::string defconn() const{return _defconn;}
+  void set_defconn(std::string x){_defconn=x;}
+  std::string port_default(uint_t i)const;
 };
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/

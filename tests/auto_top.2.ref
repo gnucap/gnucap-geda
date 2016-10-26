@@ -1,0 +1,5 @@
+dut0: port #3 (3) never connected
+#          
+dut0.R1.r: short circuit
+dut0.R1.r: short circuit
+ 0.        

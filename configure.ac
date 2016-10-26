@@ -42,7 +42,11 @@ AC_SUBST([GC_CPPFLAGS])
 # Checks for typedefs, structures, and compiler characteristics.
 
 # FIXME: check for gnucap-conf availability
-gnucap_libdir=$(gnucap-conf$_program_suffix --libdir)
+if test "x${prefix}" = "xNONE"; then
+gnucap_libdir="$(gnucap-conf$_program_suffix --libdir)"
+else
+gnucap_libdir="$libdir"/$PACKAGE_NAME
+fi
 AC_SUBST([gnucap_libdir])
 
 # Checks for library functions.

@@ -1,0 +1,53 @@
+>>>>>spice 
+>>>>>.verilog 
+>>>>>module RESISTOR(1 2); 
+>>>>>parameter value=1; 
+>>>>>module VOLTAGE_SOURCE ( 1 2 ) 
+>>>>>geda auto_top.3a.sch default_connect=auto 
+reading file auto_top.3a.sch
+>>>>>gC
+reading file auto_dut.3a.sch
+>>>>>spice 
+>>>>>.options insensitive=0 
+>>>>>.print dc i(V1.v) 
+dut0: port #3 (3) never connected
+dut0: port #3 (3) autoconnect to toprail
+V1: map_subckt_nodes net: 2 sckt: 2
+V1: map_subckt_nodes connected components 2
+collapse dut0: x_cn_9 (3), 1(1)
+collapse dut0: x_cn_10 (4), 2(2)
+collapse dut0: x_cn_11 (5), x_cn_9(3)
+collapse dut0: x_cn_12 (6), x_cn_10(4)
+collapse dut0: x_cn_13 (7), 3(8)
+collapse dut0: x_nn_16 (11), x_nn_17(12)
+collapse dut0: x_nn_16 (11), x_cn_12(6)
+collapse dut0: x_cn_15 (10), x_cn_13(7)
+collapse dut0: x_cn_14 (9), x_nn_17(12)
+dut0: map_subckt_nodes net: 3 sckt: 12
+dut0: map_subckt_nodes connected components 3
+collapse dut0: x_cn_9 (3), 1(1)
+collapse dut0: x_cn_10 (4), 2(2)
+collapse dut0: x_cn_11 (5), x_cn_9(3)
+collapse dut0: x_cn_12 (6), x_cn_10(4)
+collapse dut0: x_cn_13 (7), 3(8)
+collapse dut0: x_nn_16 (11), x_nn_17(12)
+collapse dut0: x_nn_16 (11), x_cn_12(6)
+collapse dut0: x_cn_15 (10), x_cn_13(7)
+collapse dut0: x_cn_14 (9), x_nn_17(12)
+dut0.R1: map_subckt_nodes net: 2 sckt: 2
+dut0.R1: map_subckt_nodes connected components 2
+dut0.R2: map_subckt_nodes net: 2 sckt: 2
+dut0.R2: map_subckt_nodes connected components 2
+>>>>>.dc 
+collapse dut0: x_cn_9 (3), 1(1)
+collapse dut0: x_cn_10 (4), 2(2)
+collapse dut0: x_cn_11 (5), x_cn_9(3)
+collapse dut0: x_cn_12 (6), x_cn_10(4)
+collapse dut0: x_cn_13 (7), 3(8)
+collapse dut0: x_nn_16 (11), x_nn_17(12)
+collapse dut0: x_nn_16 (11), x_cn_12(6)
+collapse dut0: x_cn_15 (10), x_cn_13(7)
+collapse dut0: x_cn_14 (9), x_nn_17(12)
+#           i(V1.v)   
+ 0.        -1.9997    
+>>>>>.end 

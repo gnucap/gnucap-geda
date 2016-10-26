@@ -1,0 +1,27 @@
+options trace
+
+spice
+
+.verilog
+
+module RESISTOR(1 2);
+	parameter value=1;
+	resistor #(.r(value)) r(1,2);
+endmodule
+
+module VOLTAGE_SOURCE ( 1 2 )
+vsource #(value) v( 1 2 )
+endmodule VOLTAGE_SOURCE
+
+geda auto_top.3.sch default_connect=promiscuous
+
+
+spice
+.options insensitive=0
+
+.list
+
+.print dc i(V1.v)
+.dc
+
+.end

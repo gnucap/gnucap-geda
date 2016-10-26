@@ -2,6 +2,8 @@ plugindir = @gnucap_libdir@
 
 PLUGIN_LDFLAGS=-module -shared
 
+pkginclude_HEADERS = lang_geda.h
+
 plugin_LTLIBRARIES = lang_geda.la
 lang_geda_la_CPPFLAGS = $(GEDA_CFLAGS) @GC_CPPFLAGS@
 lang_geda_la_CXXFLAGS = -std=c++0x

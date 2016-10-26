@@ -1,4 +1,12 @@
-v 20130925 2
+Q?: port #4 (4) never connected
+Q?: port #4 (4) never connected
+Q?: port #4 (4) never connected
+Q?: port #4 (4) never connected
+Q?: port #4 (4) never connected
+Q?: port #4 (4) never connected
+Q?: port #4 (4) never connected
+Q?: port #4 (4) never connected
+v 20130925 2 
 C 41800 43900 1 0 0 BC547-1.sym
 {
 T 41800 43900 5 10 0 1 0 0 1

@@ -64,6 +64,9 @@ XFAIL_TESTS =
 # empty line in comment, breaks counter.
 XFAIL_TESTS += comment.1.sch
 
+# promiscuous incomplete
+XFAIL_TESTS += auto_top.4.gc
+
 # something wrong with lm741 symbol (pinseq?)
 # need workaround.
 XFAIL_TESTS += eg25_recon.gc
@@ -92,6 +95,12 @@ TESTS = $(EG_TESTS) \
 
 # each of these induce a test.
 SCHEMATICS = \
+	auto_top.1.sch \
+	auto_top.2.sch \
+	auto_top.3.sch \
+	auto_top.3a.sch \
+	auto_top.3b.sch \
+	auto_top.4.sch \
 	d_gedasckt.2.sch \
 	d_gedasckt.3.sch \
 	d_gedasckt.4.sch \
@@ -115,6 +124,15 @@ $(SCHEMATICS:%.sch=%.out): %.out: $(PWD)/%.sch
 spice.out: $(PWD)/spice_foo.sp
 testbench.out: $(PWD)/dut.sch
 dlatch_tr.out: $(PWD)/D_Latch.sch
+
+auto_top.1.out: $(PWD)/auto_dut.1.sch
+auto_top.1.out: $(PWD)/auto_top.1.sch
+
+auto_top.2.out: $(PWD)/auto_dut.2.sch
+auto_top.3.out: $(PWD)/auto_dut.3.sch
+auto_top.3a.out: $(PWD)/auto_dut.3a.sch
+auto_top.3b.out: $(PWD)/auto_dut.3b.sch
+auto_top.4.out: $(PWD)/auto_dut.4.sch
 
 $(ER_TESTS) $(CUSTOM_TESTS): %.sh: %.ref
 	@echo "#!/bin/sh" > $@
@@ -155,6 +173,7 @@ $(ER_TESTS:%.sh=%.gc): %_recon.gc: %.out
 eg34.sch.out: EXTRA_CMD=options nowarn
 eg26.sch.out: EXTRA_CMD=options nowarn
 
+nets.sch.out: .P
 nets.sch.out: nets.sch
 	$(GNUCAP_ENV) $(GNUCAP_GEDA) -a $(MODULE) $< |grep ^net | wc -l > $@
 
@@ -162,6 +181,7 @@ $(ER_TESTS:%.sh=%.log): %.log: %.out
 # $(EG_TESTS:%.sch=%.log): %.log: %.sch.out
 $(CUSTOM_TESTS:%.sh=%.log): %.log: %.out
 
+bogus.sch.out: .P
 bogus.sch.out: $(PWD)/bogus.sch
 	$(GNUCAP_ENV) $(GNUCAP_GEDA) -a $(MODULE) $< > $@
 
@@ -179,6 +199,8 @@ $(PWD)/%.sp: $(abs_srcdir)/%.sp
 
 res_net.out testbench.out: GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
 convert.out: $(PWD)/res_net.sch
+
+auto_top.1.out: GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
 
 EXTRA_SED_ARG =
 EXTRA_DIFF_ARG =
@@ -279,6 +301,14 @@ EXTRA_DIST = \
 	sch_log_compiler \
 	nets.sch nets.ref spice_foo.sp \
 	dut.sch \
+	auto_dut.1.sch \
+	auto_top.1.sch \
+	auto_dut.2.sch \
+	auto_top.2.sch \
+	auto_dut.3.sch \
+	auto_top.3.sch \
+	auto_dut.3a.sch \
+	auto_dut.3b.sch \
 	bogus.sch bogus.ref \
 	gafrc \
 	$(EG_TESTS:%.sch=%.ref) \
