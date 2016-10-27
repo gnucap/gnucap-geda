@@ -136,7 +136,7 @@ nesting.out: $(PWD)/nesting.sch
 spice.out: $(PWD)/spice_foo.sp
 testbench.out: $(PWD)/dut.sch
 dlatch_tr.out: $(PWD)/D_Latch.sch
-divide_by_two.out inv_tr.out: $(PWD)/CMOS_Inverter.sch
+invtb.out divide_by_two.out inv_tr.out: $(PWD)/CMOS_Inverter.sch
 
 auto_top.1.out: $(PWD)/auto_dut.1.sch
 auto_top.1.out: $(PWD)/auto_top.1.sch

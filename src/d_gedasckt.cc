@@ -82,7 +82,7 @@ void MODEL_GEDA_SUBCKT::set_port_by_index(uint_t num, std::string& ext_name,
   }
   if(_defaults.size()<=(unsigned)num){
 	  _defaults.resize(num+1);
-  }else{ untested();
+  }else{
   }
   _defaults[num] = def;
 }
@@ -133,24 +133,24 @@ DEV_GEDA_SUBCKT::~DEV_GEDA_SUBCKT()
 /*--------------------------------------------------------------------------*/
 // map a node, so we can connect to it
 void DEV_GEDA_SUBCKT::trysomehing(std::string x)
-{ untested();
+{
 
   NODE_MAP* Map = subckt()->nodes();
   NODE_MAP* ModelMap = _parent->subckt()->nodes();
   trace4("trying something", long_label(), x, Map->how_many(), ModelMap->how_many());
   assert(Map);
-  if( (*Map)[x] ){ untested();
+  if( (*Map)[x] ){
 	  trace0("it's there");
 	  // we have been here. probably nothing left to do.
   //}else if( NODE* N=(*_parent->scope()->nodes())[x] ){ untested();
-  }else if( NODE* N=(*ModelMap)[x] ){ untested();
+  }else if( NODE* N=(*ModelMap)[x] ){
 	  error(bDEBUG, "Preparing existing node %s in %s\n",
 			  x.c_str(), long_label().c_str());
 	  trace2("founda node in model", N->long_label(), N->user_number());
 	  // apply the the user number, as in the model.
 	  NODE* XX = Map->new_node(x);
 	  XX->set_user_number(N->user_number());
-  }else{untested();
+  }else{
 	  error(bDEBUG, "Creating new node %s in %s\n",
 			  x.c_str(), long_label().c_str());
 	  // the model does not know that node either. invent it.
@@ -171,10 +171,10 @@ void DEV_GEDA_SUBCKT::set_parent(const MODEL_GEDA_SUBCKT* p)
 	}
 
 	_parent = p;
-	if(p->defconn()!=""){ untested();
+	if(p->defconn()!=""){
 		// hmm
 		set_param_by_name("default_connect", p->defconn());
-	}else{ untested();
+	}else{
 		// hmm
 		set_param_by_name("default_connect", p->defconn());
 	}
@@ -250,7 +250,7 @@ void DEV_GEDA_SUBCKT::default_connect(const CARD* model)
 			}else if(defcon=="open"){ untested();
 			}else if(defcon=="auto" || defcon=="promiscuous"){
 				trace1("auto", dp);
-				if(dp!=""){ untested();
+				if(dp!=""){
 					error(bDEBUG, "%s: port #%d (%s) autoconnect to %s\n",
 							long_label().c_str(), i,
 							port_name(i-1).c_str(),
@@ -258,7 +258,7 @@ void DEV_GEDA_SUBCKT::default_connect(const CARD* model)
 					// hmm only works if that node already exists...
 					trace1("", port_value(i-1));
 					incomplete();
-					if(owner()==NULL){ untested();
+					if(owner()==NULL){
 						// this creates a new top level node and connects
 						// to the dangling port.
 						set_port_by_index(i-1, dp);
@@ -269,7 +269,7 @@ void DEV_GEDA_SUBCKT::default_connect(const CARD* model)
 					}else{ incomplete();
 						error(bWARNING, "i cannot help you\n");
 					}
-				}else{ untested();
+				}else{
 					error(bPICKY, "%s: port #%d (%s) autoconnect but no name\n",
 							long_label().c_str(), i,
 							port_name(i-1).c_str());
