@@ -1,0 +1,86 @@
+options debug
+options numdgt=2
+spice
+
+.model cmosn  nmos ( level=1  vto= 0.8  kp= 41.5964u  gamma= 0.863074
++ phi= 0.6  cbd= 0.  cbs= 0.  pb= 0.7
++ cgso= 218.971p  cgdo= 218.971p  cgbo= 0.  rsh= 0.  cj= 384.4u  mj= 0.4884
++ cjsw= 527.2p  mjsw= 0.3002  js= 0.  tox= 41.8n  nsub= 15.3142E+15
++ nss= 1.E+12  tpg=1  xj= 400.n  ld= 265.073n  uo= 503.521
++ kf= 0.  af= 1.  fc= 0.5  lambda=.01)
+
+.model cmosp  pmos ( level=1  vto=-0.844345  kp= 41.5964u  gamma= 0.863074
++ phi= 0.6  rd= 0.  rs= 0.  cbd= 0.  cbs= 0.  is= 0  pb= 0.7
++ cgso= 218.971p  cgdo= 218.971p  cgbo= 0.  rsh= 0.  cj= 384.4u  mj= 0.4884
++ cjsw= 527.2p  mjsw= 0.3002  js= 0.  tox= 41.8n  nsub= 15.3142E+15
++ nss= 1.E+12  tpg=1  xj= 400.n  ld= 265.073n  uo= 503.521
++ kf= 0.  af= 1.  fc= 0.5 lambda=.01)
+
+.subckt vpulse ( 1 2 )
+.parameter delay=0
+.parameter iv=0
+.parameter pv=1
+.parameter rise=10n
+.parameter fall=10n
+.parameter width=1u
+.parameter period=2u
+v 1 2 pulse iv=iv pv=pv width=width fall=fall rise=rise delay=delay period=period
+.ends
+
+.verilog
+module VOLTAGE_SOURCE ( 1 2 )
+vsource #(value) v( 1 2 )
+endmodule VOLTAGE_SOURCE
+
+module vpulse_incomplete ( 1 2 )
+vsource #(iv) v( 1 2 )
+endmodule VOLTAGE_SOURCE
+
+module NMOS_TRANSISTOR(D G S B);
+parameter l
+parameter w
+cmosn #(.l(l), .w(w)) m(D,G,S,B);
+endmodule
+
+module PMOS_TRANSISTOR(D G S B);
+parameter l
+parameter w
+cmosp #(.l(l), .w(w)) m(D,G,S,B);
+endmodule
+
+module RESISTOR(1 2);
+	parameter value=1;
+	resistor #(.r(value)) r(1,2);
+endmodule
+
+geda "invtb.sch" module device="invtb" default_connect=auto
+
+invtb myinvtb(0);
+list
+
+spice
+.options noinsensitive
+
+* .list
+
+.print op
++ vd(myinvtb.inv1.P1.m)
++ vg(myinvtb.inv1.P1.m)
++ vs(myinvtb.inv1.P1.m)
++ vb(myinvtb.inv1.P1.m)
++ vg(myinvtb.inv2.P1.m)
++ v(myinvtb.Vdd:1)
++ v(myinvtb.VDD.v)
++ v(myinvtb.VCLK.v)
+.op trace=n
+.print tran
++ vd(myinvtb.inv1.P1.m)
++ vg(myinvtb.inv1.P1.m)
++ vs(myinvtb.inv1.P1.m)
++ vb(myinvtb.inv1.P1.m)
++ v(myinvtb.VCLK.v)
++ v(myinvtb.ck)
++ v(myinvtb.VCLK.v)
++ v(myinvtb.q)
+.tran 0 5u .333u
+.end

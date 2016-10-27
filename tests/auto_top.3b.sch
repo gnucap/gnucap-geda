@@ -35,7 +35,7 @@ device=RESISTOR
 T 46700 46600 5 10 0 1 180 0 1
 device=DUT
 T 46300 46800 5 10 1 0 0 0 1
-source=auto_dut.3a.sch
+source=auto_dut.3b.sch
 T 46300 46600 5 10 1 0 0 0 1
 refdes=dut0
 T 46200 46300 5 10 1 1 0 0 1
@@ -56,3 +56,10 @@ pintype=OUTPUT
 T 49400 47400 5 10 1 0 0 0 1
 refdes=a
 }
+C 48000 44900 1 0 0 gnd-1.sym
+{
+T 48300 45000 5 10 1 0 0 0 1
+net=toprail
+}
+N 48100 45200 48100 45700 4
+N 48100 45700 46100 45700 4

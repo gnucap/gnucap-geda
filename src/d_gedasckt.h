@@ -104,6 +104,9 @@ private:
   const MODEL_GEDA_SUBCKT* _parent;
   node_t _nodes[PORTS_PER_SUBCKT];
   unsigned _num_cc; // number connected components
+private: // cleanup later
+  void trysomehing(std::string x);
+  unsigned _num_auto_nodes; // number of nodes added during precalc_first.
 };
 /*--------------------------------------------------------------------------*/
 class INTERFACE MODEL_GEDA_SUBCKT : public DEV_GEDA_SUBCKT {

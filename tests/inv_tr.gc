@@ -1,0 +1,60 @@
+options debug
+options numdgt=1
+spice
+
+.model cmosn  nmos ( level=1  vto= 0.8  kp= 41.5964u  gamma= 0.863074
++ phi= 0.6  cbd= 0.  cbs= 0.  pb= 0.7
++ cgso= 218.971p  cgdo= 218.971p  cgbo= 0.  rsh= 0.  cj= 384.4u  mj= 0.4884
++ cjsw= 527.2p  mjsw= 0.3002  js= 0.  tox= 41.8n  nsub= 15.3142E+15
++ nss= 1.E+12  tpg=1  xj= 400.n  ld= 265.073n  uo= 503.521
++ kf= 0.  af= 1.  fc= 0.5  lambda=.01)
+
+.model cmosp  pmos ( level=1  vto=-0.844345  kp= 41.5964u  gamma= 0.863074
++ phi= 0.6  rd= 0.  rs= 0.  cbd= 0.  cbs= 0.  is= 0  pb= 0.7
++ cgso= 218.971p  cgdo= 218.971p  cgbo= 0.  rsh= 0.  cj= 384.4u  mj= 0.4884
++ cjsw= 527.2p  mjsw= 0.3002  js= 0.  tox= 41.8n  nsub= 15.3142E+15
++ nss= 1.E+12  tpg=1  xj= 400.n  ld= 265.073n  uo= 503.521
++ kf= 0.  af= 1.  fc= 0.5 lambda=.01)
+
+.verilog
+module NMOS_TRANSISTOR(D G S B);
+parameter l
+parameter w
+cmosn #(.l(l), .w(w)) m(D,G,S,B);
+endmodule
+
+module PMOS_TRANSISTOR(D G S B);
+parameter l
+parameter w
+cmosp #(.l(l), .w(w)) m(D,G,S,B);
+endmodule
+
+// BUG: default_connect here.
+geda "CMOS_Inverter.sch" module device="inv" default_connect=auto
+// list
+
+inv myinv(clk,ni);
+list
+
+parameter vdd=3.3
+
+spice
+.options insensitive=0
+V1 vdd 0 vdd
+
+Vd Vdd:1 vdd 0
+V0 GND:1 0 -1
+
+Vck clk 0 pulse iv=0 pv=vdd rise=.01 fall=.01 width=.09 delay=.1 period=.2
+
+.list
+
+.print op v(nodes) vg(myinv.P1.m)
++ ev(v1)
++ vs(myinv.P1.m)
++ vd(myinv.P1.m)
++ v(myinv.vddrail)
+.op trace=n
+.print tran v(clk) v(ni)
+.tran 0 1 0.0333 basic
+.end

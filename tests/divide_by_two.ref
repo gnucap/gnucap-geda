@@ -1,0 +1,337 @@
+reading file divide_by_two.sch
+reading file D_Latch.sch
+reading file CMOS_Inverter.sch
+cmosp: rsh - rs - rd conflict: using rsh
+cmosp: is - js conflict
+paramset cmosn nmos1;\
+ .level=1; .kp=41.5964u; .vto=0.8; .gamma=0.863074; .phi=0.6; .lambda=.01; .tox=41.8n; .nsub=15.3142E+15; .nss=1.E+12; .xj=400.n; .uo=503.521; .tpg=1; .tnom=NA( 27.); .fc=0.5; .pb=0.7; .cj=384.4u; .mj=0.4884; .cjsw=527.2p; .mjsw=0.3002; .is=NA( 10.f); .js=0.; .rsh=0.; .cbd=0.; .cbs=0.; .cgso=218.971p; .cgdo=218.971p; .cgbo=0.; .ld=265.073n;\
+endparmset
+
+paramset cmosp pmos1;\
+ .level=1; .kp=41.5964u; .vto=-0.844345; .gamma=0.863074; .phi=0.6; .lambda=.01; .tox=41.8n; .nsub=15.3142E+15; .nss=1.E+12; .xj=400.n; .uo=503.521; .tpg=1; .tnom=NA( 27.); .fc=0.5; .pb=0.7; .cj=384.4u; .mj=0.4884; .cjsw=527.2p; .mjsw=0.3002; .is=0; .js=0.; .rsh=0.; .rd=0.; .rs=0.; .cbd=0.; .cbs=0.; .cgso=218.971p; .cgdo=218.971p; .cgbo=0.; .ld=265.073n;\
+endparmset
+
+module vpulse (1,2);
+vsource #(pulse.iv(iv), .pv(pv), .delay(delay), .rise(rise), .fall(fall), .width(width), .period(period)) v (.p(1),.n(2));
+endmodule // vpulse
+
+module VOLTAGE_SOURCE (1,2);
+vsource #(.dc(value)) v (.p(1),.n(2));
+endmodule // VOLTAGE_SOURCE
+
+// not representable in verilog... 
+module vpulse_incomplete (1,2);
+vsource #(.dc(iv)) v (.p(1),.n(2));
+endmodule // vpulse_incomplete
+
+module NMOS_TRANSISTOR (D,G,S,B);
+cmosn #(.l(l),.w(w)) m (.d(D),.g(G),.s(S),.b(B));
+endmodule // NMOS_TRANSISTOR
+
+module PMOS_TRANSISTOR (D,G,S,B);
+cmosp #(.l(l),.w(w)) m (.d(D),.g(G),.s(S),.b(B));
+endmodule // PMOS_TRANSISTOR
+
+//* bug: should work without default_connect 
+module LATCH (CLK,D,\_D\_,\_Q\_,Q,V+,V-);
+//comment (incomplete) title-B.sym
+PMOS_TRANSISTOR #(.basename(asic-pmos-1.sym),.description(low),.l(11u),.model-name(pmos4),.w(2u)) M4 (.D(x_cn_1),.G(x_cn_2),.S(x_cn_3),.B(x_cn_0));
+place #(.x(47100),.y(48600)) 47100:48600 (.port(x_cn_0));
+place #(.x(47000),.y(48100)) 47000:48100 (.port(x_cn_1));
+place #(.x(46400),.y(48600)) 46400:48600 (.port(x_cn_2));
+place #(.x(47000),.y(49100)) 47000:49100 (.port(x_cn_3));
+PMOS_TRANSISTOR #(.basename(asic-pmos-1.sym),.description(low),.l(11u),.model-name(pmos4),.w(2u)) M3 (.D(x_cn_5),.G(x_cn_6),.S(x_cn_7),.B(x_cn_4));
+place #(.x(44700),.y(48600)) 44700:48600 (.port(x_cn_4));
+place #(.x(44800),.y(48100)) 44800:48100 (.port(x_cn_5));
+place #(.x(45400),.y(48600)) 45400:48600 (.port(x_cn_6));
+place #(.x(44800),.y(49100)) 44800:49100 (.port(x_cn_7));
+net #() net0 (.p(x_cn_6),.n(x_nn_8));
+place #(.x(45800),.y(48600)) 45800:48600 (.port(x_nn_8));
+net #() net1 (.p(x_nn_8),.n(x_nn_9));
+place #(.x(45800),.y(47800)) 45800:47800 (.port(x_nn_9));
+net #() net2 (.p(x_nn_9),.n(x_nn_10));
+place #(.x(47000),.y(47800)) 47000:47800 (.port(x_nn_10));
+net #() net3 (.p(x_nn_11),.n(x_cn_1));
+place #(.x(47000),.y(47400)) 47000:47400 (.port(x_nn_11));
+net #() extranet4 (.p(x_nn_11),.n(x_nn_10));
+net #() net5 (.p(x_nn_12),.n(x_nn_13));
+place #(.x(44600),.y(49200)) 44600:49200 (.port(x_nn_12));
+place #(.x(47200),.y(49200)) 47200:49200 (.port(x_nn_13));
+net #() net6 (.p(x_nn_14),.n(x_nn_15));
+place #(.x(44800),.y(48000)) 44800:48000 (.port(x_nn_14));
+place #(.x(46100),.y(48000)) 46100:48000 (.port(x_nn_15));
+net #() net7 (.p(x_nn_15),.n(x_nn_16));
+place #(.x(46100),.y(48600)) 46100:48600 (.port(x_nn_16));
+net #() net8 (.p(x_nn_17),.n(x_cn_5));
+place #(.x(44800),.y(47400)) 44800:47400 (.port(x_nn_17));
+net #() extranet9 (.p(x_nn_17),.n(x_nn_14));
+net #() net10 (.p(x_cn_2),.n(x_nn_16));
+net #() net11 (.p(x_cn_4),.n(x_nn_18));
+place #(.x(44600),.y(48600)) 44600:48600 (.port(x_nn_18));
+NMOS_TRANSISTOR #(.basename(asic-nmos-1.sym),.description(low),.l(11u),.model-name(nmos4),.w(1u)) M1 (.D(x_nn_17),.G(x_cn_20),.S(x_cn_21),.B(x_cn_19));
+place #(.x(44900),.y(46900)) 44900:46900 (.port(x_cn_19));
+place #(.x(44200),.y(46900)) 44200:46900 (.port(x_cn_20));
+place #(.x(44800),.y(46400)) 44800:46400 (.port(x_cn_21));
+NMOS_TRANSISTOR #(.basename(asic-nmos-1.sym),.description(low),.l(11u),.model-name(nmos4),.w(1u)) M2 (.D(x_nn_11),.G(x_cn_23),.S(x_cn_24),.B(x_cn_22));
+place #(.x(46900),.y(46900)) 46900:46900 (.port(x_cn_22));
+place #(.x(47600),.y(46900)) 47600:46900 (.port(x_cn_23));
+place #(.x(47000),.y(46400)) 47000:46400 (.port(x_cn_24));
+net #() net12 (.p(x_cn_22),.n(x_nn_25));
+place #(.x(46800),.y(46900)) 46800:46900 (.port(x_nn_25));
+net #() net13 (.p(x_nn_25),.n(x_nn_26));
+place #(.x(46800),.y(46200)) 46800:46200 (.port(x_nn_26));
+net #() net14 (.p(x_nn_27),.n(x_nn_28));
+place #(.x(44800),.y(46200)) 44800:46200 (.port(x_nn_27));
+place #(.x(47000),.y(46200)) 47000:46200 (.port(x_nn_28));
+net #() extranet15 (.p(x_nn_27),.n(x_nn_26));
+net #() net16 (.p(x_nn_28),.n(x_cn_24));
+net #() net17 (.p(x_cn_19),.n(x_nn_29));
+place #(.x(45000),.y(46900)) 45000:46900 (.port(x_nn_29));
+net #() net18 (.p(x_nn_29),.n(x_nn_30));
+place #(.x(45000),.y(46200)) 45000:46200 (.port(x_nn_30));
+net #() extranet19 (.p(x_nn_30),.n(x_nn_27));
+net #() extranet20 (.p(x_nn_30),.n(x_nn_27));
+net #() net21 (.p(x_nn_27),.n(x_cn_21));
+NMOS_TRANSISTOR #(.basename(asic-nmos-1.sym),.description(low),.l(11u),.model-name(nmos4),.w(8u)) M5 (.D(x_cn_32),.G(x_cn_33),.S(x_cn_34),.B(x_cn_31));
+place #(.x(46000),.y(45300)) 46000:45300 (.port(x_cn_31));
+place #(.x(45900),.y(45800)) 45900:45800 (.port(x_cn_32));
+place #(.x(45300),.y(45300)) 45300:45300 (.port(x_cn_33));
+place #(.x(45900),.y(44800)) 45900:44800 (.port(x_cn_34));
+net #() net22 (.p(x_cn_32),.n(x_nn_35));
+place #(.x(45900),.y(46200)) 45900:46200 (.port(x_nn_35));
+net #() extranet23 (.p(x_nn_35),.n(x_nn_27));
+net #() extranet24 (.p(x_nn_35),.n(x_nn_27));
+net #() net25 (.p(x_cn_31),.n(x_nn_36));
+place #(.x(46100),.y(45300)) 46100:45300 (.port(x_nn_36));
+net #() net26 (.p(x_nn_37),.n(x_nn_36));
+place #(.x(46100),.y(44600)) 46100:44600 (.port(x_nn_37));
+net #() net27 (.p(x_cn_34),.n(x_nn_38));
+place #(.x(45900),.y(44500)) 45900:44500 (.port(x_nn_38));
+net #() net28 (.p(x_nn_39),.n(x_nn_37));
+place #(.x(45900),.y(44600)) 45900:44600 (.port(x_nn_39));
+net #() extranet29 (.p(x_nn_39),.n(x_cn_34));
+//T 40800 50500 9 10 1 0 0 0 1 
+//D LATCH 
+port #(.basename(in-1.sym)) D (.int(x_cn_20),.ext(D));
+port #(.basename(in-1.sym)) \_D\_ (.int(x_cn_23),.ext(\_D\_));
+port #(.basename(in-1.sym)) CLK (.int(x_cn_33),.ext(CLK));
+port #(.basename(out-1.sym)) \_Q\_ (.int(x_cn_40),.ext(\_Q\_));
+place #(.x(44400),.y(48000)) 44400:48000 (.port(x_cn_40));
+net #() net30 (.p(x_nn_18),.n(x_nn_12));
+net #() net31 (.p(x_cn_7),.n(x_nn_41));
+place #(.x(44800),.y(49200)) 44800:49200 (.port(x_nn_41));
+net #() extranet32 (.p(x_nn_41),.n(x_nn_12));
+net #() net33 (.p(x_nn_13),.n(x_nn_42));
+place #(.x(47200),.y(48600)) 47200:48600 (.port(x_nn_42));
+net #() net34 (.p(x_nn_42),.n(x_cn_0));
+net #() net35 (.p(x_cn_3),.n(x_nn_43));
+place #(.x(47000),.y(49200)) 47000:49200 (.port(x_nn_43));
+net #() extranet36 (.p(x_nn_43),.n(x_nn_12));
+port #(.basename(in-1.sym)) V+ (.int(x_cn_44),.ext(V+));
+place #(.x(45900),.y(49400)) 45900:49400 (.port(x_cn_44));
+rail #(.basename(vee-1.sym),.net(Vee:1)) Vee:1 (.pin(x_nn_38),.rail(Vee:1));
+port #(.basename(in-1.sym)) V- (.int(x_cn_45),.ext(V-));
+place #(.x(48400),.y(45600)) 48400:45600 (.port(x_cn_45));
+net #() net37 (.p(x_nn_46),.n(x_cn_45));
+place #(.x(48700),.y(45600)) 48700:45600 (.port(x_nn_46));
+rail #(.basename(vee-1.sym),.net(Vee:1)) Vee:1 (.pin(x_cn_47),.rail(Vee:1));
+place #(.x(48700),.y(45400)) 48700:45400 (.port(x_cn_47));
+net #() net38 (.p(x_cn_47),.n(x_nn_46));
+net #() net39 (.p(x_cn_44),.n(x_nn_48));
+place #(.x(45900),.y(49200)) 45900:49200 (.port(x_nn_48));
+net #() extranet40 (.p(x_nn_48),.n(x_nn_12));
+net #() extranet41 (.p(x_nn_48),.n(x_nn_43));
+port #(.basename(out-1.sym)) Q (.int(x_cn_49),.ext(Q));
+place #(.x(47400),.y(47800)) 47400:47800 (.port(x_cn_49));
+net #() net42 (.p(x_cn_49),.n(x_nn_10));
+net #() extranet43 (.p(x_nn_10),.n(x_nn_11));
+net #() net44 (.p(x_nn_14),.n(x_cn_40));
+net #() extranet45 (.p(x_nn_14),.n(x_nn_17));
+endmodule // LATCH
+
+module cmos_inv (in,out,Vdd:1,GND:1);
+//comment (incomplete) title-B.sym
+PMOS_TRANSISTOR #(.basename(asic-pmos-1.sym),.description(low),.l(1u),.model-name(pmos4),.w(6u)) P1 (.D(x_cn_77),.G(x_cn_78),.S(x_cn_79),.B(x_cn_76));
+place #(.x(45300),.y(47900)) 45300:47900 (.port(x_cn_76));
+place #(.x(45200),.y(47400)) 45200:47400 (.port(x_cn_77));
+place #(.x(44600),.y(47900)) 44600:47900 (.port(x_cn_78));
+place #(.x(45200),.y(48400)) 45200:48400 (.port(x_cn_79));
+net #() net65 (.p(x_cn_76),.n(x_nn_80));
+place #(.x(45400),.y(47900)) 45400:47900 (.port(x_nn_80));
+net #() net66 (.p(x_nn_81),.n(x_cn_79));
+place #(.x(45200),.y(48700)) 45200:48700 (.port(x_nn_81));
+NMOS_TRANSISTOR #(.basename(asic-nmos-1.sym),.description(low),.l(1u),.model-name(nmos4),.w(3u)) N1 (.D(x_cn_83),.G(x_cn_84),.S(x_cn_85),.B(x_cn_82));
+place #(.x(45300),.y(46200)) 45300:46200 (.port(x_cn_82));
+place #(.x(45200),.y(46700)) 45200:46700 (.port(x_cn_83));
+place #(.x(44600),.y(46200)) 44600:46200 (.port(x_cn_84));
+place #(.x(45200),.y(45700)) 45200:45700 (.port(x_cn_85));
+net #() net67 (.p(x_cn_82),.n(x_nn_86));
+place #(.x(45400),.y(46200)) 45400:46200 (.port(x_nn_86));
+net #() net68 (.p(x_nn_87),.n(x_nn_86));
+place #(.x(45400),.y(45600)) 45400:45600 (.port(x_nn_87));
+net #() net69 (.p(x_nn_88),.n(x_cn_85));
+place #(.x(45200),.y(45400)) 45200:45400 (.port(x_nn_88));
+net #() net70 (.p(x_nn_89),.n(x_nn_90));
+place #(.x(44300),.y(47900)) 44300:47900 (.port(x_nn_89));
+place #(.x(44300),.y(46200)) 44300:46200 (.port(x_nn_90));
+net #() net71 (.p(x_cn_78),.n(x_nn_89));
+net #() net72 (.p(x_cn_84),.n(x_nn_90));
+net #() net73 (.p(x_cn_77),.n(x_cn_83));
+port #(.basename(gnd-1.sym),.net(GND:1),.pinseq(4),.default_value(GND:1)) GND:1 (.int(x_nn_88),.ext(GND:1));
+net #() net74 (.p(x_nn_91),.n(x_nn_87));
+place #(.x(45200),.y(45600)) 45200:45600 (.port(x_nn_91));
+net #() extranet75 (.p(x_nn_91),.n(x_nn_88));
+port #(.basename(vdd-1.sym),.net(Vdd:1),.pinseq(3),.default_value(Vdd:1)) vddrail (.int(x_nn_81),.ext(Vdd:1));
+net #() net76 (.p(x_nn_92),.n(x_nn_93));
+place #(.x(45200),.y(48500)) 45200:48500 (.port(x_nn_92));
+place #(.x(45400),.y(48500)) 45400:48500 (.port(x_nn_93));
+net #() extranet77 (.p(x_nn_92),.n(x_nn_81));
+net #() net78 (.p(x_nn_93),.n(x_nn_80));
+net #() net79 (.p(x_nn_94),.n(x_nn_95));
+place #(.x(45200),.y(47000)) 45200:47000 (.port(x_nn_94));
+place #(.x(46000),.y(47000)) 46000:47000 (.port(x_nn_95));
+net #() extranet80 (.p(x_nn_94),.n(x_cn_77));
+net #() net81 (.p(x_nn_96),.n(x_nn_97));
+place #(.x(43600),.y(47000)) 43600:47000 (.port(x_nn_96));
+place #(.x(44300),.y(47000)) 44300:47000 (.port(x_nn_97));
+net #() extranet82 (.p(x_nn_97),.n(x_nn_89));
+port #(.basename(input-1.sym),.pinseq(1)) in (.int(x_nn_96),.ext(in));
+port #(.basename(output-1.sym),.pinseq(2)) out (.int(x_nn_95),.ext(out));
+endmodule // cmos_inv
+
+module div (q,zero);
+LATCH #(.basename(D_Latch.sym),.default_connect(auto),.description(D_LATCH),.numslots(0),.source(D_Latch.sch)) D2 (.CLK(x_cn_50),.D(x_cn_51),.\_D\_(x_cn_55),.\_Q\_(x_cn_56),.Q(x_cn_52),.V+(x_cn_53),.V-(x_cn_54));
+place #(.x(56100),.y(48400)) 56100:48400 (.port(x_cn_50));
+place #(.x(54300),.y(47600)) 54300:47600 (.port(x_cn_51));
+place #(.x(57300),.y(47600)) 57300:47600 (.port(x_cn_52));
+place #(.x(55300),.y(48400)) 55300:48400 (.port(x_cn_53));
+place #(.x(55700),.y(46200)) 55700:46200 (.port(x_cn_54));
+place #(.x(54300),.y(47000)) 54300:47000 (.port(x_cn_55));
+place #(.x(57300),.y(47000)) 57300:47000 (.port(x_cn_56));
+net #() net46 (.p(x_nn_57),.n(x_nn_58));
+place #(.x(52600),.y(47000)) 52600:47000 (.port(x_nn_57));
+place #(.x(53400),.y(47000)) 53400:47000 (.port(x_nn_58));
+net #() net47 (.p(x_nn_58),.n(x_nn_59));
+place #(.x(53400),.y(47600)) 53400:47600 (.port(x_nn_59));
+net #() net48 (.p(x_cn_51),.n(x_nn_59));
+net #() net49 (.p(x_nn_60),.n(x_nn_61));
+place #(.x(52600),.y(47600)) 52600:47600 (.port(x_nn_60));
+place #(.x(52900),.y(47600)) 52900:47600 (.port(x_nn_61));
+net #() net50 (.p(x_nn_61),.n(x_nn_62));
+place #(.x(52900),.y(48000)) 52900:48000 (.port(x_nn_62));
+net #() net51 (.p(x_nn_62),.n(x_nn_63));
+place #(.x(54000),.y(48000)) 54000:48000 (.port(x_nn_63));
+net #() net52 (.p(x_nn_63),.n(x_nn_64));
+place #(.x(54000),.y(47000)) 54000:47000 (.port(x_nn_64));
+net #() net53 (.p(x_nn_64),.n(x_cn_55));
+net #() net54 (.p(x_cn_56),.n(x_nn_65));
+place #(.x(57600),.y(47000)) 57600:47000 (.port(x_nn_65));
+net #() net55 (.p(x_nn_66),.n(x_nn_67));
+place #(.x(49300),.y(46000)) 49300:46000 (.port(x_nn_66));
+place #(.x(57600),.y(46000)) 57600:46000 (.port(x_nn_67));
+net #() net56 (.p(x_nn_68),.n(x_nn_69));
+place #(.x(49300),.y(47000)) 49300:47000 (.port(x_nn_68));
+place #(.x(49600),.y(47000)) 49600:47000 (.port(x_nn_69));
+net #() net57 (.p(x_cn_52),.n(x_nn_70));
+place #(.x(58400),.y(47600)) 58400:47600 (.port(x_nn_70));
+net #() net58 (.p(x_nn_71),.n(x_nn_72));
+place #(.x(58100),.y(47600)) 58100:47600 (.port(x_nn_71));
+place #(.x(58100),.y(45500)) 58100:45500 (.port(x_nn_72));
+net #() extranet59 (.p(x_nn_71),.n(x_cn_52));
+net #() net60 (.p(x_nn_73),.n(x_nn_72));
+place #(.x(48800),.y(45500)) 48800:45500 (.port(x_nn_73));
+net #() net61 (.p(x_nn_65),.n(x_nn_67));
+net #() net62 (.p(x_nn_73),.n(x_nn_74));
+place #(.x(48800),.y(47600)) 48800:47600 (.port(x_nn_74));
+net #() net63 (.p(x_nn_74),.n(x_nn_75));
+place #(.x(49600),.y(47600)) 49600:47600 (.port(x_nn_75));
+net #() net64 (.p(x_nn_66),.n(x_nn_68));
+cmos_inv #(.basename(7404-1.sym),.class(IC),.default_connect(auto),.description(6),.documentation(http://www-s.ti.com/sc/ds/sn74hc04.pdf),.footprint(DIP14),.net(Vcc:14),.numslots(6),.pins(14),.slot(1),.slotdef(6:13),.source(CMOS_Inverter.sch)) inv2 (.in(x_cn_98),.out(x_cn_99));
+place #(.x(53100),.y(49800)) 53100:49800 (.port(x_cn_98));
+place #(.x(54200),.y(49800)) 54200:49800 (.port(x_cn_99));
+net #() net83 (.p(x_nn_100),.n(x_nn_101));
+place #(.x(47700),.y(46800)) 47700:46800 (.port(x_nn_100));
+place #(.x(47700),.y(50800)) 47700:50800 (.port(x_nn_101));
+net #() net84 (.p(x_nn_101),.n(x_nn_102));
+place #(.x(55300),.y(50800)) 55300:50800 (.port(x_nn_102));
+net #() net85 (.p(x_nn_103),.n(x_nn_104));
+place #(.x(50600),.y(50800)) 50600:50800 (.port(x_nn_103));
+place #(.x(50600),.y(48400)) 50600:48400 (.port(x_nn_104));
+net #() extranet86 (.p(x_nn_103),.n(x_nn_101));
+net #() net87 (.p(x_nn_102),.n(x_cn_53));
+rail #(.basename(gnd-1.sym),.net(GND:1)) rail1 (.pin(x_cn_105),.rail(GND:1));
+place #(.x(47700),.y(45500)) 47700:45500 (.port(x_cn_105));
+LATCH #(.basename(D_Latch.sym),.default_connect(auto),.description(D_LATCH),.numslots(0),.source(D_Latch.sch)) D1 (.CLK(x_cn_106),.D(x_nn_75),.\_D\_(x_nn_69),.\_Q\_(x_nn_57),.Q(x_nn_60),.V+(x_nn_104),.V-(x_cn_107));
+place #(.x(51400),.y(48400)) 51400:48400 (.port(x_cn_106));
+place #(.x(51000),.y(46200)) 51000:46200 (.port(x_cn_107));
+net #() net88 (.p(x_cn_50),.n(x_nn_108));
+place #(.x(56100),.y(49800)) 56100:49800 (.port(x_nn_108));
+net #() net89 (.p(x_nn_109),.n(x_cn_98));
+place #(.x(49000),.y(49800)) 49000:49800 (.port(x_nn_109));
+net #() net90 (.p(x_nn_110),.n(x_nn_111));
+place #(.x(45500),.y(49800)) 45500:49800 (.port(x_nn_110));
+place #(.x(45500),.y(47300)) 45500:47300 (.port(x_nn_111));
+net #() net91 (.p(x_cn_106),.n(x_nn_112));
+place #(.x(51400),.y(49800)) 51400:49800 (.port(x_nn_112));
+net #() extranet92 (.p(x_nn_112),.n(x_nn_109));
+rail #(.basename(gnd-1.sym),.net(GND:1)) GND:1 (.pin(x_cn_113),.rail(GND:1));
+place #(.x(45500),.y(45700)) 45500:45700 (.port(x_cn_113));
+net #() net93 (.p(x_nn_114),.n(x_cn_113));
+place #(.x(45500),.y(46100)) 45500:46100 (.port(x_nn_114));
+//comment (incomplete) spice-directive-1.sym
+VOLTAGE_SOURCE #(.basename(voltage-3.sym),.value(vdd)) VDD (.1(x_nn_100),.2(x_cn_115));
+place #(.x(47700),.y(45900)) 47700:45900 (.port(x_cn_115));
+net #() net94 (.p(x_cn_105),.n(x_cn_115));
+net #() net95 (.p(x_cn_99),.n(x_nn_108));
+net #() net96 (.p(x_nn_116),.n(x_nn_117));
+place #(.x(49900),.y(50800)) 49900:50800 (.port(x_nn_116));
+place #(.x(49900),.y(51900)) 49900:51900 (.port(x_nn_117));
+net #() extranet97 (.p(x_nn_116),.n(x_nn_101));
+net #() extranet98 (.p(x_nn_116),.n(x_nn_103));
+rail #(.basename(vdd-1.sym),.net(Vdd:1)) toprail (.pin(x_nn_117),.rail(Vdd:1));
+rail #(.basename(gnd-1.sym),.net(GND:1)) GND:1 (.pin(x_cn_118),.rail(GND:1));
+place #(.x(51000),.y(44500)) 51000:44500 (.port(x_cn_118));
+rail #(.basename(gnd-1.sym),.net(GND:1)) GND:1 (.pin(x_cn_119),.rail(GND:1));
+place #(.x(55700),.y(44600)) 55700:44600 (.port(x_cn_119));
+net #() net99 (.p(x_cn_119),.n(x_cn_54));
+net #() net100 (.p(x_cn_118),.n(x_cn_107));
+port #(.basename(spice-subcircuit-IO-1.sym)) q (.int(x_nn_70),.ext(q));
+vpulse #(.basename(vpulse-1.sym),.comment(syntax:),.description(pulse),.fall(.5n),.footprint(none),.iv(0),.numslots(0),.period(.1u),.pv(vdd),.rise(.5n),.value(pulse),.width(.05u)) VCLK (.1(x_nn_111),.2(x_nn_114));
+cmos_inv #(.basename(7404-1.sym),.class(IC),.default_connect(auto),.description(6),.documentation(http://www-s.ti.com/sc/ds/sn74hc04.pdf),.footprint(DIP14),.net(Vcc:14),.numslots(6),.pins(14),.slot(1),.slotdef(6:13),.source(CMOS_Inverter.sch)) inv1 (.in(x_cn_120),.out(x_nn_109));
+place #(.x(47900),.y(49800)) 47900:49800 (.port(x_cn_120));
+net #() net101 (.p(x_cn_120),.n(x_nn_110));
+port #(.basename(spice-subcircuit-IO-1.sym)) zero (.int(x_cn_121),.ext(zero));
+place #(.x(51000),.y(45100)) 51000:45100 (.port(x_cn_121));
+net #() extranet102 (.p(x_cn_121),.n(x_cn_118));
+endmodule // div
+
+div #(.default_connect(auto),.vdd(5)) mydiv (.q(q),.zero(0));
+cmosp: rsh - rs - rd conflict: using rsh
+cmosp: is - js conflict
+mydiv.inv2: port #3 (Vdd:1) never connected, strategy auto
+mydiv.inv2: port #3 (Vdd:1) autoconnect to Vdd:1
+Preparing existing node Vdd:1 in mydiv
+mydiv.inv2: port #4 (GND:1) never connected, strategy auto
+mydiv.inv2: port #4 (GND:1) autoconnect to GND:1
+Preparing existing node GND:1 in mydiv
+mydiv.inv1: port #3 (Vdd:1) never connected, strategy auto
+mydiv.inv1: port #3 (Vdd:1) autoconnect to Vdd:1
+mydiv.inv1: port #4 (GND:1) never connected, strategy auto
+mydiv.inv1: port #4 (GND:1) autoconnect to GND:1
+cmosp: rsh - rs - rd conflict: using rsh
+cmosp: is - js conflict
+#         vb(mydiv.D1.M3.m) vg(mydiv.inv1.P1.m) vb(mydiv.inv1.P1.m) vg(mydiv.inv2.P1.m) v(vdd:1) v(mydiv.VDD.v)
+open circuit: internal node 8
+open circuit: internal node 12
+open circuit: internal node 13
+open circuit: internal node 14
+ 27.      5.       0.       5.       5.       0.       5.      
+cmosp: rsh - rs - rd conflict: using rsh
+cmosp: is - js conflict
+cmosp: rsh - rs - rd conflict: using rsh
+cmosp: is - js conflict
+open circuit: internal node 8
+open circuit: internal node 12
+open circuit: internal node 13
+open circuit: internal node 14
+converged beyond limit, resetting limit

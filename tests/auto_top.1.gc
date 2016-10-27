@@ -1,6 +1,6 @@
 options picky
 
-geda auto_top.1.sch
+geda auto_top.1.sch default_connect=open
 
 verilog
 

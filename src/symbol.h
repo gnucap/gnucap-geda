@@ -22,7 +22,7 @@
 #include <memory>
 #include <gmpxx.h> // to workaround bug in gmp header about __cplusplus
 #define COMPLEX NOCOMPLEX // COMPLEX already came from md.h
-extern "C"{
+extern "C"{ //
 # include <libgeda/libgeda.h>
 }
 #undef COMPLEX
@@ -30,20 +30,24 @@ extern "C"{
 #include <ap.h>
 #include <set>
 
-enum angle_t { a_invalid = -1,
-               a_0 = 0,
-               a_90 = 90,
-               a_180 = 180,
-               a_270 = 270 };
+enum angle_t { //
+	a_invalid = -1,
+	a_0 = 0,
+	a_90 = 90,
+	a_180 = 180,
+	a_270 = 270
+};
 
-enum mirror_t { m_invalid = -1,
-                m_0 = 0,
-                m_r = 1 };
+enum mirror_t { //
+	m_invalid = -1,
+	m_0 = 0,
+	m_r = 1
+};
 
 // should be std::map<std::string, morethanstring>?
-class GEDA_PIN : public std::map<std::string, std::string>{
+class GEDA_PIN : public std::map<std::string, std::string>{ //
 	public:
-		GEDA_PIN(){
+		GEDA_PIN(){untested();
 			operator[]("pinlabel") = "unknown";
 			operator[]("pinseq") = "0";
 		}
@@ -65,18 +69,18 @@ class GEDA_PIN : public std::map<std::string, std::string>{
 		unsigned& color(){return _color;}
 		bool& bus(){return _bus;}
 	public:
-		bool has_key(const std::string key)const{
+		bool has_key(const std::string key)const{untested();
 			const_iterator it = parent::find( key );
 			return (it != end());
 		}
 	public:
-		unsigned pinseq()const{
+		unsigned pinseq()const{untested();
 			// the manual says pinseq is mandatory.
 			assert(find("pinseq") != end()); // for now.
 			return atoi(find("pinseq")->second.c_str());
 		}
-		std::string label()const{
-			if(find("pinlabel") == end()){
+		std::string label()const{untested();
+			if(find("pinlabel") == end()){untested();
 				incomplete();
 				assert(find("pinseq") != end());
 				return( "unknown_pin_" + find("pinseq")->second );
@@ -85,7 +89,7 @@ class GEDA_PIN : public std::map<std::string, std::string>{
 		}
 };
 /*--------------------------------------------------------------------------*/
-class GEDA_SYMBOL {
+class GEDA_SYMBOL { //
 	std::string _filename;
 	std::set<GEDA_PIN> _pins;
 	std::map<std::string, const GEDA_PIN*> _pins_by_name;
@@ -113,7 +117,7 @@ class GEDA_SYMBOL {
 //			std::map<std::string, std::string>(x),
 //			_filename(x._filename),
 //			_pincount(x._pincount)
-//  		{
+//  		{untested();
 //			trace1("copying pins", _pins.size());
 //			_pins = x._pins;
 //		}
@@ -125,39 +129,40 @@ class GEDA_SYMBOL {
 		    y(0),
 		    _mirror(0),
 		    _angle(a_0)
-		{
+		{untested();
 			unsigned scope = 0;
 			trace1( "GEDA_SYMBOL::GEDA_SYMBOL", basename);
 			const CLibSymbol* symbol = s_clib_get_symbol_by_name(basename.c_str());
 			if(!symbol){ untested();
-				throw(Exception_Cant_Find("parsing gedanetlist", basename ));
+				trace1("error fetching", basename);
+				throw(Exception_Cant_Find("parsing gedanetlist", basename));
 			}
 			std::string filename(s_clib_symbol_get_filename(symbol));
 			trace1("...", filename);
 			CS cmd(CS::_INC_FILE, filename);
 			cmd.get_line("");
-			while(true){
-				if (cmd.match1('{')) {
+			while(true){untested();
+				if (cmd.match1('{')) {untested();
 					scope++;
-				} else if(cmd.match1('}')) {
+				} else if(cmd.match1('}')) {untested();
 					assert(scope);
 					scope--;
 					continue;
 				}
 
-				if (!scope){
-					if (cmd.umatch("P ")){
+				if (!scope){untested();
+					if (cmd.umatch("P ")){untested();
 						// waah unclever...
 						GEDA_PIN p(cmd);
 						if(!p.has_key("pinseq")) { untested();
 							error(bWARNING, "pin without pinseq in %s\n", basename.c_str());
 							p["pinseq"] = to_string(unsigned(1+_pins.size()));
-						} else {
+						} else {untested();
 						}
 						// _pins.resize(max(p.pinseq(), _pins.size()+1));
 						assert(p.pinseq()); // starts at 1?
 						std::pair<std::set<GEDA_PIN>::const_iterator,bool> f = _pins.insert(p);
-						if(f.second){
+						if(f.second){untested();
 						}else{incomplete();
 							error(bDANGER,"pin collision %d %s\n", p.pinseq(), p.label().c_str());
 							// collision
@@ -165,45 +170,45 @@ class GEDA_SYMBOL {
 						const GEDA_PIN* P = &(*(f.first));
 						_pins_by_name[p.label()] = P;
 
-						if(p.pinseq()<=_pins_by_seq.size()){
+						if(p.pinseq()<=_pins_by_seq.size()){untested();
 							// ok
-						}else{
+						}else{untested();
 							_pins_by_seq.resize(p.pinseq());
 						}
 						_pins_by_seq[p.pinseq()-1] = P;
 						continue; // line has been read
 					}
-					{
+					{untested();
 						std::string pname = cmd.ctos("=","","");
 						unsigned here = cmd.cursor();
 						std::string pvalue;
 						cmd >> "=";
-						if(!cmd.stuck(&here)){
+						if(!cmd.stuck(&here)){untested();
 							cmd >> pvalue;
 							if(pvalue!="")
 								_attribs[pname] = pvalue;
 						}
 					}
 				}
-				try{
+				try{untested();
 					cmd.get_line("");
-				}catch (Exception_End_Of_Input&){
+				}catch (Exception_End_Of_Input&){untested();
 					break;
 				}
 			}
 			trace2("done parse", basename, _pins.size());
 		}
-		bool has_key(const std::string key) const{
+		bool has_key(const std::string key) const{untested();
 			const_iterator it = _attribs.find( key );
 			return (it != _attribs.end());
 		}
 		unsigned pincount()const {return _pins.size();}
-		const std::string operator[](const std::string& x)const{
+		const std::string operator[](const std::string& x)const{untested();
 			const_iterator it = _attribs.find( x );
 			if (it != _attribs.end()) return it->second;
 			return "";
 		}
-		std::string& operator[](const std::string& x){
+		std::string& operator[](const std::string& x){untested();
 			return _attribs[x];
 		}
 		iterator begin(){ return _attribs.begin(); }
@@ -229,7 +234,7 @@ class GEDA_SYMBOL {
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 GEDA_PIN::GEDA_PIN( CS& cmd )
-{
+{untested();
 	x0() = cmd.ctoi();
 	y0() = cmd.ctoi();
 	int x = cmd.ctoi();
@@ -237,44 +242,52 @@ GEDA_PIN::GEDA_PIN( CS& cmd )
 	_bus = cmd.ctob();
 	_color = cmd.ctou();
 	bool swap = cmd.ctob();
-	if (swap){
+	if (swap){untested();
 		x0() = x;
 		y0() = y;
 	}
 	std::string    _portvalue="_";
-	try{
+	try{untested();
 		cmd.get_line("");
-	}catch(Exception_End_Of_Input&){
+	}catch(Exception_End_Of_Input&){untested();
 		return;
 	}
-	if (cmd >> "{")
-		for(;;){
-			cmd.get_line("");
-			if(cmd>>"}"){
-				cmd.get_line(""); // better just try?
+	if (cmd >> "{"){ untested();
+		for(;;){untested();
+			try{ untested();
+				cmd.get_line("");
+			}catch(...){ incomplete();
+			}
+			if(cmd>>"}"){untested();
+				try{ untested();
+					cmd.get_line("");
+				}catch(...){ incomplete();
+				}
 				break;
-			}else{
-				if (cmd>>"T"){
-				} else {
+			}else{untested();
+				if (cmd>>"T"){untested();
+				} else {untested();
 					std::string pname = cmd.ctos("=","","");
 					std::string value;
 					unsigned here = cmd.cursor();
 					cmd >> "=";
-					if(!cmd.stuck(&here)){
+					if(!cmd.stuck(&here)){untested();
 						cmd >> value;
 						operator[](pname) = value;
-					} else {
+					} else {untested();
 						untested();
 					}
 				}
 			}
 		}
-	if(find("pinlabel") == end()){
+	}
+	if(find("pinlabel") == end()){untested();
+	}else{ untested();
 	}
 }
 /*--------------------------------------------------------------------------*/
-COMPONENT* GEDA_SYMBOL::operator>>(COMPONENT* m) const{
-	for(std::set<GEDA_PIN>::const_iterator i=pinbegin(); i!=pinend(); ++i){
+COMPONENT* GEDA_SYMBOL::operator>>(COMPONENT* m) const{untested();
+	for(std::set<GEDA_PIN>::const_iterator i=pinbegin(); i!=pinend(); ++i){untested();
 		trace0("GEDA_SYMBOL::operator>>");
 		std::string l = i->label(); // why std::string&? hmmm
 		trace2("GEDA_SYMBOL::operator>>", i->pinseq(), i->label());
@@ -285,24 +298,24 @@ COMPONENT* GEDA_SYMBOL::operator>>(COMPONENT* m) const{
 }
 /*--------------------------------------------------------------------------*/
 // sort of dynamic dispatcher ...
-class GEDA_SYMBOL_MAP{
+class GEDA_SYMBOL_MAP{ //
 	public:
 		typedef std::map<std::string, GEDA_SYMBOL*> parent;
-		~GEDA_SYMBOL_MAP(){
-			for(parent::iterator i = _m.begin(); i!=_m.end(); ++i){
+		~GEDA_SYMBOL_MAP(){untested();
+			for(parent::iterator i = _m.begin(); i!=_m.end(); ++i){untested();
 				// incomplete(); // memory leak
 				// delete i->second;
 			}
 		}
 
 	public:
-		GEDA_SYMBOL* operator[](const std::string key){
+		GEDA_SYMBOL* operator[](const std::string key){untested();
 			parent::const_iterator it = _m.find( key );
 			GEDA_SYMBOL*& s = _m[key];
-			if ( it == _m.end() ) {
+			if ( it == _m.end() ) {untested();
 				trace1("GEDA_SYMBOL_MAP", key);
 				s = new GEDA_SYMBOL(key);
-			} else {
+			} else {untested();
 			}
 
 			return _m[key];

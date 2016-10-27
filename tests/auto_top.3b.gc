@@ -1,4 +1,5 @@
-options trace
+options numdgt=2
+options debug
 
 spice
 
@@ -7,23 +8,23 @@ vt toprail 0 0
 .verilog
 
 module RESISTOR(1 2);
-	parameter value=1;
-	resistor #(.r(value)) r(1,2);
+	resistor #(.r(1)) r(1,2);
 endmodule
 
 module VOLTAGE_SOURCE ( 1 2 )
 vsource #(value) v( 1 2 )
 endmodule VOLTAGE_SOURCE
 
-geda auto_top.3a.sch default_connect=auto
+geda auto_top.3b.sch default_connect=auto
 
+list
 
+print dc i(V1.v) v(a) v(V1.v) v(dut0.P*) v(dut0.R*.r)
 spice
 .options insensitive=0
+.list
 
-* .mstat
 
-.print dc i(V1.v)
 .dc
 
 .end

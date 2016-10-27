@@ -64,6 +64,9 @@ XFAIL_TESTS =
 # empty line in comment, breaks counter.
 XFAIL_TESTS += comment.1.sch
 
+# ground in submodules causes trouble
+XFAIL_TESTS += auto_top.1g.gc
+
 # promiscuous incomplete
 XFAIL_TESTS += auto_top.4.gc
 
@@ -81,6 +84,9 @@ GC_TESTS = \
 	$(SCHEMATICS:%.sch=%.gc) \
 	convert.gc \
 	dlatch_tr.gc \
+	inv_tr.gc \
+	divide_by_two.gc \
+	invtb.gc \
 	d_gedasckt.1.gc \
 	error.1.gc \
 	notfound.gc \
@@ -96,19 +102,23 @@ TESTS = $(EG_TESTS) \
 # each of these induce a test.
 SCHEMATICS = \
 	auto_top.1.sch \
+	auto_top.1s.sch \
+	auto_top.1g.sch \
+	auto_top.1ge.sch \
 	auto_top.2.sch \
 	auto_top.3.sch \
 	auto_top.3a.sch \
 	auto_top.3b.sch \
 	auto_top.4.sch \
+	buf.1.sch \
+	buf.2.sch \
 	d_gedasckt.2.sch \
 	d_gedasckt.3.sch \
 	d_gedasckt.4.sch \
 	d_gedasckt.5.sch \
 	d_gedasckt.6.sch \
 	d_gedasckt.7.sch \
-	buf.1.sch \
-	buf.2.sch \
+	nesting.sch \
 	spice.sch \
 	rail.sch \
 	short.sch \
@@ -120,19 +130,25 @@ SCHEMATICS = \
 
 $(SCHEMATICS:%.sch=%.out): %.out: $(PWD)/%.sch
 
-# this includes an extra netlist
+# FIXME: these include extra files, find them where they are.
+inv_tr.out: $(PWD)/CMOS_Inverter.sch
+nesting.out: $(PWD)/nesting.sch
 spice.out: $(PWD)/spice_foo.sp
 testbench.out: $(PWD)/dut.sch
 dlatch_tr.out: $(PWD)/D_Latch.sch
+divide_by_two.out inv_tr.out: $(PWD)/CMOS_Inverter.sch
 
 auto_top.1.out: $(PWD)/auto_dut.1.sch
 auto_top.1.out: $(PWD)/auto_top.1.sch
+
+auto_dut.1s.out: $(PWD)/auto_dut.1s.sch
+auto_top.1s.out: $(PWD)/auto_top.1s.sch
 
 auto_top.2.out: $(PWD)/auto_dut.2.sch
 auto_top.3.out: $(PWD)/auto_dut.3.sch
 auto_top.3a.out: $(PWD)/auto_dut.3a.sch
 auto_top.3b.out: $(PWD)/auto_dut.3b.sch
-auto_top.4.out: $(PWD)/auto_dut.4.sch
+auto_top.4.out: $(PWD)/auto_dut.3.sch
 
 $(ER_TESTS) $(CUSTOM_TESTS): %.sh: %.ref
 	@echo "#!/bin/sh" > $@

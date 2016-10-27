@@ -10,7 +10,7 @@ refdes=V1
 T 43000 46200 5 10 1 0 0 0 1
 value=1
 }
-N 43900 45200 43900 46000 4
+N 43900 45600 43900 46000 4
 N 43900 46900 43900 47900 4
 N 43900 47900 49300 47900 4
 {
@@ -18,15 +18,10 @@ T 43900 47900 5 10 1 1 0 0 1
 netname=nhi
 }
 N 46100 47900 46100 47200 4
-C 43800 44900 1 0 0 gnd-1.sym
-{
-T 44100 45000 5 10 1 0 0 0 1
-net=0
-}
 C 46000 44900 1 0 0 gnd-1.sym
 {
 T 46300 45000 5 10 1 0 0 0 1
-net=0
+net=n0
 }
 C 46200 46300 1 90 0 resistor-2.sym
 {
@@ -35,24 +30,28 @@ device=RESISTOR
 T 46700 46600 5 10 0 1 180 0 1
 device=DUT
 T 46300 46800 5 10 1 0 0 0 1
-default_connect=auto
-T 46300 46600 5 10 1 0 0 0 1
-source=auto_dut.1.sch
+source=auto_dut.3a.sch
 T 46300 46600 5 10 1 0 0 0 1
 refdes=dut0
+T 46200 46300 5 10 1 1 0 0 1
+default_connect=auto
 }
 T 50000 40700 9 10 1 0 0 0 1
 Testbench
 T 53900 40100 9 10 1 0 0 0 1
 felix
-C 49100 47600 1 0 0 spice-subcircuit-IO-1.sym
+N 45600 46500 45600 47900 4
+C 45500 46200 1 0 0 gnd-1.sym
 {
-T 50000 48000 5 10 0 1 0 0 1
+T 45000 46400 5 10 1 0 0 0 1
+net=toprail
+}
+C 43700 45300 1 0 0 spice-subcircuit-IO-1.sym
+{
+T 44600 45700 5 10 0 1 0 0 1
 device=spice-IO
-T 49950 47850 5 10 1 1 0 0 1
-pinlabel=a
-T 49500 47000 5 10 0 0 0 0 1
+T 44100 44700 5 10 0 0 0 0 1
 pintype=OUTPUT
-T 49400 47400 5 10 1 0 0 0 1
-refdes=a
+T 44550 45550 5 10 1 1 0 0 1
+pinlabel=a
 }

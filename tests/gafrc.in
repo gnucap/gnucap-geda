@@ -1,1 +1,2 @@
 (component-library "@srcdir@")
+(source-library "@srcdir@")

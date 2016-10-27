@@ -1,0 +1,25 @@
+reading file nesting.sch
+module VOLTAGE_SOURCE (1,2);
+vsource #(.dc(1)) myv (.p(1),.n(2));
+endmodule // VOLTAGE_SOURCE
+
+module nest (IN);
+//comment (incomplete) title-B.sym
+VOLTAGE_SOURCE #(.basename(voltage-3.sym),.value(1)) v1 (.1(x_cn_0),.2(x_cn_1));
+place #(.x(43900),.y(46900)) 43900:46900 (.port(x_cn_0));
+place #(.x(43900),.y(46000)) 43900:46000 (.port(x_cn_1));
+net #() net0 (.p(x_nn_2),.n(x_cn_1));
+place #(.x(43900),.y(45200)) 43900:45200 (.port(x_nn_2));
+net #() net1 (.p(x_cn_0),.n(x_nn_3));
+place #(.x(43900),.y(47900)) 43900:47900 (.port(x_nn_3));
+rail #(.basename(gnd-1.sym),.net(somenet)) somenet (.pin(x_nn_2),.rail(somenet));
+//T 50000 40700 9 10 1 0 0 0 1 
+//Testbench 
+//T 53900 40100 9 10 1 0 0 0 1 
+//felix 
+port #(.basename(input-1.sym)) IN (.int(x_nn_3),.ext(IN));
+endmodule // nest
+
+nest #() mmm (.IN(0));
+#           ev(mmm.v1.myv)
+ 0.         1.        

@@ -1,0 +1,24 @@
+options debug
+
+
+verilog
+module RESISTOR ( 1 2 )
+endmodule RESISTOR
+
+module VOLTAGE_SOURCE ( 1 2 )
+vsource #(value) v( 1 2 )
+endmodule VOLTAGE_SOURCE
+geda auto_top.1ge.sch module device=mm
+
+mm mmm(0);
+print dc i(mmm.V1.v) v(mmm.toprail) v(mmm.dut0.P3)
+
+list
+
+spice
+*.options insensitive=0
+
+* .mstat
+.dc
+
+.end

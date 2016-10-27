@@ -21,12 +21,12 @@ N 46100 47900 46100 47200 4
 C 43800 44900 1 0 0 gnd-1.sym
 {
 T 44100 45000 5 10 1 0 0 0 1
-net=0
+net=lg
 }
 C 46000 44900 1 0 0 gnd-1.sym
 {
 T 46300 45000 5 10 1 0 0 0 1
-net=0
+net=lg
 }
 C 46200 46300 1 90 0 resistor-2.sym
 {
@@ -35,11 +35,11 @@ device=RESISTOR
 T 46700 46600 5 10 0 1 180 0 1
 device=DUT
 T 46300 46800 5 10 1 0 0 0 1
-default_connect=auto
-T 46300 46600 5 10 1 0 0 0 1
-source=auto_dut.1.sch
+source=auto_dut.3a.sch
 T 46300 46600 5 10 1 0 0 0 1
 refdes=dut0
+T 46300 46400 5 10 1 0 0 0 1
+default_connect=auto
 }
 T 50000 40700 9 10 1 0 0 0 1
 Testbench

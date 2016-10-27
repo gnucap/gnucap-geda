@@ -98,7 +98,11 @@ std::string MODEL_GEDA_SUBCKT::port_default(uint_t i)const
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 DEV_GEDA_SUBCKT::DEV_GEDA_SUBCKT() :
-	BASE_SUBCKT(), _part(NULL), _map(NULL), _parent(NULL)
+	BASE_SUBCKT(),
+	_part(NULL),
+	_map(NULL),
+	_parent(NULL),
+	_num_auto_nodes(0)
 {
 	attach_common(&Default_SUBCKT);
 	detach_common();
@@ -108,7 +112,11 @@ DEV_GEDA_SUBCKT::DEV_GEDA_SUBCKT() :
 }
 /*--------------------------------------------------------------------------*/
 DEV_GEDA_SUBCKT::DEV_GEDA_SUBCKT(DEV_GEDA_SUBCKT const& p) :
-	BASE_SUBCKT(p), _part(NULL), _map(NULL), _parent(p._parent)
+	BASE_SUBCKT(p),
+	_part(NULL),
+	_map(NULL),
+	_parent(p._parent),
+	_num_auto_nodes(0)
 {
   for (uint_t ii = 0; ii < max_nodes(); ++ii) {
     _nodes[ii] = p._nodes[ii];
@@ -123,13 +131,52 @@ DEV_GEDA_SUBCKT::~DEV_GEDA_SUBCKT()
 	trace3("destroying", long_label(), (this), (common()));
 }
 /*--------------------------------------------------------------------------*/
+// map a node, so we can connect to it
+void DEV_GEDA_SUBCKT::trysomehing(std::string x)
+{ untested();
+
+  NODE_MAP* Map = subckt()->nodes();
+  NODE_MAP* ModelMap = _parent->subckt()->nodes();
+  trace4("trying something", long_label(), x, Map->how_many(), ModelMap->how_many());
+  assert(Map);
+  if( (*Map)[x] ){ untested();
+	  trace0("it's there");
+	  // we have been here. probably nothing left to do.
+  //}else if( NODE* N=(*_parent->scope()->nodes())[x] ){ untested();
+  }else if( NODE* N=(*ModelMap)[x] ){ untested();
+	  error(bDEBUG, "Preparing existing node %s in %s\n",
+			  x.c_str(), long_label().c_str());
+	  trace2("founda node in model", N->long_label(), N->user_number());
+	  // apply the the user number, as in the model.
+	  NODE* XX = Map->new_node(x);
+	  XX->set_user_number(N->user_number());
+  }else{untested();
+	  error(bDEBUG, "Creating new node %s in %s\n",
+			  x.c_str(), long_label().c_str());
+	  // the model does not know that node either. invent it.
+	  NODE* XX = Map->new_node(x);
+	  XX->set_user_number(ModelMap->how_many() + Map->how_many());
+	  ++_num_auto_nodes;
+  }
+  trace3("tried something", long_label(), x, Map->how_many());
+}
+/*--------------------------------------------------------------------------*/
 void DEV_GEDA_SUBCKT::set_parent(const MODEL_GEDA_SUBCKT* p)
 {
-	trace1("set_parent", p->defconn());
+	COMMON_PARAMLIST* c = prechecked_cast<COMMON_PARAMLIST*>(mutable_common());
+	PARAMETER<double> pdefcon=c->_params.deep_lookup("default_connect");
+	trace3("set_parent defconn", long_label(), p->defconn(), pdefcon);
+	for(unsigned i=0; i<(unsigned)param_count(); ++i){
+		trace2("DEV_GEDA_SUBCKT::sp", param_name(i), param_value(i));
+	}
+
 	_parent = p;
-	if(p->defconn()!=""){
+	if(p->defconn()!=""){ untested();
+		// hmm
 		set_param_by_name("default_connect", p->defconn());
-	}else{
+	}else{ untested();
+		// hmm
+		set_param_by_name("default_connect", p->defconn());
 	}
 }
 /*--------------------------------------------------------------------------*/
@@ -180,11 +227,10 @@ std::string DEV_GEDA_SUBCKT::port_name(uint_t i)const {
 /*--------------------------------------------------------------------------*/
 void DEV_GEDA_SUBCKT::default_connect(const CARD* model)
 {
-
 	COMMON_PARAMLIST* c = prechecked_cast<COMMON_PARAMLIST*>(mutable_common());
 	PARAMETER<double> pdefcon=c->_params.deep_lookup("default_connect");
 	std::string defcon=pdefcon.string();
-	trace2("defcon", defcon, pdefcon);
+	trace2("defcon", long_label(), defcon);
 	// _map maps nodes to nets.
 	// some of them are external
 	// namely model->n_(i).t_() for i < net_nodes()
@@ -194,25 +240,39 @@ void DEV_GEDA_SUBCKT::default_connect(const CARD* model)
 			// already connected.
 			trace1("..", n_(i-1).e_());
 		}else{ incomplete();
-			error(bTRACE, "%s: port #%d (%s) never connected\n",
+			error(bDEBUG, "%s: port #%d (%s) never connected, strategy %s\n",
 					long_label().c_str(), i,
-					port_name(i-1).c_str());
-			trace1("..", defcon);
+					port_name(i-1).c_str(), defcon.c_str());
 			std::string dp=port_default(i-1);
+			trace2("..", defcon, dp);
 
 			if(defcon==""){ untested();
 			}else if(defcon=="open"){ untested();
 			}else if(defcon=="auto" || defcon=="promiscuous"){
-				if(dp!=""){
+				trace1("auto", dp);
+				if(dp!=""){ untested();
 					error(bDEBUG, "%s: port #%d (%s) autoconnect to %s\n",
 							long_label().c_str(), i,
 							port_name(i-1).c_str(),
 							dp.c_str());
 					// hmm only works if that node already exists...
-					trace1("",port_value(i-1));
+					trace1("", port_value(i-1));
 					incomplete();
-					set_port_by_index(i-1, dp);
-				}else{
+					if(owner()==NULL){ untested();
+						// this creates a new top level node and connects
+						// to the dangling port.
+						set_port_by_index(i-1, dp);
+					}else if(DEV_GEDA_SUBCKT* o=dynamic_cast<DEV_GEDA_SUBCKT*>(owner())){ incomplete();
+						// now what are the net names in o??
+						o->trysomehing(dp);
+						set_port_by_index(i-1, dp);
+					}else{ incomplete();
+						error(bWARNING, "i cannot help you\n");
+					}
+				}else{ untested();
+					error(bPICKY, "%s: port #%d (%s) autoconnect but no name\n",
+							long_label().c_str(), i,
+							port_name(i-1).c_str());
 				}
 			}else{
 				error(bPICKY, "%s: port #%d (%s) never connected\n",
@@ -228,33 +288,34 @@ void DEV_GEDA_SUBCKT::default_connect(const CARD* model)
 /*--------------------------------------------------------------------------*/
 void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 {
+	for(unsigned i=0; i<(unsigned)param_count(); ++i){
+		trace2("DEV_GEDA_SUBCKT::msn", param_name(i), param_value(i));
+	}
 	assert(model);
 	assert(model->subckt());
 	assert(model->subckt()->nodes());
-	unsigned num_nodes_in_subckt = _parent->subckt()->nodes()->how_many();
+	unsigned num_nodes_in_model = _parent->subckt()->nodes()->how_many();
 	typedef boost::counting_iterator<unsigned> elt_iter;
 	error(bTRACE, "%s: map_subckt_nodes net: %d sckt: %d\n",
 			long_label().c_str(),
 			(unsigned)model->net_nodes(),
-			num_nodes_in_subckt);
+			num_nodes_in_model);
 
-	unsigned *port=new unsigned[num_nodes_in_subckt+1];
-	std::fill(port, port+num_nodes_in_subckt+1, INVALID_NODE);
+	unsigned *port=new unsigned[num_nodes_in_model+1];
+	std::fill(port, port+num_nodes_in_model+1, INVALID_NODE);
 
-	for (unsigned i=1; i <= num_nodes_in_subckt; ++i) {
+	for (unsigned i=1; i <= num_nodes_in_model; ++i) {
 		trace3("collapse map", i, _part->find_set(i), port[i]);
 	}
 	assert(_part);
 	assert(_map);
-//	     orbit_number(_map, num_nodes_in_subckt, port);
-	_part->compress_sets(elt_iter(1), elt_iter(num_nodes_in_subckt));
-	_part->normalize_sets(elt_iter(1), elt_iter(num_nodes_in_subckt));
+	_part->compress_sets(elt_iter(1), elt_iter(num_nodes_in_model));
+	_part->normalize_sets(elt_iter(1), elt_iter(num_nodes_in_model));
 
-	for (unsigned i=1; i <= num_nodes_in_subckt; ++i) {
+	for (unsigned i=1; i <= num_nodes_in_model; ++i) {
 		trace3("normalized map", i, _part->find_set(i), port[i]);
 	}
 
-//
 	unsigned connected_ports=0;
 	for(unsigned i=1; i<=(unsigned)model->net_nodes(); ++i){
 		unsigned usernumber = model->n_(i-1).t_();
@@ -275,7 +336,7 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 		}
 	}
 
-	for(unsigned i=0; i<=num_nodes_in_subckt; ++i){
+	for(unsigned i=0; i<=num_nodes_in_model; ++i){
 		trace4("portsconn", i, _part->find_set(i), port[i], port[_part->find_set(i)]);
 	}
 
@@ -283,7 +344,7 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 		assert(_part->find_set(0)==0);
 		// self test: verify that port node numbering is correct
 		for (unsigned j = 0; j < (unsigned)model->net_nodes(); ++j) {
-			assert(model->n_(j).e_() <= (uint_t)num_nodes_in_subckt);
+			assert(model->n_(j).e_() <= (uint_t)num_nodes_in_model);
 			//assert(model->n_(j).e_() == j+1);
 			trace4("ports", j, model->n_(j).short_label(),
 					model->n_(j).e_(), n_(j).t_());
@@ -294,7 +355,8 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 			unsigned seek = 0; // model->net_nodes();
 			_num_cc = connected_ports;
 			trace1("seek", seek);
-			for (unsigned i=1; i <= num_nodes_in_subckt; ++i) {
+			unsigned i;
+			for (i=1; i <= num_nodes_in_model; ++i) {
 				trace3("num", i, _part->find_set(i), port[_part->find_set(i)]);
 				assert(_part->find_set(i)); // no gnd?
 				if(port[_part->find_set(i)]!=(unsigned)INVALID_NODE){
@@ -311,10 +373,15 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 					++_num_cc;
 				}
 			}
+			for (; i <= _num_auto_nodes+num_nodes_in_model; ++i) { untested();
+				_map[i] = CKT_BASE::_sim->newnode_subckt();
+				trace4("auto, new", i, _map[i], seek, _sim->_total_nodes);
+				++_num_cc;
+			}
 		}
 	}
-	trace2("ncc", _num_cc, _part->count_sets(elt_iter(1), elt_iter(num_nodes_in_subckt+1)));
-	assert(_num_cc == _part->count_sets(elt_iter(1), elt_iter(num_nodes_in_subckt+1)));
+	trace2("ncc", _num_cc, _part->count_sets(elt_iter(1), elt_iter(num_nodes_in_model+1)));
+	assert(_num_cc == _num_auto_nodes+_part->count_sets(elt_iter(1), elt_iter(num_nodes_in_model+1)));
 
 	error(bTRACE, "%s: map_subckt_nodes connected components %d\n",
 			long_label().c_str(), _num_cc);
@@ -323,7 +390,7 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 	// "map" now contains a translation list,
 	// from subckt local numbers to matrix index numbers
 	
-	for(unsigned i=0; i<=num_nodes_in_subckt; ++i){
+	for(unsigned i=0; i<=num_nodes_in_model; ++i){
 		trace3("preapply", long_label(), i, _map[i]);
 	}
 
@@ -377,12 +444,20 @@ void DEV_GEDA_SUBCKT::precalc_first()
 		//  assert(find_looking_out(c->modelname()) == _parent);
 	}
 
+	trace1("DEV_GEDA_SUBCKT::pf", long_label());
+	for(unsigned i=0; i<(unsigned)param_count(); ++i){
+		trace2("DEV_GEDA_SUBCKT::pf", param_name(i), param_value(i));
+	}
+
 	default_connect(_parent);
 }
 /*--------------------------------------------------------------------------*/
 void DEV_GEDA_SUBCKT::expand()
 {
-	trace1("DEV_GEDA_SUBCKT::expand", long_label());
+	trace2("DEV_GEDA_SUBCKT::expand", long_label(), param_count());
+	for(unsigned i=0; i<(unsigned)param_count(); ++i){
+		trace2("DEV_GEDA_SUBCKT::expand", param_name(i), param_value(i));
+	}
 	BASE_SUBCKT::expand();
 	COMMON_PARAMLIST* c = prechecked_cast<COMMON_PARAMLIST*>(mutable_common());
 	assert(c);
@@ -395,7 +470,8 @@ void DEV_GEDA_SUBCKT::expand()
 			_parent = prechecked_cast<const MODEL_GEDA_SUBCKT*>(model);
 		}
 	}else{
-		assert(find_looking_out(c->modelname()) == _parent);
+		trace1("DEV_GEDA_SUBCKT::expand", c->modelname());
+		// assert(find_looking_out(c->modelname()) == _parent); nope.
 	}
 
 	assert(_parent->subckt());
@@ -411,7 +487,8 @@ void DEV_GEDA_SUBCKT::expand()
 	subckt()->shallow_copy(_parent->subckt());
 	subckt()->set_owner(this);
 
-	unsigned num_nodes_in_subckt = _parent->subckt()->nodes()->how_many() + 1;
+	unsigned num_nodes_in_model = _parent->subckt()->nodes()->how_many() + 1;
+	unsigned num_nodes_in_subckt = num_nodes_in_model + _num_auto_nodes;
 	if(_map){
 		incomplete();
 		delete[] _map;
@@ -421,7 +498,7 @@ void DEV_GEDA_SUBCKT::expand()
 	for(unsigned i=0; i<num_nodes_in_subckt; ++i){
 		_map[i] = i;
 	}
-	_part = new PARTITION(num_nodes_in_subckt);
+	_part = new PARTITION(num_nodes_in_model);
 	subckt()->precalc_first(); // collapses nodes (HACK).
 	// maybe
 	// for i in subckt{
@@ -463,7 +540,8 @@ void DEV_GEDA_SUBCKT::set_port_by_index(uint_t num, std::string& ext_name)
 {
   trace3("DEV_GEDA_SUBCKT::set_port_by_index", long_label(), num, ext_name);
   COMPONENT::set_port_by_index(num, ext_name);
-  trace2("DEV_GEDA_SUBCKT::set_port_by_index", (this), _n[num].t_());
+  trace2("DEV_GEDA_SUBCKT::set_port_by_index", _n[num].t_(), _n[num].e_());
+  trace1("DEV_GEDA_SUBCKT::set_port_by_index", scope()->nodes()->how_many());
 }
 /*--------------------------------------------------------------------------*/
 double DEV_GEDA_SUBCKT::tr_probe_num(const std::string& x)const

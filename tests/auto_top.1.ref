@@ -1,4 +1,4 @@
-dut0: port #3 (3) never connected
+dut0: port #3 (3) autoconnect but no name
 *// This File is part of gnucap-geda 
 *// (C) 2012 Felix Salfelder 
 *// GPLv3 or later 
@@ -90,13 +90,13 @@ extranet9 ( x_nn_16 x_cn_11 )  net
 net10 ( x_nn_17 x_cn_14 )  net 
 net11 ( x_cn_15 x_cn_13 )  net 
 .ends DUT
-dut0 ( x_nn_1 x_nn_8 )  DUT  basename=resistor-2.sym source=auto_dut.1.sch
+dut0 ( x_nn_1 x_nn_8 )  DUT  basename=resistor-2.sym default_connect=auto source=auto_dut.1.sch
 *T 50000 40700 9 10 1 0 0 0 1 
 *Testbench 
 *T 53900 40100 9 10 1 0 0 0 1 
 *felix 
 a ( x_nn_6 )  port  basename=spice-subcircuit-IO-1.sym pinlabel=a
 * .mstat 
-dut0: port #3 (3) never connected
+dut0: port #3 (3) autoconnect but no name
 #          
  0.        

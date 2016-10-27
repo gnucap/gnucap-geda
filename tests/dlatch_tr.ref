@@ -19,12 +19,12 @@ endmodule // PMOS_TRANSISTOR
 
 module dlatch (D,\_D\_,CLK,\_Q\_,V+,V-,Q);
 //comment (incomplete) title-B.sym
-PMOS_TRANSISTOR #(.basename(asic-pmos-1.sym),.description(low),.l(1u),.model-name(pmos4),.w(2u)) M4 (.D(x_cn_1),.G(x_cn_2),.S(x_cn_3),.B(x_cn_0));
+PMOS_TRANSISTOR #(.basename(asic-pmos-1.sym),.description(low),.l(11u),.model-name(pmos4),.w(2u)) M4 (.D(x_cn_1),.G(x_cn_2),.S(x_cn_3),.B(x_cn_0));
 place #(.x(47100),.y(48600)) 47100:48600 (.port(x_cn_0));
 place #(.x(47000),.y(48100)) 47000:48100 (.port(x_cn_1));
 place #(.x(46400),.y(48600)) 46400:48600 (.port(x_cn_2));
 place #(.x(47000),.y(49100)) 47000:49100 (.port(x_cn_3));
-PMOS_TRANSISTOR #(.basename(asic-pmos-1.sym),.description(low),.l(1u),.model-name(pmos4),.w(2u)) M3 (.D(x_cn_5),.G(x_cn_6),.S(x_cn_7),.B(x_cn_4));
+PMOS_TRANSISTOR #(.basename(asic-pmos-1.sym),.description(low),.l(11u),.model-name(pmos4),.w(2u)) M3 (.D(x_cn_5),.G(x_cn_6),.S(x_cn_7),.B(x_cn_4));
 place #(.x(44700),.y(48600)) 44700:48600 (.port(x_cn_4));
 place #(.x(44800),.y(48100)) 44800:48100 (.port(x_cn_5));
 place #(.x(45400),.y(48600)) 45400:48600 (.port(x_cn_6));
@@ -52,11 +52,11 @@ net #() extranet9 (.p(x_nn_17),.n(x_nn_14));
 net #() net10 (.p(x_cn_2),.n(x_nn_16));
 net #() net11 (.p(x_cn_4),.n(x_nn_18));
 place #(.x(44600),.y(48600)) 44600:48600 (.port(x_nn_18));
-NMOS_TRANSISTOR #(.basename(asic-nmos-1.sym),.description(low),.l(1u),.model-name(nmos4),.w(1u)) M1 (.D(x_nn_17),.G(x_cn_20),.S(x_cn_21),.B(x_cn_19));
+NMOS_TRANSISTOR #(.basename(asic-nmos-1.sym),.description(low),.l(11u),.model-name(nmos4),.w(1u)) M1 (.D(x_nn_17),.G(x_cn_20),.S(x_cn_21),.B(x_cn_19));
 place #(.x(44900),.y(46900)) 44900:46900 (.port(x_cn_19));
 place #(.x(44200),.y(46900)) 44200:46900 (.port(x_cn_20));
 place #(.x(44800),.y(46400)) 44800:46400 (.port(x_cn_21));
-NMOS_TRANSISTOR #(.basename(asic-nmos-1.sym),.description(low),.l(1u),.model-name(nmos4),.w(1u)) M2 (.D(x_nn_11),.G(x_cn_23),.S(x_cn_24),.B(x_cn_22));
+NMOS_TRANSISTOR #(.basename(asic-nmos-1.sym),.description(low),.l(11u),.model-name(nmos4),.w(1u)) M2 (.D(x_nn_11),.G(x_cn_23),.S(x_cn_24),.B(x_cn_22));
 place #(.x(46900),.y(46900)) 46900:46900 (.port(x_cn_22));
 place #(.x(47600),.y(46900)) 47600:46900 (.port(x_cn_23));
 place #(.x(47000),.y(46400)) 47000:46400 (.port(x_cn_24));
@@ -76,7 +76,7 @@ place #(.x(45000),.y(46200)) 45000:46200 (.port(x_nn_30));
 net #() extranet19 (.p(x_nn_30),.n(x_nn_27));
 net #() extranet20 (.p(x_nn_30),.n(x_nn_27));
 net #() net21 (.p(x_nn_27),.n(x_cn_21));
-NMOS_TRANSISTOR #(.basename(asic-nmos-1.sym),.description(low),.l(1u),.model-name(nmos4),.w(8u)) M5 (.D(x_cn_32),.G(x_cn_33),.S(x_cn_34),.B(x_cn_31));
+NMOS_TRANSISTOR #(.basename(asic-nmos-1.sym),.description(low),.l(11u),.model-name(nmos4),.w(8u)) M5 (.D(x_cn_32),.G(x_cn_33),.S(x_cn_34),.B(x_cn_31));
 place #(.x(46000),.y(45300)) 46000:45300 (.port(x_cn_31));
 place #(.x(45900),.y(45800)) 45900:45800 (.port(x_cn_32));
 place #(.x(45300),.y(45300)) 45300:45300 (.port(x_cn_33));
@@ -148,12 +148,12 @@ m ( D G S B )  cmosp  l=l w=w
 .subckt dlatch ( D \_D\_ CLK \_Q\_ V+ V- Q )
 *v 20130925 2 
 *comment (incomplete) title-B.sym
-M4 ( x_cn_1 x_cn_2 x_cn_3 x_cn_0 )  PMOS_TRANSISTOR  basename=asic-pmos-1.sym description=low l=1u model-name=pmos4 w=2u
+M4 ( x_cn_1 x_cn_2 x_cn_3 x_cn_0 )  PMOS_TRANSISTOR  basename=asic-pmos-1.sym description=low l=11u model-name=pmos4 w=2u
 47100:48600 ( x_cn_0 )  place  x=47100 y=48600
 47000:48100 ( x_cn_1 )  place  x=47000 y=48100
 46400:48600 ( x_cn_2 )  place  x=46400 y=48600
 47000:49100 ( x_cn_3 )  place  x=47000 y=49100
-M3 ( x_cn_5 x_cn_6 x_cn_7 x_cn_4 )  PMOS_TRANSISTOR  basename=asic-pmos-1.sym description=low l=1u model-name=pmos4 w=2u
+M3 ( x_cn_5 x_cn_6 x_cn_7 x_cn_4 )  PMOS_TRANSISTOR  basename=asic-pmos-1.sym description=low l=11u model-name=pmos4 w=2u
 44700:48600 ( x_cn_4 )  place  x=44700 y=48600
 44800:48100 ( x_cn_5 )  place  x=44800 y=48100
 45400:48600 ( x_cn_6 )  place  x=45400 y=48600
@@ -181,11 +181,11 @@ extranet9 ( x_nn_17 x_nn_14 )  net
 net10 ( x_cn_2 x_nn_16 ) 
 net11 ( x_cn_4 x_nn_18 ) 
 44600:48600 ( x_nn_18 )  place  x=44600 y=48600
-M1 ( x_nn_17 x_cn_20 x_cn_21 x_cn_19 )  NMOS_TRANSISTOR  basename=asic-nmos-1.sym description=low l=1u model-name=nmos4 w=1u
+M1 ( x_nn_17 x_cn_20 x_cn_21 x_cn_19 )  NMOS_TRANSISTOR  basename=asic-nmos-1.sym description=low l=11u model-name=nmos4 w=1u
 44900:46900 ( x_cn_19 )  place  x=44900 y=46900
 44200:46900 ( x_cn_20 )  place  x=44200 y=46900
 44800:46400 ( x_cn_21 )  place  x=44800 y=46400
-M2 ( x_nn_11 x_cn_23 x_cn_24 x_cn_22 )  NMOS_TRANSISTOR  basename=asic-nmos-1.sym description=low l=1u model-name=nmos4 w=1u
+M2 ( x_nn_11 x_cn_23 x_cn_24 x_cn_22 )  NMOS_TRANSISTOR  basename=asic-nmos-1.sym description=low l=11u model-name=nmos4 w=1u
 46900:46900 ( x_cn_22 )  place  x=46900 y=46900
 47600:46900 ( x_cn_23 )  place  x=47600 y=46900
 47000:46400 ( x_cn_24 )  place  x=47000 y=46400
@@ -205,7 +205,7 @@ net18 ( x_nn_29 x_nn_30 )
 extranet19 ( x_nn_30 x_nn_27 )  net 
 extranet20 ( x_nn_30 x_nn_27 )  net 
 net21 ( x_nn_27 x_cn_21 ) 
-M5 ( x_cn_32 x_cn_33 x_cn_34 x_cn_31 )  NMOS_TRANSISTOR  basename=asic-nmos-1.sym description=low l=1u model-name=nmos4 w=8u
+M5 ( x_cn_32 x_cn_33 x_cn_34 x_cn_31 )  NMOS_TRANSISTOR  basename=asic-nmos-1.sym description=low l=11u model-name=nmos4 w=8u
 46000:45300 ( x_cn_31 )  place  x=46000 y=45300
 45900:45800 ( x_cn_32 )  place  x=45900 y=45800
 45300:45300 ( x_cn_33 )  place  x=45300 y=45300
@@ -273,21 +273,21 @@ cmosp: rsh - rs - rd conflict: using rsh
 cmosp: is - js conflict
 #         v(clk)   v(d)     v(q)     v(vdd)   v(xd)    v(xq)   
 open circuit: internal node 4
- 27.      0.       0.       4.16     5.       5.       4.16    
+ 27.      0.       0.       4.15     5.       5.       4.15    
 cmosp: rsh - rs - rd conflict: using rsh
 cmosp: is - js conflict
 cmosp: rsh - rs - rd conflict: using rsh
 cmosp: is - js conflict
 #Time     ev(vck)  v(q)    
 open circuit: internal node 4
- 0.       0.       4.16    
- 0.1      0.       4.16    
- 0.2      0.       4.16    
- 0.3      5.      -0.049   
- 0.4      5.      -0.049   
+ 0.       0.       4.15    
+ 0.1      0.       4.15    
+ 0.2      0.       4.15    
+ 0.3      5.      -0.035   
+ 0.4      5.       0.0354  
  0.5      0.       1.44    
  0.6      0.       1.45    
- 0.7      0.       1.46    
- 0.8      0.       1.46    
+ 0.7      0.       1.45    
+ 0.8      0.       1.45    
  0.9      0.       1.45    
- 1.       0.       1.46    
+ 1.       0.       1.45    

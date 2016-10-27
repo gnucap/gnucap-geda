@@ -1,53 +1,143 @@
->>>>>spice 
->>>>>.verilog 
->>>>>module RESISTOR(1 2); 
->>>>>parameter value=1; 
->>>>>module VOLTAGE_SOURCE ( 1 2 ) 
->>>>>geda auto_top.3a.sch default_connect=auto 
-reading file auto_top.3a.sch
->>>>>gC
-reading file auto_dut.3a.sch
->>>>>spice 
->>>>>.options insensitive=0 
->>>>>.print dc i(V1.v) 
-dut0: port #3 (3) never connected
+reading file auto_top.3b.sch
+reading file auto_dut.3b.sch
+dut0: port #3 (3) never connected, strategy auto
 dut0: port #3 (3) autoconnect to toprail
-V1: map_subckt_nodes net: 2 sckt: 2
-V1: map_subckt_nodes connected components 2
-collapse dut0: x_cn_9 (3), 1(1)
-collapse dut0: x_cn_10 (4), 2(2)
-collapse dut0: x_cn_11 (5), x_cn_9(3)
-collapse dut0: x_cn_12 (6), x_cn_10(4)
-collapse dut0: x_cn_13 (7), 3(8)
-collapse dut0: x_nn_16 (11), x_nn_17(12)
-collapse dut0: x_nn_16 (11), x_cn_12(6)
-collapse dut0: x_cn_15 (10), x_cn_13(7)
-collapse dut0: x_cn_14 (9), x_nn_17(12)
-dut0: map_subckt_nodes net: 3 sckt: 12
-dut0: map_subckt_nodes connected components 3
-collapse dut0: x_cn_9 (3), 1(1)
-collapse dut0: x_cn_10 (4), 2(2)
-collapse dut0: x_cn_11 (5), x_cn_9(3)
-collapse dut0: x_cn_12 (6), x_cn_10(4)
-collapse dut0: x_cn_13 (7), 3(8)
-collapse dut0: x_nn_16 (11), x_nn_17(12)
-collapse dut0: x_nn_16 (11), x_cn_12(6)
-collapse dut0: x_cn_15 (10), x_cn_13(7)
-collapse dut0: x_cn_14 (9), x_nn_17(12)
-dut0.R1: map_subckt_nodes net: 2 sckt: 2
-dut0.R1: map_subckt_nodes connected components 2
-dut0.R2: map_subckt_nodes net: 2 sckt: 2
-dut0.R2: map_subckt_nodes connected components 2
->>>>>.dc 
-collapse dut0: x_cn_9 (3), 1(1)
-collapse dut0: x_cn_10 (4), 2(2)
-collapse dut0: x_cn_11 (5), x_cn_9(3)
-collapse dut0: x_cn_12 (6), x_cn_10(4)
-collapse dut0: x_cn_13 (7), 3(8)
-collapse dut0: x_nn_16 (11), x_nn_17(12)
-collapse dut0: x_nn_16 (11), x_cn_12(6)
-collapse dut0: x_cn_15 (10), x_cn_13(7)
-collapse dut0: x_cn_14 (9), x_nn_17(12)
-#           i(V1.v)   
- 0.        -1.9997    
->>>>>.end 
+vsource #( DC  0.) vt (.p(toprail),.n(0));
+module RESISTOR (1,2);
+resistor #(.r(1)) r (.p(1),.n(2));
+endmodule // RESISTOR
+
+module VOLTAGE_SOURCE (1,2);
+vsource #(.dc(value)) v (.p(1),.n(2));
+endmodule // VOLTAGE_SOURCE
+
+//comment (incomplete) title-B.sym
+net #() net0 (.p(x_nn_0),.n(x_nn_1));
+place #(.x(46100),.y(45200)) 46100:45200 (.port(x_nn_0));
+place #(.x(46100),.y(46300)) 46100:46300 (.port(x_nn_1));
+VOLTAGE_SOURCE #(.basename(voltage-3.sym),.value(1)) V1 (.1(x_cn_2),.2(x_cn_3));
+place #(.x(43900),.y(46900)) 43900:46900 (.port(x_cn_2));
+place #(.x(43900),.y(46000)) 43900:46000 (.port(x_cn_3));
+net #() net1 (.p(x_nn_4),.n(x_cn_3));
+place #(.x(43900),.y(45200)) 43900:45200 (.port(x_nn_4));
+net #() net2 (.p(x_cn_2),.n(x_nn_5));
+place #(.x(43900),.y(47900)) 43900:47900 (.port(x_nn_5));
+net #() nhi (.p(x_nn_5),.n(x_nn_6));
+place #(.x(49300),.y(47900)) 49300:47900 (.port(x_nn_6));
+net #() net4 (.p(x_nn_7),.n(x_nn_8));
+place #(.x(46100),.y(47900)) 46100:47900 (.port(x_nn_7));
+place #(.x(46100),.y(47200)) 46100:47200 (.port(x_nn_8));
+net #() extranet5 (.p(x_nn_7),.n(x_nn_5));
+rail #(.basename(gnd-1.sym),.net(0)) 0 (.pin(x_nn_4),.rail(0));
+rail #(.basename(gnd-1.sym),.net(0)) 0 (.pin(x_nn_0),.rail(0));
+module DUT (1,2,3);
+//comment (incomplete) title-B.sym
+//T 50000 40700 9 10 1 0 0 0 1 
+//Device under test 
+//T 53900 40100 9 10 1 0 0 0 1 
+//felix 
+port #(.basename(spice-subcircuit-IO-1.sym),.pinseq(1),.pinlabel(1)) P1 (.int(x_cn_9),.ext(1));
+place #(.x(45900),.y(46800)) 45900:46800 (.port(x_cn_9));
+port #(.basename(spice-subcircuit-IO-1.sym),.pinseq(2),.pinlabel(2)) P2 (.int(x_cn_10),.ext(2));
+place #(.x(47900),.y(46800)) 47900:46800 (.port(x_cn_10));
+RESISTOR #(.basename(resistor-1.sym),.class(DISCRETE),.pins(2),.value(1)) R1 (.1(x_cn_11),.2(x_cn_12));
+place #(.x(46400),.y(46800)) 46400:46800 (.port(x_cn_11));
+place #(.x(47300),.y(46800)) 47300:46800 (.port(x_cn_12));
+net #() net6 (.p(x_cn_11),.n(x_cn_9));
+net #() net7 (.p(x_cn_12),.n(x_cn_10));
+port #(.basename(spice-subcircuit-IO-1.sym),.pinseq(3),.pinlabel(3),.default_value(toprail)) P3 (.int(x_cn_13),.ext(3));
+place #(.x(50400),.y(45600)) 50400:45600 (.port(x_cn_13));
+RESISTOR #(.basename(resistor-1.sym),.class(DISCRETE),.pins(2),.value(1)) R2 (.1(x_cn_14),.2(x_cn_15));
+place #(.x(47700),.y(45600)) 47700:45600 (.port(x_cn_14));
+place #(.x(48600),.y(45600)) 48600:45600 (.port(x_cn_15));
+net #() net8 (.p(x_nn_16),.n(x_nn_17));
+place #(.x(47600),.y(46800)) 47600:46800 (.port(x_nn_16));
+place #(.x(47600),.y(45600)) 47600:45600 (.port(x_nn_17));
+net #() extranet9 (.p(x_nn_16),.n(x_cn_12));
+net #() net10 (.p(x_cn_15),.n(x_cn_13));
+net #() net11 (.p(x_cn_14),.n(x_nn_17));
+endmodule // DUT
+
+DUT #(.basename(resistor-2.sym),.default_connect(auto),.source(auto_dut.3b.sch)) dut0 (.1(x_nn_1),.2(x_nn_8),.3(toprail));
+//T 50000 40700 9 10 1 0 0 0 1 
+//Testbench 
+//T 53900 40100 9 10 1 0 0 0 1 
+//felix 
+port #(.basename(spice-subcircuit-IO-1.sym),.pinlabel(a)) a (.int(x_nn_6));
+rail #(.basename(gnd-1.sym),.net(toprail)) toprail (.pin(x_cn_18),.rail(toprail));
+place #(.x(48100),.y(45200)) 48100:45200 (.port(x_cn_18));
+net #() net12 (.p(x_cn_18),.n(x_nn_19));
+place #(.x(48100),.y(45700)) 48100:45700 (.port(x_nn_19));
+net #() net13 (.p(x_nn_19),.n(x_nn_20));
+place #(.x(46100),.y(45700)) 46100:45700 (.port(x_nn_20));
+net #() extranet14 (.p(x_nn_20),.n(x_nn_0));
+vt ( toprail 0 )  vsource  DC  0.
+.subckt RESISTOR ( 1 2 )
+r ( 1 2 )  resistor 1
+.ends RESISTOR
+.subckt VOLTAGE_SOURCE ( 1 2 )
+v ( 1 2 )  vsource value
+.ends VOLTAGE_SOURCE
+*v 20130925 2 
+*comment (incomplete) title-B.sym
+net0 ( x_nn_0 x_nn_1 )  net 
+46100:45200 ( x_nn_0 )  place  x=46100 y=45200
+46100:46300 ( x_nn_1 )  place  x=46100 y=46300
+V1 ( x_cn_2 x_cn_3 )  VOLTAGE_SOURCE  basename=voltage-3.sym value=1
+43900:46900 ( x_cn_2 )  place  x=43900 y=46900
+43900:46000 ( x_cn_3 )  place  x=43900 y=46000
+net1 ( x_nn_4 x_cn_3 )  net 
+43900:45200 ( x_nn_4 )  place  x=43900 y=45200
+net2 ( x_cn_2 x_nn_5 )  net 
+43900:47900 ( x_nn_5 )  place  x=43900 y=47900
+nhi ( x_nn_5 x_nn_6 )  net 
+49300:47900 ( x_nn_6 )  place  x=49300 y=47900
+net4 ( x_nn_7 x_nn_8 )  net 
+46100:47900 ( x_nn_7 )  place  x=46100 y=47900
+46100:47200 ( x_nn_8 )  place  x=46100 y=47200
+extranet5 ( x_nn_7 x_nn_5 )  net 
+0 ( x_nn_4 0 )  rail  basename=gnd-1.sym net=0
+0 ( x_nn_0 0 )  rail  basename=gnd-1.sym net=0
+.subckt DUT ( 1 2 3 )
+*v 20130925 2 
+*comment (incomplete) title-B.sym
+*T 50000 40700 9 10 1 0 0 0 1 
+*Device under test 
+*T 53900 40100 9 10 1 0 0 0 1 
+*felix 
+P1 ( x_cn_9 1 )  port  basename=spice-subcircuit-IO-1.sym pinseq=1 pinlabel=1
+45900:46800 ( x_cn_9 )  place  x=45900 y=46800
+P2 ( x_cn_10 2 )  port  basename=spice-subcircuit-IO-1.sym pinseq=2 pinlabel=2
+47900:46800 ( x_cn_10 )  place  x=47900 y=46800
+R1 ( x_cn_11 x_cn_12 )  RESISTOR  basename=resistor-1.sym class=DISCRETE pins=2 value=1
+46400:46800 ( x_cn_11 )  place  x=46400 y=46800
+47300:46800 ( x_cn_12 )  place  x=47300 y=46800
+net6 ( x_cn_11 x_cn_9 )  net 
+net7 ( x_cn_12 x_cn_10 )  net 
+P3 ( x_cn_13 3 )  port  basename=spice-subcircuit-IO-1.sym pinseq=3 pinlabel=3 default_value=toprail
+50400:45600 ( x_cn_13 )  place  x=50400 y=45600
+R2 ( x_cn_14 x_cn_15 )  RESISTOR  basename=resistor-1.sym class=DISCRETE pins=2 value=1
+47700:45600 ( x_cn_14 )  place  x=47700 y=45600
+48600:45600 ( x_cn_15 )  place  x=48600 y=45600
+net8 ( x_nn_16 x_nn_17 )  net 
+47600:46800 ( x_nn_16 )  place  x=47600 y=46800
+47600:45600 ( x_nn_17 )  place  x=47600 y=45600
+extranet9 ( x_nn_16 x_cn_12 )  net 
+net10 ( x_cn_15 x_cn_13 )  net 
+net11 ( x_cn_14 x_nn_17 )  net 
+.ends DUT
+dut0 ( x_nn_1 x_nn_8 toprail )  DUT  basename=resistor-2.sym default_connect=auto source=auto_dut.3b.sch
+*T 50000 40700 9 10 1 0 0 0 1 
+*Testbench 
+*T 53900 40100 9 10 1 0 0 0 1 
+*felix 
+a ( x_nn_6 )  port  basename=spice-subcircuit-IO-1.sym pinlabel=a
+toprail ( x_cn_18 toprail )  rail  basename=gnd-1.sym net=toprail
+48100:45200 ( x_cn_18 )  place  x=48100 y=45200
+net12 ( x_cn_18 x_nn_19 )  net 
+48100:45700 ( x_nn_19 )  place  x=48100 y=45700
+net13 ( x_nn_19 x_nn_20 )  net 
+46100:45700 ( x_nn_20 )  place  x=46100 y=45700
+extranet14 ( x_nn_20 x_nn_0 )  net 
+#         i(V1.v)  v(a)     v(V1.v)  v(dut0.P1) v(dut0.P2) v(dut0.P3) v(dut0.R1.r) v(dut0.R2.r)
+ 0.      -2.       1.       1.       20.u     1.       10.u    -1.       1.      

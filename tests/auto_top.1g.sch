@@ -35,9 +35,7 @@ device=RESISTOR
 T 46700 46600 5 10 0 1 180 0 1
 device=DUT
 T 46300 46800 5 10 1 0 0 0 1
-default_connect=auto
-T 46300 46600 5 10 1 0 0 0 1
-source=auto_dut.1.sch
+source=auto_dut.3a.sch
 T 46300 46600 5 10 1 0 0 0 1
 refdes=dut0
 }
@@ -55,4 +53,22 @@ T 49500 47000 5 10 0 0 0 0 1
 pintype=OUTPUT
 T 49400 47400 5 10 1 0 0 0 1
 refdes=a
+}
+N 48400 45200 48400 46300 4
+N 48400 47900 48400 47200 4
+C 48300 44900 1 0 0 gnd-1.sym
+{
+T 48600 45000 5 10 1 0 0 0 1
+net=n0
+}
+C 48500 46300 1 90 0 resistor-2.sym
+{
+T 48150 46700 5 10 0 0 90 0 1
+device=RESISTOR
+T 49000 46600 5 10 0 1 180 0 1
+device=DUT
+T 48600 46800 5 10 1 0 0 0 1
+source=auto_dut.3a.sch
+T 48600 46600 5 10 1 0 0 0 1
+refdes=dut0
 }

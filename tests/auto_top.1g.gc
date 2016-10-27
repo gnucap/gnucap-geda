@@ -1,0 +1,19 @@
+options debug
+
+
+verilog
+module VOLTAGE_SOURCE ( 1 2 )
+vsource #(value) v( 1 2 )
+endmodule VOLTAGE_SOURCE
+geda auto_top.1g.sch module device=mm
+
+mm mmm(0);
+list
+print dc v(mmm.V1.v) v(mmm.toprail) v(mmm.dut0.P*)
+
+spice
+
+* .mstat
+.dc
+
+.end

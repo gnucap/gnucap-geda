@@ -1,11 +1,11 @@
 //v 20130925 2
 //comment (incomplete) title-B.sym
-PMOS_TRANSISTOR #(.basename(asic-pmos-1.sym),.description(low),.l(1u),.model-name(pmos4),.w(2u)) M4 (.D(x_cn_1),.G(x_cn_2),.S(x_cn_3),.B(x_cn_0));
+PMOS_TRANSISTOR #(.basename(asic-pmos-1.sym),.description(low),.l(11u),.model-name(pmos4),.w(2u)) M4 (.D(x_cn_1),.G(x_cn_2),.S(x_cn_3),.B(x_cn_0));
 place #(.x(47100),.y(48600)) 47100:48600 (.port(x_cn_0));
 place #(.x(47000),.y(48100)) 47000:48100 (.port(x_cn_1));
 place #(.x(46400),.y(48600)) 46400:48600 (.port(x_cn_2));
 place #(.x(47000),.y(49100)) 47000:49100 (.port(x_cn_3));
-PMOS_TRANSISTOR #(.basename(asic-pmos-1.sym),.description(low),.l(1u),.model-name(pmos4),.w(2u)) M3 (.D(x_cn_5),.G(x_cn_6),.S(x_cn_7),.B(x_cn_4));
+PMOS_TRANSISTOR #(.basename(asic-pmos-1.sym),.description(low),.l(11u),.model-name(pmos4),.w(2u)) M3 (.D(x_cn_5),.G(x_cn_6),.S(x_cn_7),.B(x_cn_4));
 place #(.x(44700),.y(48600)) 44700:48600 (.port(x_cn_4));
 place #(.x(44800),.y(48100)) 44800:48100 (.port(x_cn_5));
 place #(.x(45400),.y(48600)) 45400:48600 (.port(x_cn_6));
@@ -33,11 +33,11 @@ net #() extranet9 (.p(x_nn_17),.n(x_nn_14));
 net #() net10 (.p(x_cn_2),.n(x_nn_16));
 net #() net11 (.p(x_cn_4),.n(x_nn_18));
 place #(.x(44600),.y(48600)) 44600:48600 (.port(x_nn_18));
-NMOS_TRANSISTOR #(.basename(asic-nmos-1.sym),.description(low),.l(1u),.model-name(nmos4),.w(1u)) M1 (.D(x_nn_17),.G(x_cn_20),.S(x_cn_21),.B(x_cn_19));
+NMOS_TRANSISTOR #(.basename(asic-nmos-1.sym),.description(low),.l(11u),.model-name(nmos4),.w(1u)) M1 (.D(x_nn_17),.G(x_cn_20),.S(x_cn_21),.B(x_cn_19));
 place #(.x(44900),.y(46900)) 44900:46900 (.port(x_cn_19));
 place #(.x(44200),.y(46900)) 44200:46900 (.port(x_cn_20));
 place #(.x(44800),.y(46400)) 44800:46400 (.port(x_cn_21));
-NMOS_TRANSISTOR #(.basename(asic-nmos-1.sym),.description(low),.l(1u),.model-name(nmos4),.w(1u)) M2 (.D(x_nn_11),.G(x_cn_23),.S(x_cn_24),.B(x_cn_22));
+NMOS_TRANSISTOR #(.basename(asic-nmos-1.sym),.description(low),.l(11u),.model-name(nmos4),.w(1u)) M2 (.D(x_nn_11),.G(x_cn_23),.S(x_cn_24),.B(x_cn_22));
 place #(.x(46900),.y(46900)) 46900:46900 (.port(x_cn_22));
 place #(.x(47600),.y(46900)) 47600:46900 (.port(x_cn_23));
 place #(.x(47000),.y(46400)) 47000:46400 (.port(x_cn_24));
@@ -57,7 +57,7 @@ place #(.x(45000),.y(46200)) 45000:46200 (.port(x_nn_30));
 net #() extranet19 (.p(x_nn_30),.n(x_nn_27));
 net #() extranet20 (.p(x_nn_30),.n(x_nn_27));
 net #() net21 (.p(x_nn_27),.n(x_cn_21));
-NMOS_TRANSISTOR #(.basename(asic-nmos-1.sym),.description(low),.l(1u),.model-name(nmos4),.w(8u)) M5 (.D(x_cn_32),.G(x_cn_33),.S(x_cn_34),.B(x_cn_31));
+NMOS_TRANSISTOR #(.basename(asic-nmos-1.sym),.description(low),.l(11u),.model-name(nmos4),.w(8u)) M5 (.D(x_cn_32),.G(x_cn_33),.S(x_cn_34),.B(x_cn_31));
 place #(.x(46000),.y(45300)) 46000:45300 (.port(x_cn_31));
 place #(.x(45900),.y(45800)) 45900:45800 (.port(x_cn_32));
 place #(.x(45300),.y(45300)) 45300:45300 (.port(x_cn_33));

@@ -1,0 +1,185 @@
+reading file CMOS_Inverter.sch
+cmosp: rsh - rs - rd conflict: using rsh
+cmosp: is - js conflict
+myinv: port #3 (Vdd:1) never connected, strategy auto
+myinv: port #3 (Vdd:1) autoconnect to Vdd:1
+myinv: port #4 (GND:1) never connected, strategy auto
+myinv: port #4 (GND:1) autoconnect to GND:1
+paramset cmosn nmos1;\
+ .level=1; .kp=41.5964u; .vto=0.8; .gamma=0.863074; .phi=0.6; .lambda=.01; .tox=41.8n; .nsub=15.3142E+15; .nss=1.E+12; .xj=400.n; .uo=503.521; .tpg=1; .tnom=NA( 27.); .fc=0.5; .pb=0.7; .cj=384.4u; .mj=0.4884; .cjsw=527.2p; .mjsw=0.3002; .is=NA( 10.f); .js=0.; .rsh=0.; .cbd=0.; .cbs=0.; .cgso=218.971p; .cgdo=218.971p; .cgbo=0.; .ld=265.073n;\
+endparmset
+
+paramset cmosp pmos1;\
+ .level=1; .kp=41.5964u; .vto=-0.844345; .gamma=0.863074; .phi=0.6; .lambda=.01; .tox=41.8n; .nsub=15.3142E+15; .nss=1.E+12; .xj=400.n; .uo=503.521; .tpg=1; .tnom=NA( 27.); .fc=0.5; .pb=0.7; .cj=384.4u; .mj=0.4884; .cjsw=527.2p; .mjsw=0.3002; .is=0; .js=0.; .rsh=0.; .rd=0.; .rs=0.; .cbd=0.; .cbs=0.; .cgso=218.971p; .cgdo=218.971p; .cgbo=0.; .ld=265.073n;\
+endparmset
+
+module NMOS_TRANSISTOR (D,G,S,B);
+cmosn #(.l(l),.w(w)) m (.d(D),.g(G),.s(S),.b(B));
+endmodule // NMOS_TRANSISTOR
+
+module PMOS_TRANSISTOR (D,G,S,B);
+cmosp #(.l(l),.w(w)) m (.d(D),.g(G),.s(S),.b(B));
+endmodule // PMOS_TRANSISTOR
+
+// BUG: default_connect here. 
+module inv (in,out,Vdd:1,GND:1);
+//comment (incomplete) title-B.sym
+PMOS_TRANSISTOR #(.basename(asic-pmos-1.sym),.description(low),.l(1u),.model-name(pmos4),.w(6u)) P1 (.D(x_cn_1),.G(x_cn_2),.S(x_cn_3),.B(x_cn_0));
+place #(.x(45300),.y(47900)) 45300:47900 (.port(x_cn_0));
+place #(.x(45200),.y(47400)) 45200:47400 (.port(x_cn_1));
+place #(.x(44600),.y(47900)) 44600:47900 (.port(x_cn_2));
+place #(.x(45200),.y(48400)) 45200:48400 (.port(x_cn_3));
+net #() net0 (.p(x_cn_0),.n(x_nn_4));
+place #(.x(45400),.y(47900)) 45400:47900 (.port(x_nn_4));
+net #() net1 (.p(x_nn_5),.n(x_cn_3));
+place #(.x(45200),.y(48700)) 45200:48700 (.port(x_nn_5));
+NMOS_TRANSISTOR #(.basename(asic-nmos-1.sym),.description(low),.l(1u),.model-name(nmos4),.w(3u)) N1 (.D(x_cn_7),.G(x_cn_8),.S(x_cn_9),.B(x_cn_6));
+place #(.x(45300),.y(46200)) 45300:46200 (.port(x_cn_6));
+place #(.x(45200),.y(46700)) 45200:46700 (.port(x_cn_7));
+place #(.x(44600),.y(46200)) 44600:46200 (.port(x_cn_8));
+place #(.x(45200),.y(45700)) 45200:45700 (.port(x_cn_9));
+net #() net2 (.p(x_cn_6),.n(x_nn_10));
+place #(.x(45400),.y(46200)) 45400:46200 (.port(x_nn_10));
+net #() net3 (.p(x_nn_11),.n(x_nn_10));
+place #(.x(45400),.y(45600)) 45400:45600 (.port(x_nn_11));
+net #() net4 (.p(x_nn_12),.n(x_cn_9));
+place #(.x(45200),.y(45400)) 45200:45400 (.port(x_nn_12));
+net #() net5 (.p(x_nn_13),.n(x_nn_14));
+place #(.x(44300),.y(47900)) 44300:47900 (.port(x_nn_13));
+place #(.x(44300),.y(46200)) 44300:46200 (.port(x_nn_14));
+net #() net6 (.p(x_cn_2),.n(x_nn_13));
+net #() net7 (.p(x_cn_8),.n(x_nn_14));
+net #() net8 (.p(x_cn_1),.n(x_cn_7));
+port #(.basename(gnd-1.sym),.net(GND:1),.pinseq(4),.default_value(GND:1)) GND:1 (.int(x_nn_12),.ext(GND:1));
+net #() net9 (.p(x_nn_15),.n(x_nn_11));
+place #(.x(45200),.y(45600)) 45200:45600 (.port(x_nn_15));
+net #() extranet10 (.p(x_nn_15),.n(x_nn_12));
+port #(.basename(vdd-1.sym),.net(Vdd:1),.pinseq(3),.default_value(Vdd:1)) vddrail (.int(x_nn_5),.ext(Vdd:1));
+net #() net11 (.p(x_nn_16),.n(x_nn_17));
+place #(.x(45200),.y(48500)) 45200:48500 (.port(x_nn_16));
+place #(.x(45400),.y(48500)) 45400:48500 (.port(x_nn_17));
+net #() extranet12 (.p(x_nn_16),.n(x_nn_5));
+net #() net13 (.p(x_nn_17),.n(x_nn_4));
+net #() net14 (.p(x_nn_18),.n(x_nn_19));
+place #(.x(45200),.y(47000)) 45200:47000 (.port(x_nn_18));
+place #(.x(46000),.y(47000)) 46000:47000 (.port(x_nn_19));
+net #() extranet15 (.p(x_nn_18),.n(x_cn_1));
+net #() net16 (.p(x_nn_20),.n(x_nn_21));
+place #(.x(43600),.y(47000)) 43600:47000 (.port(x_nn_20));
+place #(.x(44300),.y(47000)) 44300:47000 (.port(x_nn_21));
+net #() extranet17 (.p(x_nn_21),.n(x_nn_13));
+port #(.basename(input-1.sym),.pinseq(1)) in (.int(x_nn_20),.ext(in));
+port #(.basename(output-1.sym),.pinseq(2)) out (.int(x_nn_19),.ext(out));
+endmodule // inv
+
+// list 
+inv #(.default_connect(auto)) myinv (.in(clk),.out(ni),.Vdd:1(Vdd:1),.GND:1(GND:1));
+cmosp: rsh - rs - rd conflict: using rsh
+cmosp: is - js conflict
+.model cmosn nmos1 ( level=1 kp=41.5964u vto=0.8 gamma=0.863074 phi=0.6 lambda=.01 tox=41.8n nsub=15.3142E+15 nss=1.E+12 xj=400.n uo=503.521 tpg=1 tnom=NA( 27.) fc=0.5 pb=0.7 cj=384.4u mj=0.4884 cjsw=527.2p mjsw=0.3002 is=NA( 10.f) js=0. rsh=0. cbd=0. cbs=0. cgso=218.971p cgdo=218.971p cgbo=0. ld=265.073n)
+.model cmosp pmos1 ( level=1 kp=41.5964u vto=-0.844345 gamma=0.863074 phi=0.6 lambda=.01 tox=41.8n nsub=15.3142E+15 nss=1.E+12 xj=400.n uo=503.521 tpg=1 tnom=NA( 27.) fc=0.5 pb=0.7 cj=384.4u mj=0.4884 cjsw=527.2p mjsw=0.3002 is=0 js=0. rsh=0. rd=0. rs=0. cbd=0. cbs=0. cgso=218.971p cgdo=218.971p cgbo=0. ld=265.073n)
+.subckt NMOS_TRANSISTOR ( D G S B )
+m ( D G S B )  cmosn  l=l w=w
+.ends NMOS_TRANSISTOR
+.subckt PMOS_TRANSISTOR ( D G S B )
+m ( D G S B )  cmosp  l=l w=w
+.ends PMOS_TRANSISTOR
+*// BUG: default_connect here. 
+.subckt inv ( in out Vdd:1 GND:1 )
+*v 20130925 2 
+*comment (incomplete) title-B.sym
+P1 ( x_cn_1 x_cn_2 x_cn_3 x_cn_0 )  PMOS_TRANSISTOR  basename=asic-pmos-1.sym description=low l=1u model-name=pmos4 w=6u
+45300:47900 ( x_cn_0 )  place  x=45300 y=47900
+45200:47400 ( x_cn_1 )  place  x=45200 y=47400
+44600:47900 ( x_cn_2 )  place  x=44600 y=47900
+45200:48400 ( x_cn_3 )  place  x=45200 y=48400
+net0 ( x_cn_0 x_nn_4 )  net 
+45400:47900 ( x_nn_4 )  place  x=45400 y=47900
+net1 ( x_nn_5 x_cn_3 )  net 
+45200:48700 ( x_nn_5 )  place  x=45200 y=48700
+N1 ( x_cn_7 x_cn_8 x_cn_9 x_cn_6 )  NMOS_TRANSISTOR  basename=asic-nmos-1.sym description=low l=1u model-name=nmos4 w=3u
+45300:46200 ( x_cn_6 )  place  x=45300 y=46200
+45200:46700 ( x_cn_7 )  place  x=45200 y=46700
+44600:46200 ( x_cn_8 )  place  x=44600 y=46200
+45200:45700 ( x_cn_9 )  place  x=45200 y=45700
+net2 ( x_cn_6 x_nn_10 )  net 
+45400:46200 ( x_nn_10 )  place  x=45400 y=46200
+net3 ( x_nn_11 x_nn_10 )  net 
+45400:45600 ( x_nn_11 )  place  x=45400 y=45600
+net4 ( x_nn_12 x_cn_9 )  net 
+45200:45400 ( x_nn_12 )  place  x=45200 y=45400
+net5 ( x_nn_13 x_nn_14 )  net 
+44300:47900 ( x_nn_13 )  place  x=44300 y=47900
+44300:46200 ( x_nn_14 )  place  x=44300 y=46200
+net6 ( x_cn_2 x_nn_13 )  net 
+net7 ( x_cn_8 x_nn_14 )  net 
+net8 ( x_cn_1 x_cn_7 )  net 
+GND:1 ( x_nn_12 GND:1 )  port  basename=gnd-1.sym net=GND:1 pinseq=4 default_value=GND:1
+net9 ( x_nn_15 x_nn_11 )  net 
+45200:45600 ( x_nn_15 )  place  x=45200 y=45600
+extranet10 ( x_nn_15 x_nn_12 )  net 
+vddrail ( x_nn_5 Vdd:1 )  port  basename=vdd-1.sym net=Vdd:1 pinseq=3 default_value=Vdd:1
+net11 ( x_nn_16 x_nn_17 )  net 
+45200:48500 ( x_nn_16 )  place  x=45200 y=48500
+45400:48500 ( x_nn_17 )  place  x=45400 y=48500
+extranet12 ( x_nn_16 x_nn_5 )  net 
+net13 ( x_nn_17 x_nn_4 )  net 
+net14 ( x_nn_18 x_nn_19 )  net 
+45200:47000 ( x_nn_18 )  place  x=45200 y=47000
+46000:47000 ( x_nn_19 )  place  x=46000 y=47000
+extranet15 ( x_nn_18 x_cn_1 )  net 
+net16 ( x_nn_20 x_nn_21 )  net 
+43600:47000 ( x_nn_20 )  place  x=43600 y=47000
+44300:47000 ( x_nn_21 )  place  x=44300 y=47000
+extranet17 ( x_nn_21 x_nn_13 )  net 
+in ( x_nn_20 in )  port  basename=input-1.sym pinseq=1
+out ( x_nn_19 out )  port  basename=output-1.sym pinseq=2
+.ends inv
+*// list 
+myinv ( clk ni Vdd:1 GND:1 )  inv  default_connect=auto
+V1 ( vdd 0 ) vdd
+Vd ( Vdd:1 vdd )  DC  0.
+V0 ( GND:1 0 )  DC -1.
+Vck ( clk 0 ) pulse iv= 0. pv=vdd delay= 0.1 rise= 0.01 fall= 0.01 width= 0.09 period= 0.2
+cmosp: rsh - rs - rd conflict: using rsh
+cmosp: is - js conflict
+cmosp: rsh - rs - rd conflict: using rsh
+cmosp: is - js conflict
+#         v(GND:1) v(Vdd:1) v(clk)   v(ni)    v(vdd)   vg(myinv.P1.m) ev(V1)   vs(myinv.P1.m) vd(myinv.P1.m) v(myinv.vddrail)
+ 27.     -1.       3.3      0.       3.3      3.3      0.       3.3      3.3      3.3      3.3     
+cmosp: rsh - rs - rd conflict: using rsh
+cmosp: is - js conflict
+cmosp: rsh - rs - rd conflict: using rsh
+cmosp: is - js conflict
+#Time     v(clk)   v(ni)   
+ 0.       0.       3.3     
+ 0.0333   0.       3.3     
+ 0.0666   0.       3.3     
+ 0.0999   0.       3.3     
+ 0.133    3.3     -1.      
+ 0.167    3.3     -1.      
+ 0.2      3.3     -1.      
+ 0.233    0.       3.3     
+ 0.266    0.       3.3     
+ 0.3      0.       3.3     
+ 0.333    3.3     -1.      
+ 0.366    3.3     -1.      
+ 0.4      3.3     -1.      
+ 0.433    0.       3.3     
+ 0.466    0.       3.3     
+ 0.5      0.       3.3     
+ 0.533    3.3     -1.      
+ 0.566    3.3     -1.      
+ 0.599    3.3     -1.      
+ 0.633    0.       3.3     
+ 0.666    0.       3.3     
+ 0.699    0.       3.3     
+ 0.733    3.3     -1.      
+ 0.766    3.3     -1.      
+ 0.799    3.3     -1.      
+ 0.833    0.       3.3     
+ 0.866    0.       3.3     
+ 0.899    0.       3.3     
+ 0.932    3.3     -1.      
+ 0.966    3.3     -1.      
+ 0.999    3.3     -1.      

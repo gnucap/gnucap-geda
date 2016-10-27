@@ -1,0 +1,17 @@
+options debug
+
+
+verilog
+module VOLTAGE_SOURCE ( 1 2 )
+vsource #(1) myv( 1 2 )
+endmodule VOLTAGE_SOURCE
+geda nesting.sch module device=nest
+
+nest mmm(0);
+list
+
+spice
+.print dc ev(mmm.V1.myv)
+.dc
+
+.end

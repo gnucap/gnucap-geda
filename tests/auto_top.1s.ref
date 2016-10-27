@@ -1,0 +1,69 @@
+reading file auto_top.1s.sch
+reading file auto_dut.3a.sch
+mmm: port #1 (a) never connected, strategy NA( NA)
+mmm: port #1 (a) never connected
+module !_voltage-3.sym (1,2);
+endmodule // !_voltage-3.sym
+
+module DUT (1,2,3);
+//comment (incomplete) title-B.sym
+//T 50000 40700 9 10 1 0 0 0 1 
+//Device under test 
+//T 53900 40100 9 10 1 0 0 0 1 
+//felix 
+port #(.basename(spice-subcircuit-IO-1.sym),.pinseq(1),.pinlabel(1)) P1 (.int(x_cn_9),.ext(1));
+place #(.x(45900),.y(46800)) 45900:46800 (.port(x_cn_9));
+port #(.basename(spice-subcircuit-IO-1.sym),.pinseq(2),.pinlabel(2)) P2 (.int(x_cn_10),.ext(2));
+place #(.x(47900),.y(46800)) 47900:46800 (.port(x_cn_10));
+net #() net6 (.p(x_nn_11),.n(x_cn_9));
+place #(.x(46400),.y(46800)) 46400:46800 (.port(x_nn_11));
+net #() net7 (.p(x_nn_12),.n(x_cn_10));
+place #(.x(47300),.y(46800)) 47300:46800 (.port(x_nn_12));
+port #(.basename(spice-subcircuit-IO-1.sym),.pinseq(3),.pinlabel(3),.default_value(toprail)) P3 (.int(x_cn_13),.ext(3));
+place #(.x(49000),.y(45600)) 49000:45600 (.port(x_cn_13));
+net #() net8 (.p(x_nn_14),.n(x_cn_13));
+place #(.x(48400),.y(45600)) 48400:45600 (.port(x_nn_14));
+endmodule // DUT
+
+module mm (a);
+//comment (incomplete) title-B.sym
+net #() net0 (.p(x_nn_0),.n(x_nn_1));
+place #(.x(46100),.y(45200)) 46100:45200 (.port(x_nn_0));
+place #(.x(46100),.y(46300)) 46100:46300 (.port(x_nn_1));
+VOLTAGE_SOURCE #(.basename(voltage-3.sym),.value(1)) V1 (.1(x_cn_2),.2(x_cn_3));
+place #(.x(43900),.y(46900)) 43900:46900 (.port(x_cn_2));
+place #(.x(43900),.y(46000)) 43900:46000 (.port(x_cn_3));
+net #() net1 (.p(x_nn_4),.n(x_cn_3));
+place #(.x(43900),.y(45200)) 43900:45200 (.port(x_nn_4));
+net #() net2 (.p(x_cn_2),.n(x_nn_5));
+place #(.x(43900),.y(47900)) 43900:47900 (.port(x_nn_5));
+net #() nhi (.p(x_nn_5),.n(x_nn_6));
+place #(.x(49300),.y(47900)) 49300:47900 (.port(x_nn_6));
+net #() net4 (.p(x_nn_7),.n(x_nn_8));
+place #(.x(46100),.y(47900)) 46100:47900 (.port(x_nn_7));
+place #(.x(46100),.y(47200)) 46100:47200 (.port(x_nn_8));
+net #() extranet5 (.p(x_nn_7),.n(x_nn_5));
+rail #(.basename(gnd-1.sym),.net(lg)) lg (.pin(x_nn_4),.rail(lg));
+rail #(.basename(gnd-1.sym),.net(lg)) lg (.pin(x_nn_0),.rail(lg));
+DUT #(.basename(resistor-2.sym),.default_connect(auto),.source(auto_dut.3a.sch)) dut0 (.1(x_nn_1),.2(x_nn_8));
+//T 50000 40700 9 10 1 0 0 0 1 
+//Testbench 
+//T 53900 40100 9 10 1 0 0 0 1 
+//felix 
+port #(.basename(spice-subcircuit-IO-1.sym),.pinlabel(a)) a (.int(x_nn_6),.ext(a));
+endmodule // mm
+
+module VOLTAGE_SOURCE (1,2);
+vsource #(.dc(value)) v (.p(1),.n(2));
+endmodule // VOLTAGE_SOURCE
+
+mm #() mmm ();
+mmm: port #1 (a) never connected, strategy NA( NA)
+mmm: port #1 (a) never connected
+mmm.dut0: port #3 (3) never connected, strategy auto
+mmm.dut0: port #3 (3) autoconnect to toprail
+Creating new node toprail in mmm
+mmm: port #1 (a) never connected, strategy NA( NA)
+mmm: port #1 (a) never connected
+#          
+ 0.        
