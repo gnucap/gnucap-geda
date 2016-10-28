@@ -137,6 +137,8 @@ spice.out: $(PWD)/spice_foo.sp
 testbench.out: $(PWD)/dut.sch
 dlatch_tr.out: $(PWD)/D_Latch.sch
 invtb.out divide_by_two.out inv_tr.out: $(PWD)/CMOS_Inverter.sch
+divide_by_two.out: $(PWD)/divide_by_two.sch
+invtb.out: $(PWD)/invtb.sch
 
 auto_top.1.out: $(PWD)/auto_dut.1.sch
 auto_top.1.out: $(PWD)/auto_top.1.sch

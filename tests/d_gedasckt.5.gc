@@ -1,6 +1,4 @@
 load lang_geda.so
-load lang_adms.so
-load c_debug.so
 options trace
 spice
 .param amplitude = 1
