@@ -57,7 +57,7 @@ ER_TESTS = eg1_recon.sh \
            eg43_recon.sh \
            eg5_recon.sh
 
-DISTCLEANFILES = $(EG_TESTS:%.sch=%.gc) $(ER_TESTS:%.sh=%.gc)
+DISTCLEANFILES = $(EG_TESTS:%.sch=%.gc) $(ER_TESTS:%.sh=%.gc) *.out
 
 XFAIL_TESTS =
 
@@ -69,6 +69,7 @@ XFAIL_TESTS += auto_top.1g.gc
 
 # promiscuous incomplete
 XFAIL_TESTS += auto_top.4.gc
+
 
 # something wrong with lm741 symbol (pinseq?)
 # need workaround.
@@ -151,6 +152,9 @@ auto_top.3.out: $(PWD)/auto_dut.3.sch
 auto_top.3a.out: $(PWD)/auto_dut.3a.sch
 auto_top.3b.out: $(PWD)/auto_dut.3b.sch
 auto_top.4.out: $(PWD)/auto_dut.3.sch
+
+auto_top.1ge.out: $(PWD)/auto_dut.3a.sch
+auto_top.1s.out: $(PWD)/auto_dut.3a.sch
 
 $(ER_TESTS) $(CUSTOM_TESTS): %.sh: %.ref
 	@echo "#!/bin/sh" > $@
@@ -315,9 +319,15 @@ $(OUTFILES) $(LOGFILES): .P
 .PHONY: %.reg clean-examples .P
 
 EXTRA_DIST = \
+	CMOS_Inverter.sch \
+	divide_by_two.sch \
+	invtb.sch \
+	D_Latch.sch \
+	D_Latch.sym \
 	gc_log_compiler \
 	sch_log_compiler \
-	nets.sch nets.ref spice_foo.sp \
+	nets.sch nets.ref \
+	spice_foo.sp \
 	dut.sch \
 	auto_dut.1.sch \
 	auto_top.1.sch \
