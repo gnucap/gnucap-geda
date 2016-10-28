@@ -1,6 +1,7 @@
 For lang_geda (gEDA plugin)
 
 **TODO (In the order of preference)
+- possible segfault in auto node probes
 - better/more error messages and exceptions
 - read submodules during expand, not parse.
 - factor in gafrc, particularly to find files (ask libgeda where they are?)

@@ -64,8 +64,11 @@ I1 0 q 1e-12
 + vg(mydiv.inv1.P1.m)
 + vb(mydiv.inv1.P1.m)
 + vg(mydiv.inv2.P1.m)
-+ v(mydiv.Vdd:1)
 + v(mydiv.VDD.v)
++ v(mydiv.toprail)
+
+* BUG: auto node in gedasckt -> segfault
+*+ v(mydiv.Vdd:1)
 .op trace=n
 
 .print tran
