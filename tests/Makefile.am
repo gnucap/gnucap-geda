@@ -136,7 +136,7 @@ inv_tr.out: $(PWD)/CMOS_Inverter.sch
 nesting.out: $(PWD)/nesting.sch
 spice.out: $(PWD)/spice_foo.sp
 testbench.out: $(PWD)/dut.sch
-dlatch_tr.out: $(PWD)/D_Latch.sch
+divide_by_two.out dlatch_tr.out: $(PWD)/D_Latch.sch
 invtb.out divide_by_two.out inv_tr.out: $(PWD)/CMOS_Inverter.sch
 divide_by_two.out: $(PWD)/divide_by_two.sch
 invtb.out: $(PWD)/invtb.sch
