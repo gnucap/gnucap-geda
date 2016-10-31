@@ -320,12 +320,12 @@ mydiv.inv1: port #4 (GND:1) never connected, strategy auto
 mydiv.inv1: port #4 (GND:1) autoconnect to GND:1
 cmosp: rsh - rs - rd conflict: using rsh
 cmosp: is - js conflict
-#         vb(mydiv.D1.M3.m) vg(mydiv.inv1.P1.m) vb(mydiv.inv1.P1.m) vg(mydiv.inv2.P1.m) v(vdd:1) v(mydiv.VDD.v)
+#         vb(mydiv.D1.M3.m) vg(mydiv.inv1.P1.m) vb(mydiv.inv1.P1.m) vg(mydiv.inv2.P1.m) v(mydiv.VDD.v) v(mydiv.toprail)
 open circuit: internal node 8
 open circuit: internal node 12
 open circuit: internal node 13
 open circuit: internal node 14
- 27.      5.       0.       5.       5.       0.       5.      
+ 27.      5.       0.       5.       5.       5.       5.      
 cmosp: rsh - rs - rd conflict: using rsh
 cmosp: is - js conflict
 cmosp: rsh - rs - rd conflict: using rsh
