@@ -131,6 +131,10 @@ DEV_GEDA_SUBCKT::~DEV_GEDA_SUBCKT()
 	trace3("destroying", long_label(), (this), (common()));
 }
 /*--------------------------------------------------------------------------*/
+#ifdef CKT_NODE // -uf case
+#else // fake node base class
+#define NODE_BASE NODE
+#endif
 // map a node, so we can connect to it
 void DEV_GEDA_SUBCKT::trysomehing(std::string x)
 {
@@ -143,7 +147,7 @@ void DEV_GEDA_SUBCKT::trysomehing(std::string x)
 	  trace0("it's there");
 	  // we have been here. probably nothing left to do.
   //}else if( NODE* N=(*_parent->scope()->nodes())[x] ){ untested();
-  }else if( NODE* N=(*ModelMap)[x] ){
+  }else if( NODE_BASE* N=(*ModelMap)[x] ){
 	  error(bDEBUG, "Preparing existing node %s in %s\n",
 			  x.c_str(), long_label().c_str());
 	  trace2("founda node in model", N->long_label(), N->user_number());
