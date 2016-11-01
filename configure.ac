@@ -44,10 +44,14 @@ AC_SUBST([GC_CPPFLAGS])
 # FIXME: check for gnucap-conf availability
 if test "x${prefix}" = "xNONE"; then
 gnucap_libdir="$(gnucap-conf$_program_suffix --libdir)"
+gnucap_pkglibdir="$(gnucap-conf$_program_suffix --pkglibdir)"
 else
+# untested
 gnucap_libdir="$libdir"/$PACKAGE_NAME
+gnucap_pkglibdir="$pkglibdir"/$PACKAGE_NAME
 fi
 AC_SUBST([gnucap_libdir])
+AC_SUBST([gnucap_pkglibdir])
 
 # Checks for library functions.
 

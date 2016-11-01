@@ -1,4 +1,4 @@
-plugindir = @gnucap_libdir@
+plugindir = @gnucap_pkglibdir@
 
 PLUGIN_LDFLAGS=-module -shared
 
