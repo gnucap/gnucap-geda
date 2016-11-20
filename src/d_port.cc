@@ -22,8 +22,6 @@
  * a port connects a net to the pin of a sckt
  * this is meant to make i/o port symbols work.
  */
-// workaround bug in unstable gnucap
-#define USE(x) (void)x
 
 #include <globals.h>
 #include <e_compon.h>

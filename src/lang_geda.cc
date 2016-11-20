@@ -20,9 +20,6 @@
  *
  */
 
-// workaround bug in unstable gnucap
-#define USE(x) (void)x
-
 #define ADD_VERSION
 #include <l_lib.h>
 #include <l_dispatcher.h>

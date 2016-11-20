@@ -20,8 +20,6 @@
  * base class for net devices, implementation.
  * collapses nodes. may be overriden by loading another net.
  */
-// workaround bug in unstable gnucap
-#define USE(x) (void)x
 
 #include <globals.h>
 #include <u_sim_data.h>

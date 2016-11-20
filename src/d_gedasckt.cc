@@ -22,9 +22,6 @@
  * data structures for subcircuits from geda schematics
  */
 
-// workaround bug in unstable gnucap
-#define USE(x) (void)x
-
 #include "d_gedasckt.h"
 #include <globals.h>
 #include <u_nodemap.h>
