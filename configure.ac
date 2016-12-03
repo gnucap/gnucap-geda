@@ -46,9 +46,10 @@ if test "x${prefix}" = "xNONE"; then
 gnucap_libdir="$(gnucap-conf$_program_suffix --libdir)"
 gnucap_pkglibdir="$(gnucap-conf$_program_suffix --pkglibdir)"
 else
-# untested
-gnucap_libdir="$libdir"/$PACKAGE_NAME
-gnucap_pkglibdir="$pkglibdir"/$PACKAGE_NAME
+# default values. might not reflect installation locations.
+# need more overrides...
+gnucap_libdir="$libdir"
+gnucap_pkglibdir="$gnucap_libdir/gnucap"
 fi
 AC_SUBST([gnucap_libdir])
 AC_SUBST([gnucap_pkglibdir])
