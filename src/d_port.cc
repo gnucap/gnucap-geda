@@ -105,7 +105,7 @@ map<std::string, PARA_BASE DEV_PORT::*> DEV_PORT::_param_dict
               (PARA_BASE DEV_PORT::*)  (&DEV_PORT::_default_value));
 /*--------------------------------------------------------------------------*/
 bool DEV_PORT::param_is_printable(int i)const{
-	switch(param_count()-1-i) {
+	switch(param_count()-1-i) { untested();
 		case 0: return _basename.has_hard_value();
 		case 1: return _net.has_hard_value();
 		case 2: return _pinseq.has_hard_value();
@@ -131,7 +131,7 @@ void DEV_PORT::set_param_by_name(std::string Name, std::string Value)
 /*--------------------------------------------------------------------------*/
 std::string DEV_PORT::param_name(int i)const
 {
-	switch(param_count()-i-1) {
+	switch(param_count()-i-1) { untested();
 		case 0: return("basename");
 		case 1: return("net");
 		case 2: return("pinseq");
@@ -154,7 +154,7 @@ std::string DEV_PORT::param_name(int i, int j)const
 /*--------------------------------------------------------------------------*/
 std::string DEV_PORT::param_value(int i)const
 {
-	switch(param_count()-1-i) {
+	switch(param_count()-1-i) { untested();
 		case 0: return _basename.string();
 		case 1: return _net.string();
 		case 2: return _pinseq.string();
@@ -249,7 +249,7 @@ void DEV_PORT::set_port_by_index(uint_t i, std::string& name)
 // n[1] is external
 #if 0
 void DEV_PORT::expand()
-{
+{ untested();
 #ifdef HAVE_COLLAPSE
 	trace3("DEV_PORT::collapse", long_label(), _n[0].e_(), _n[1].e_());
 	_n[0].collapse(this, _n[1]);

@@ -53,7 +53,7 @@ private: // from DEV_SUBCKT
   // std::string   dev_type()const
   uint_t	max_nodes()const	{return PORTS_PER_SUBCKT;}
 #ifdef NDEBUG
-  void map_nodes(){
+  void map_nodes(){ untested();
     untested();
     trace3("map_nodes", long_label(), net_nodes(), matrix_nodes());
     BASE_SUBCKT::map_nodes();
@@ -139,9 +139,9 @@ private: // no-ops for prototype
   void tr_restore(){untested();}
   void tr_regress(){}
   void dc_advance(){}
-  void ac_begin(){untested();}
-  void do_ac(){untested();}
-  void ac_load(){untested();}
+  void ac_begin(){}
+  void do_ac(){}
+  void ac_load(){}
   bool do_tr(){return true;}
   bool tr_needs_eval()const{untested(); return false;}
   void tr_queue_eval(){}

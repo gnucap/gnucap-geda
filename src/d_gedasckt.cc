@@ -374,7 +374,7 @@ void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 					++_num_cc;
 				}
 			}
-			for (; i <= _num_auto_nodes+num_nodes_in_model; ++i) { untested();
+			for (; i <= _num_auto_nodes+num_nodes_in_model; ++i) {
 				_map[i] = CKT_BASE::_sim->newnode_subckt();
 				trace4("auto, new", i, _map[i], seek, _sim->_total_nodes);
 				++_num_cc;
@@ -490,7 +490,7 @@ void DEV_GEDA_SUBCKT::expand()
 
 	unsigned num_nodes_in_model = _parent->subckt()->nodes()->how_many() + 1;
 	unsigned num_nodes_in_subckt = num_nodes_in_model + _num_auto_nodes;
-	if(_map){
+	if(_map){ untested();
 		incomplete();
 		delete[] _map;
 	}else{
@@ -502,7 +502,7 @@ void DEV_GEDA_SUBCKT::expand()
 	_part = new PARTITION(num_nodes_in_model);
 	subckt()->precalc_first(); // collapses nodes (HACK).
 	// maybe
-	// for i in subckt{
+	// for i in subckt{ untested();
 	//   if net
 	//     some_callback
 	// }

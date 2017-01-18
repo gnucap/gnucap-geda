@@ -39,7 +39,7 @@ typedef int uint_t;
 class DEV_NET : public COMPONENT {
 
 public:
-  explicit DEV_NET() : COMPONENT() { untested();
+  explicit DEV_NET() : COMPONENT() {
     _n=_nodes;
   }
   explicit DEV_NET(const DEV_NET& p);
@@ -76,7 +76,7 @@ private:
 protected:
   int param_count()const  {return COMPONENT::param_count();}
 private:
-  std::string port_name(uint_t i)const{ untested();
+  std::string port_name(uint_t i)const{
     assert(i>=0);
     assert(i<2);
     static std::string names[]={"p","n"};

@@ -35,7 +35,7 @@ namespace place {
 /*--------------------------------------------------------------------------*/
 std::string DEV_PLACE::param_name(int i) const
 {
-    switch(DEV_PLACE::param_count()-i-1) {
+    switch(DEV_PLACE::param_count()-i-1) { untested();
     case 0: return "x";
     case 1: return "y";
     default : return "";
@@ -66,7 +66,7 @@ void DEV_PLACE::set_param_by_name(std::string Name,std::string Value)
 /*--------------------------------------------------------------------------*/
 void DEV_PLACE::set_param_by_index(int i, std::string& Value, int offset)
 {
-    switch(DEV_PLACE::param_count()-1-i) {
+    switch(DEV_PLACE::param_count()-1-i) { untested();
     case 0: _x = atoi(Value.c_str()); break;
     case 1: _y = atoi(Value.c_str()); break;
     default: throw Exception_Too_Many(i,2,offset);
@@ -75,7 +75,7 @@ void DEV_PLACE::set_param_by_index(int i, std::string& Value, int offset)
 /*--------------------------------------------------------------------------*/
 bool DEV_PLACE::param_is_printable(int i)const
 {
-    switch(DEV_PLACE::param_count()-1-i) {
+    switch(DEV_PLACE::param_count()-1-i) { untested();
     case 0: return true;
     case 1: return true;
     default: return COMPONENT::param_is_printable(i);
@@ -84,7 +84,7 @@ bool DEV_PLACE::param_is_printable(int i)const
 /*--------------------------------------------------------------------------*/
 std::string DEV_PLACE::param_value(int i)const
 {
-    switch(DEV_PLACE::param_count()-1-i) {
+    switch(DEV_PLACE::param_count()-1-i) { untested();
         case 0: return to_string(_x);
         case 1: return to_string(_y);
     }

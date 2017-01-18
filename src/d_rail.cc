@@ -95,7 +95,7 @@ map<string, PARA_BASE DEV_RAIL::*> DEV_RAIL::_param_dict
 ("symversion",(PARA_BASE DEV_RAIL::*)  (&DEV_RAIL::symversion));
 /*--------------------------------------------------------------------------*/
 bool DEV_RAIL::param_is_printable(int i)const{
-	switch(param_count()-1-i) {
+	switch(param_count()-1-i) { untested();
 		case 0: return basename.has_hard_value();
 		case 1: return net.has_hard_value();
 		case 2: return pinseq.has_hard_value();
@@ -119,7 +119,7 @@ void DEV_RAIL::set_param_by_name(string Name, string Value)
 /*--------------------------------------------------------------------------*/
 string DEV_RAIL::param_name(int i)const
 {
-	switch(param_count()-i-1) {
+	switch(param_count()-i-1) { untested();
 		case 0: return("basename");
 		case 1: return("net");
 		case 2: return("pinseq");
@@ -140,7 +140,7 @@ std::string DEV_RAIL::param_name(int i, int j)const
 /*--------------------------------------------------------------------------*/
 string DEV_RAIL::param_value(int i)const
 {
-	switch(param_count()-1-i) {
+	switch(param_count()-1-i) { untested();
 		case 0: return basename.string();
 		case 1: return net.string();
 		case 2: return pinseq.string();
