@@ -43,14 +43,14 @@ DEV_NET::DEV_NET(const DEV_NET& p) : COMPONENT(p)
 }
 /*--------------------------------------------------------------------------*/
 void DEV_NET::tr_iwant_matrix()
-{
+{ untested();
 	trace4("DEV_NET::tr_iwant_matrix", long_label(), _n[0].m_(), _n[1].m_(), net_nodes());
 	for( unsigned i=net_nodes(); --i>0; ){
 		trace1("DEV_NET::tr_iwant_matrix", i);
 		assert(_n[i].m_() != INVALID_NODE);
 	}
-	if(net_nodes()<2){
-	}else if(net_nodes()==2){
+	if(net_nodes()<2){ untested();
+	}else if(net_nodes()==2){ untested();
 		_sim->_aa.iwant(_n[0].m_(),_n[1].m_());
 		_sim->_lu.iwant(_n[0].m_(),_n[1].m_());
 	}else{ incomplete();
@@ -60,7 +60,17 @@ void DEV_NET::tr_iwant_matrix()
 	//_sim->_lu.iwant(_n[OUT1].m_(),_n[OUT2].m_());
 }
 /*--------------------------------------------------------------------------*/
-void DEV_NET::ac_iwant_matrix() {incomplete();}
+void DEV_NET::ac_iwant_matrix()
+{untested();
+	if(net_nodes()<2){ untested();
+	}else if(net_nodes()==2){ incomplete();
+		// reachable for top level nets.
+		// ac simulation possibly still broken due
+		// to missing ac_load...?
+		_sim->_acx.iwant(_n[0].m_(),_n[1].m_());
+	}else{ incomplete();
+	}
+}
 /*--------------------------------------------------------------------------*/
 void DEV_NET::precalc_first()
 {
@@ -82,12 +92,6 @@ void DEV_NET::precalc_first()
 /*--------------------------------------------------------------------------*/
 void DEV_NET::expand()
 {
-#ifdef HAVE_COLLAPSE
-	for( unsigned i=net_nodes(); --i>0; ){ incomplete();
-		trace2("DEV_NET::expand collapse", i, long_label());
-		_n[0].collapse(this, _n[i]);
-	}
-#endif
 }
 /*--------------------------------------------------------------------------*/
 void DEV_NET::tr_begin()
@@ -96,9 +100,6 @@ void DEV_NET::tr_begin()
 	trace3("DEV_NET::tr_begin", long_label(), _n[0].t_(), _n[1].t_());
 	// trace3("DEV_NET::tr_begin", long_label(), _n[0].e_(), _n[1].e_());
 	for( unsigned i=net_nodes(); --i>0; ){
-#ifdef HAVE_COLLAPSE
-		assert(_n[0].m_() == _n[i].m_());
-#endif
 	}
 
 	_g0 = 1./OPT::shortckt;
