@@ -2,7 +2,7 @@
 options numdgt=3
 
 spice
-V1 n1 n0 pulse iv=0 pv=1 delay=0 width=10m rise=1m
+V1 n1 n0 pulse iv=0 pv=1 delay=0 width=10m rise=1m ac 1
 R1 n0 0 1
 
 *.load lang_geda.so
@@ -21,5 +21,8 @@ spice
 .tran 0 20m 1m basic trace=n
 .measure vn2 at(probe="v(n2)" x=1m)
 .measure vn2 at(probe="v(n2)" x=5m)
+
+.print ac v(n1) v(n2)
+.ac .1 100 10
 
 .end

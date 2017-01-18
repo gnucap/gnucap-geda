@@ -112,3 +112,9 @@ DUT #(.basename(resistor-2.sym),.source(dut.sch)) dut1 (.1(x_nn_16),.2(x_nn_14))
 port #(.basename(spice-subcircuit-IO-1.sym),.pinlabel(a)) a (.int(x_nn_6));
 #           v(a)       i(V1.v)   
  0.         1.        -0.002     
+#Freq       v(a)       i(V1.v)   
+ 0.1        1.         0.002     
+ 30.1       1.         0.002     
+ 60.1       1.         0.002     
+ 90.1       1.         0.002     
+ 120.1      1.         0.002     

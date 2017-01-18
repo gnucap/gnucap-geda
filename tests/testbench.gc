@@ -13,4 +13,8 @@ spice
 .print dc v(a) i(V1.v)
 .dc
 
+* this is a dummy, just checking connectivity.
+.print ac v(a) i(V1.v)
+.ac .1 100 30
+
 .end
