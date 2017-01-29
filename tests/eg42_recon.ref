@@ -6,7 +6,7 @@ device=555timer
 T 64700 52500 5 10 0 1 0 0 1
 refdes=U1
 T 64700 52500 5 10 0 1 0 0 1
-footprint=DIL
+footprint=DIL 8 315
 }
 C 64100 52600 1 0 0 gnd-1.sym
 {
@@ -28,7 +28,7 @@ device=SWITCAP-capacitor
 T 67000 53400 5 10 0 1 0 0 1
 refdes=C1
 T 67000 53400 5 10 0 1 0 0 1
-footprint=RADIAL_CAN
+footprint=RADIAL_CAN 200
 T 67000 53400 5 10 0 1 0 0 1
 pins=2
 T 67000 53400 5 10 0 1 0 0 1
@@ -69,7 +69,7 @@ device=LED
 T 70000 51300 5 10 0 1 0 0 1
 refdes=D2
 T 70000 51300 5 10 0 1 0 0 1
-footprint=LED
+footprint=LED 200
 }
 C 69200 52400 1 0 0 2N3055-1.sym
 {
@@ -98,7 +98,7 @@ refdes=C2
 T 64400 54000 5 10 0 1 0 0 1
 description=polarized
 T 64400 54000 5 10 0 1 0 0 1
-footprint=RADIAL_CAN
+footprint=RADIAL_CAN 200
 T 64400 54000 5 10 0 1 0 0 1
 numslots=0
 T 64400 54000 5 10 0 1 0 0 1
@@ -230,7 +230,7 @@ device=LEDseries
 T 69900 54500 5 10 0 1 0 0 1
 refdes=D1
 T 69900 54500 5 10 0 1 0 0 1
-footprint=LED
+footprint=LED 200
 }
 C 70900 50800 1 90 1 led-2.sym
 {
@@ -239,7 +239,7 @@ device=LEDseries
 T 70900 50800 5 10 0 1 0 0 1
 refdes=D?
 T 70900 50800 5 10 0 1 0 0 1
-footprint=LED
+footprint=LED 200
 }
 N 69800 53600 69800 53400 4
 N 68100 55200 70800 55200 4

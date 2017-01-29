@@ -30,35 +30,35 @@ C 56100 47500 1 0 1 in-1.sym
 T 56100 47800 5 10 0 0 0 6 1
 device=INPUT
 T 56100 47800 5 10 1 1 0 6 1
-refdes=Pin 6
+refdes=Pin_6
 }
 C 56100 46500 1 0 1 in-1.sym
 {
 T 56100 46800 5 10 0 0 0 6 1
 device=INPUT
 T 56100 46800 5 10 1 1 0 6 1
-refdes=Pin 5
+refdes=Pin_5
 }
 C 56100 45100 1 0 1 in-1.sym
 {
 T 56100 45400 5 10 0 0 0 6 1
 device=INPUT
 T 56100 45400 5 10 1 1 0 6 1
-refdes=Pin 4
+refdes=Pin_4
 }
 C 56100 43600 1 0 1 in-1.sym
 {
 T 56100 43900 5 10 0 0 0 6 1
 device=INPUT
 T 56100 43900 5 10 1 1 0 6 1
-refdes=Pin 3
+refdes=Pin_3
 }
 C 56100 42100 1 0 1 in-1.sym
 {
 T 56100 42400 5 10 0 0 0 6 1
 device=INPUT
 T 56100 42400 5 10 1 1 0 6 1
-refdes=Pin 2
+refdes=Pin_2
 }
 C 50000 44700 1 0 1 2N2222-1.sym
 {
@@ -140,14 +140,14 @@ C 56100 49100 1 0 1 in-1.sym
 T 56100 49400 5 10 0 0 0 6 1
 device=INPUT
 T 56100 49400 5 10 1 1 0 6 1
-refdes=Pin 7
+refdes=Pin_7
 }
 C 56100 49800 1 0 1 in-1.sym
 {
 T 56100 50100 5 10 0 0 0 6 1
 device=INPUT
 T 56100 50100 5 10 1 1 0 6 1
-refdes=Pin 9
+refdes=Pin_9
 }
 N 42000 45700 42000 50000 4
 N 54400 45200 55500 45200 4
