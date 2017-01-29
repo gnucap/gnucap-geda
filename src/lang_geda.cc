@@ -1177,6 +1177,16 @@ COMPONENT* LANG_GEDA::parse_instance(CS& cmd, COMPONENT* x)
 }
 /*----------------------------------------------------------------------*/
 /*----------------------------------------------------------------------*/
+static void trim_tail(std::string& s)
+{
+	size_t size=s.size();
+	if(size==0){ untested();
+	}else if(s[size-1]==' '){ untested();
+		s.resize(size-1);
+	}else{ untested();
+	}
+}
+/*----------------------------------------------------------------------*/
 // this is a hack finding the string in a C block.
 // no parse, if _C is present.
 GEDA_SYMBOL* LANG_GEDA::parse_C(CS& cmd)const
@@ -1228,8 +1238,10 @@ GEDA_SYMBOL* LANG_GEDA::parse_C(CS& cmd)const
 					break;
 				} else if(cmd >> "T") {
 				} else {
-					string name = cmd.ctos("=","",""), value;
-					cmd >> "=" >> value;
+					std::string name = cmd.ctos("=","","");
+					cmd >> "=";
+					std::string value = cmd.tail();
+					trim_tail(value); // BUG?! where does the space come from?
 					(*_C)[name] = value;
 				}
 			}
