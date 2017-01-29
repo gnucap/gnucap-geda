@@ -24,7 +24,7 @@ vsource #(.dc(value)) v (.p(1),.n(2));
 endmodule // VOLTAGE_SOURCE
 
 module CURRENT_SOURCE (1,2);
-isource #(.dc(value)) i (.p(p),.n(n));
+isource #(.dc(value)) i (.p(1),.n(2));
 endmodule // CURRENT_SOURCE
 
 module BC547 (1,2,3,4);

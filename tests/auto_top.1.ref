@@ -20,7 +20,7 @@ v ( n p )  vsource value
 v ( 1 2 )  vsource value
 .ends VOLTAGE_SOURCE
 .subckt CURRENT_SOURCE ( 1 2 )
-i ( p n )  isource value
+i ( 1 2 )  isource value
 .ends CURRENT_SOURCE
 .subckt BC547 ( 1 2 3 4 )
 *// nothing yet 
