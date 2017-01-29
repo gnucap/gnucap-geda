@@ -3,6 +3,7 @@
 # license: GPLv3+
 
 MODULE = ../src/.libs/lang_geda.so
+GC_ATTACH = -a $(MODULE)
 GNUCAP_ENV = export GUILE_WARN_DEPRECATED=no LD_LIBRARY_PATH=../src/.libs$(LD_LIBRARY_PATH:%=:%);
 GNUCAP = $(shell echo gnucap | sed -e '$(transform)')
 GNUCAP_GEDA = ../gnucap-geda
@@ -91,6 +92,7 @@ GC_TESTS = \
 	d_gedasckt.1.gc \
 	error.1.gc \
 	notfound.gc \
+	switch.1.gc \
 	verilog.gc \
 	verilog_place.gc
 
@@ -122,11 +124,11 @@ SCHEMATICS = \
 	nesting.sch \
 	spice.sch \
 	rail.sch \
-	short.sch \
 	res_net.sch \
 	rc.2.sch \
 	rc.sch \
 	res.sch \
+	short.sch \
 	testbench.sch
 
 $(SCHEMATICS:%.sch=%.out): %.out: $(PWD)/%.sch
@@ -197,7 +199,7 @@ eg26.sch.out: EXTRA_CMD=options nowarn
 
 nets.sch.out: .P
 nets.sch.out: nets.sch
-	$(GNUCAP_ENV) $(GNUCAP_GEDA) -a $(MODULE) $< |grep ^net | wc -l > $@
+	$(GNUCAP_ENV) $(GNUCAP_GEDA) $(GC_ATTACH) $< |grep ^net | wc -l > $@
 
 $(ER_TESTS:%.sh=%.log): %.log: %.out
 # $(EG_TESTS:%.sch=%.log): %.log: %.sch.out
@@ -205,7 +207,7 @@ $(CUSTOM_TESTS:%.sh=%.log): %.log: %.out
 
 bogus.sch.out: .P
 bogus.sch.out: $(PWD)/bogus.sch
-	$(GNUCAP_ENV) $(GNUCAP_GEDA) -a $(MODULE) $< > $@
+	$(GNUCAP_ENV) $(GNUCAP_GEDA) $(GC_ATTACH) $< > $@
 
 %.reg: %.test %.ref
 	diff $+
@@ -235,7 +237,7 @@ $(ER_TESTS:%.sh=%.log): %.log: %.out
 
 $(GC_TESTS:%.gc=%.out): %.out: %.gc
 	echo gctest...
-	$(GNUCAP_ENV) $(GNUCAP) -a $(MODULE) $(GC_INCLUDES) < $< | \
+	$(GNUCAP_ENV) $(GNUCAP) $(GC_ATTACH) $(GC_INCLUDES) < $< | \
 		sed -e '/^default plugins/d'  -e '/^lang_geda/d' | \
 		sed -e '/^parameter /d' $(EXTRA_SED_ARG)| \
 		grep -v ^@ > $@
@@ -258,6 +260,8 @@ $(ER_TESTS:%.sh=%.out): GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
 $(EG_TESTS:%.sch=%.out): GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
 
 rc.out rc.2.out: GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
+switch.1.out: GC_INCLUDES+=-i $(abs_top_srcdir)/include/switch.v
+switch.1.out: GC_ATTACH+=-a $(abs_top_builddir)/src/.libs/f_is.so
 
 eg2b.sch.out eg2b_recon.out: VLIB_FILES+= transistor.v diode.v
 eg3.sch.out eg3_recon.out: VLIB_FILES += transistor.v 74.v
@@ -275,7 +279,7 @@ $(ER_TESTS:%.sh=%.out): EXTRA_SED_ARGS=-e '1,/^stashing /d' -e 's%^//v %v %' -e 
 
 #$(EG_TESTS:%.sch=%.out)
 $(ER_TESTS:%.sh=%.out): %.out: %.gc
-	-@echo "$(GNUCAP) $<"; $(GNUCAP_ENV) $(GNUCAP) -a $(MODULE) $(GC_INCLUDES) \
+	-@echo "$(GNUCAP) $<"; $(GNUCAP_ENV) $(GNUCAP) $(GC_ATTACH) $(GC_INCLUDES) \
 		$(VLIB_FILES:%=-i $(abs_top_srcdir)/include/%) < $< | \
 		sed -e '/^default plugins/d' \
 		    -e '/^lang_geda/d' $(EXTRA_SED_ARGS) | \

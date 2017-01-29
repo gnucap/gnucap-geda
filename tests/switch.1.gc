@@ -1,0 +1,26 @@
+options numdgt=1
+
+verilog
+geda "switch.1.sch" module device="myswitchtest"
+
+myswitchtest T(.nref(1), .nac(nac), .ndc(ndc));
+
+list
+spice
+
+* yuck, need spice for AC source.
+v1 1 0 ac 1 dc 1 op 1 tran 1
+
+R1 ndc 0 1
+R2 nac 0 1
+
+.print op   v(nodes) ev(T.*.Y1)
+.print dc   v(nodes) ev(T.*.Y1)
+.print ac   v(nodes) ev(T.*.Y1)
+.print tran v(nodes) ev(T.*.Y1)
+.op
+.dc
+.ac
+.tran 0 1 1
+
+.end

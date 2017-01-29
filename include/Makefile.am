@@ -6,4 +6,5 @@ pkginclude_HEADERS = \
 	connector.v \
 	linear.v \
 	switcap.v \
+	switch.v \
 	transistor.v

@@ -1,0 +1,47 @@
+// This File is part of gnucap-geda 
+// (C) 2012 Felix Salfelder 
+// GPLv3 or later 
+// mapping geda-symbols to actual devices 
+// "switch" section 
+// module SPST_doesnotwork(1,2); 
+//  parameter value=1.; 
+//  admittance #(.g((1.-value)*1e6)) a(1,2); 
+// endmodule 
+module SPST (1,2);
+admittance #( TRAN y  DC y  OP y  AC y) Y1 (.p(1),.n(2));
+endmodule // SPST
+
+module myswitchtest (nref,nac,ndc);
+//comment (incomplete) title-B.sym
+port #(.basename(input-2.sym),.net(nref)) nref (.int(x_cn_0),.ext(nref));
+place #(.x(44900),.y(47300)) 44900:47300 (.port(x_cn_0));
+port #(.basename(output-2.sym),.net(nac)) nac (.int(x_cn_1),.ext(nac));
+place #(.x(46900),.y(47300)) 46900:47300 (.port(x_cn_1));
+net #() net0 (.p(x_nn_2),.n(x_cn_0));
+place #(.x(45500),.y(47300)) 45500:47300 (.port(x_nn_2));
+net #() net1 (.p(x_nn_3),.n(x_cn_1));
+place #(.x(46300),.y(47300)) 46300:47300 (.port(x_nn_3));
+SPST #(.basename(switch-spst-1.sym),.value(is_ac())) SAC (.1(x_nn_2),.2(x_nn_3));
+port #(.basename(output-2.sym),.net(ndc)) ndc (.int(x_cn_4),.ext(ndc));
+place #(.x(46900),.y(46200)) 46900:46200 (.port(x_cn_4));
+net #() net2 (.p(x_nn_5),.n(x_cn_4));
+place #(.x(46300),.y(46200)) 46300:46200 (.port(x_nn_5));
+SPST #(.basename(switch-spst-1.sym),.value(is_dc())) SDC (.1(x_cn_6),.2(x_nn_5));
+place #(.x(45500),.y(46200)) 45500:46200 (.port(x_cn_6));
+net #() net3 (.p(x_nn_7),.n(x_nn_8));
+place #(.x(45100),.y(47300)) 45100:47300 (.port(x_nn_7));
+place #(.x(45100),.y(46200)) 45100:46200 (.port(x_nn_8));
+net #() extranet4 (.p(x_nn_7),.n(x_nn_2));
+net #() net5 (.p(x_nn_8),.n(x_cn_6));
+endmodule // myswitchtest
+
+myswitchtest #() T (.nref(1),.nac(nac),.ndc(ndc));
+#         v(1)     v(nac)   v(ndc)   ev(T.SAC.Y1) ev(T.SDC.Y1)
+ 27.      1.       0.       0.       0.       0.      
+#         v(1)     v(nac)   v(ndc)   ev(T.SAC.Y1) ev(T.SDC.Y1)
+ 0.       1.       0.       1.       0.       1.Meg   
+#Freq     v(1)     v(nac)   v(ndc)   ev(T.SAC.Y1) ev(T.SDC.Y1)
+ 0.       1.       1.       0.       1.Meg    0.      
+#Time     v(1)     v(nac)   v(ndc)   ev(T.SAC.Y1) ev(T.SDC.Y1)
+ 0.       1.       0.       0.       0.       0.      
+ 1.       1.       0.       0.       0.       0.      
