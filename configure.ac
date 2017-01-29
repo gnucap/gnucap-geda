@@ -97,6 +97,7 @@ AC_CONFIG_FILES([
 	tests/gafrc
 	src/Makefile
 	include/Makefile
+	examples/Makefile
 ])
 
 AC_CONFIG_FILES([gnucap-geda], [chmod +x gnucap-geda])

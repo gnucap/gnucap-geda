@@ -1,0 +1,17 @@
+chdir to an example
+
+$ cd some_example
+
+look out for .gc files (read them), then run
+
+some_example$ gnucap some_file.gc
+
+NOTE
+
+in order for this to work, you need to copy in (or symlink) the component
+libraries as included by the .gc file. (that might be better in future
+versions.)
+
+some_example$ cp $(pkgincludedir)/somefile.v .
+
+pkgincludedir defaults to /usr/local/include/gnucap-geda

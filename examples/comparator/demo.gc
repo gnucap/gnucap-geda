@@ -1,0 +1,31 @@
+load lang_geda.so
+
+// components for gEDA "analog" symbols
+include analog.v
+
+// turn a schematic into a module/subcircuit
+geda comparator.sch module
+
+verilog
+parameter bias=.1m
+parameter vdd=3.3
+parameter amplitude=0.05
+
+// instanciate the module.
+comparator.sch #(.bias(bias) .vdd(vdd)) k1(nout ninn ninp 0);
+
+// print out everything
+list
+
+// sometimes you may want to use spice components/commands
+spice
+
+Vp ninp 0 sin ( delay=0 offset={vdd/2} phase=0 amplitude=amplitude frequency=1e3 )
+Vn ninn 0 sin ( delay=0 offset={vdd/2} phase=0 amplitude=amplitude frequency=2e3 )
+c1 0 nout 1p
+
+.print op v(nodes)
+.op
+.print tran v(nodes) v(k1.p) v(k1.g2) v(k1.supp) v(k1.Ibias1.i)
+.tran 0 2m > transient.out
+.end

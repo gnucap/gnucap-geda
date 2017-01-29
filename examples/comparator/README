@@ -1,0 +1,4 @@
+a simple comparator, not trying to be efficient, or fast or otherwise useful
+
+demo.gc makes use of analog.v, runs a simple transient analysis. comparing
+sine waveforms.
