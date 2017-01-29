@@ -353,12 +353,12 @@ std::vector<string*> LANG_GEDA::parse_symbol_file(CARD* x,
 				incomplete();
 			}
 		}else if(c && linetype != "" ){
-			sym_cmd>>linetype;
+			sym_cmd >> linetype;
 			unsigned here = sym_cmd.cursor();
 			sym_cmd >> "=";
 			if(!sym_cmd.stuck(&here))
 				try {
-					sym_cmd>>dump;
+					sym_cmd >> dump;
 					x->set_param_by_name(linetype, dump);
 				} catch (Exception_No_Match&) {
 				} catch (Exception_Too_Many&) { untested();
@@ -393,9 +393,9 @@ void LANG_GEDA::parse_place(CS& cmd, COMPONENT* place)
 		cmd.reset();
 	} else if ( cmd.umatch("place") ) {untested();
 		incomplete();
-		cmd>>"place";
+		cmd >> "place";
 		std::string _portname,_x,_y;
-		cmd>>" ">>_portname>>" ">>_x>>" ">>_y;
+		cmd >> " " >> _portname >> " " >> _x >> " " >> _y;
 		place->set_param_by_name("x",_x);
 		place->set_param_by_name("y",_y);
 		string portname = string(INT_PREFIX) + "np_" + _portname;
@@ -697,12 +697,12 @@ void LANG_GEDA::parse_net(CS& cmd, COMPONENT* x)const
 					cmd>>dump;
 				}else{
 					std::string paramname=cmd.ctos("=","",""),paramvalue;
-					cmd>>"=">>paramvalue;
+					cmd >> "=" >> paramvalue;
 					if (paramname=="netname" && paramvalue!="?"){
 						x->set_label(paramvalue);
 					}else{
 						try{
-							x->set_param_by_name(paramname,paramvalue);
+							x->set_param_by_name(paramname, paramvalue);
 						}catch(Exception_No_Match){
 						}
 					}
@@ -779,7 +779,7 @@ void LANG_GEDA::parse_component(CS& cmd, COMPONENT* x)
 
 	try{
 		x->set_param_by_name("basename", basename);
-	} catch(Exception_No_Match){untested();
+	}catch(Exception_No_Match){untested();
 	}
 	// set parameters
 
@@ -792,8 +792,9 @@ void LANG_GEDA::parse_component(CS& cmd, COMPONENT* x)
 			//                    source = paramvalue;
 		}else{
 			try{
+				trace2("p", i->first, i->second);
 				x->set_param_by_name(i->first, i->second);
-			} catch (Exception_No_Match){
+			}catch(Exception_No_Match){
 			}
 		}
 	}
@@ -1181,7 +1182,7 @@ static void trim_tail(std::string& s)
 {
 	size_t size=s.size();
 	if(size==0){ untested();
-	}else if(s[size-1]==' '){ untested();
+	}else if(s[size-1]==' '){
 		s.resize(size-1);
 	}else{ untested();
 	}

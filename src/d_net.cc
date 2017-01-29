@@ -63,7 +63,7 @@ void DEV_NET::tr_iwant_matrix()
 void DEV_NET::ac_iwant_matrix()
 {
 	if(net_nodes()<2){
-	}else if(net_nodes()==2){ incomplete();
+	}else if(net_nodes()==2){
 		// reachable for top level nets.
 		// ac simulation possibly still broken due
 		// to missing ac_load...?

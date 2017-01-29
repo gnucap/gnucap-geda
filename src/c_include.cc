@@ -35,23 +35,23 @@ namespace {
 class CMD_INCLUDE : public CMD {
 public:
   void do_it(CS& cmd, CARD_LIST* Scope)
-  {
+  { untested();
     unsigned here = cmd.cursor();
     std::string directory = GNUCAP_GEDA_PKGINCLUDEDIR;
-    try {
+    try { untested();
       std::string file_name;
       cmd >> file_name;
       CS file(CS::_INC_FILE, directory + "/" + file_name);
-      for (;;) {
-	if (OPT::language) {
+      for (;;) { untested();
+	if (OPT::language) { untested();
 	  OPT::language->parse_top_item(file, Scope);
 	}else{untested();
 	  CMD::cmdproc(file.get_line(""), Scope);
 	}
       }
-    }catch (Exception_File_Open& e) {
+    }catch (Exception_File_Open& e) { untested();
       cmd.warn(bDANGER, here, e.message() + '\n');
-    }catch (Exception_End_Of_Input& e) {
+    }catch (Exception_End_Of_Input& e) { untested();
       // done
     }
   }

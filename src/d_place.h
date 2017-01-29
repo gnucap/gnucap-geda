@@ -68,7 +68,7 @@ class DEV_PLACE : public COMPONENT {
 		uint_t net_nodes()const {return 1;}
 		bool has_iv_probe()const {return false;}
 		bool print_type_in_spice()const {return true;}
-		bool is_device() const {itested(); return true;}
+		bool is_device() const { return true;}
 		CARD* clone()const {return new DEV_PLACE(*this);}
 		int param_count()const {return 2;}
 		std::string port_name(uint_t i)const{

@@ -201,7 +201,7 @@ void DEV_GEDA_SUBCKT::apply_map(unsigned* map)
 	NODE_MAP* Map = subckt()->nodes();
 	assert(Map);
 
-	for(NODE_MAP::const_iterator i=Map->begin(); i!=Map->end(); ++i) { untested();
+	for(NODE_MAP::const_iterator i=Map->begin(); i!=Map->end(); ++i) {
 		NODE* n=i->second;
 		n->set_user_number(map[n->user_number()]);
 	}
@@ -214,7 +214,7 @@ std::string DEV_GEDA_SUBCKT::port_default(uint_t i)const
 	if (_parent) {
 		if (i<_parent->net_nodes()){
 			return _parent->port_default(i);
-		}else{ untested();
+		}else{
 			return "";
 		}
 	}else{untested();
@@ -296,9 +296,6 @@ void DEV_GEDA_SUBCKT::default_connect(const CARD* model)
 /*--------------------------------------------------------------------------*/
 void DEV_GEDA_SUBCKT::map_subckt_nodes(const CARD* model)
 {
-	for(unsigned i=0; i<(unsigned)param_count(); ++i){
-		trace2("DEV_GEDA_SUBCKT::msn", param_name(i), param_value(i));
-	}
 	assert(model);
 	assert(model->subckt());
 	assert(model->subckt()->nodes());
