@@ -21,7 +21,10 @@
 
 // nodes with names prefixed by this are considered internal.
 #define INT_PREFIX string("x_")
-
+/*--------------------------------------------------------------------------*/
+#ifndef USE
+# define USE(x) (void) x // for now.
+#endif
 /*--------------------------------------------------------------------------*/
 namespace geda{ //
 typedef enum {dnOPEN, dnGND, dnAUTO} dn_t;

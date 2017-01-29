@@ -33,7 +33,7 @@
 #ifdef HAVE_BOOST_ASSIGN
 # include <boost/assign.hpp>
 #endif
-#include "io_trace.h"
+#include <io_trace.h>
 
 #ifndef HAVE_UINT_T
 typedef int uint_t;
@@ -236,7 +236,7 @@ void DEV_PORT::set_port_by_index(uint_t i, std::string& name)
 	}else if(MODEL_GEDA_SUBCKT* o = dynamic_cast<MODEL_GEDA_SUBCKT*>(owner())){ untested();
 		USE(o);
 	}else if(BASE_SUBCKT* o = dynamic_cast<BASE_SUBCKT*>(owner())){ untested();
-		(void) o;
+		USE(o);
 		// using incompatible sckt type?
 		untested(); incomplete();
 	}else if(owner()){ unreachable();
