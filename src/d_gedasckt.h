@@ -105,7 +105,7 @@ private:
   node_t _nodes[PORTS_PER_SUBCKT];
   unsigned _num_cc; // number connected components
 private: // cleanup later
-  void trysomehing(std::string x);
+  void map_a_node(std::string x);
   unsigned _num_auto_nodes; // number of nodes added during precalc_first.
 };
 /*--------------------------------------------------------------------------*/

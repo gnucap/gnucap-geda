@@ -152,7 +152,7 @@ Preparing existing node GND:1 in myinvtb
 cmosp: rsh - rs - rd conflict: using rsh
 cmosp: is - js conflict
 #         vd(myinvtb.inv1.P1.m) vg(myinvtb.inv1.P1.m) vs(myinvtb.inv1.P1.m) vb(myinvtb.inv1.P1.m) v(Vdd:1) v(myinvtb.VDD.v) v(myinvtb.VCLK.v)
- 27.      4.98     0.       5.       5.       0.       5.       0.      
+ 27.      4.98     0.       5.       5.       5.       5.       0.      
 cmosp: rsh - rs - rd conflict: using rsh
 cmosp: is - js conflict
 .print tran  vd ... (myinvtb.VCLK.v)  v(myinvtb.ck)  v(myinvtb.VCLK.v)  v(my

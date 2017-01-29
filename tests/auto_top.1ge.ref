@@ -65,4 +65,4 @@ endmodule // mm
 
 mm #() mmm (.a(0));
 #           i(mmm.V1.v) v(toprail) v(mmm.toprail) v(mmm.dut0.P3)
- 0.         0.         0.         1.         1.        
+ 0.         0.         1.         1.         1.        

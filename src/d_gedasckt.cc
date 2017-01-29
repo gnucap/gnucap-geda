@@ -133,7 +133,7 @@ DEV_GEDA_SUBCKT::~DEV_GEDA_SUBCKT()
 #define NODE_BASE NODE
 #endif
 // map a node, so we can connect to it
-void DEV_GEDA_SUBCKT::trysomehing(std::string x)
+void DEV_GEDA_SUBCKT::map_a_node(std::string x)
 {
 
   NODE_MAP* Map = subckt()->nodes();
@@ -198,6 +198,14 @@ void DEV_GEDA_SUBCKT::apply_map(unsigned* map)
 //			assert(dynamic_cast<MODEL_CARD*>(*ci));
 		}
 	}
+	NODE_MAP* Map = subckt()->nodes();
+	assert(Map);
+
+	for(NODE_MAP::const_iterator i=Map->begin(); i!=Map->end(); ++i) { untested();
+		NODE* n=i->second;
+		n->set_user_number(map[n->user_number()]);
+	}
+
 	trace1("apply_map done", long_label());
 }
 /*--------------------------------------------------------------------------*/
@@ -265,7 +273,7 @@ void DEV_GEDA_SUBCKT::default_connect(const CARD* model)
 						set_port_by_index(i-1, dp);
 					}else if(DEV_GEDA_SUBCKT* o=dynamic_cast<DEV_GEDA_SUBCKT*>(owner())){ incomplete();
 						// now what are the net names in o??
-						o->trysomehing(dp);
+						o->map_a_node(dp);
 						set_port_by_index(i-1, dp);
 					}else{ incomplete();
 						error(bWARNING, "i cannot help you\n");
