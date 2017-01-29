@@ -265,7 +265,6 @@ void DEV_GEDA_SUBCKT::default_connect(const CARD* model)
 							port_name(i-1).c_str(),
 							dp.c_str());
 					// hmm only works if that node already exists...
-					trace1("", port_value(i-1));
 					incomplete();
 					if(owner()==NULL){
 						// this creates a new top level node and connects
