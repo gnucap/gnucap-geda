@@ -57,4 +57,7 @@ DISPATCHER<FUNCTION>::INSTALL f_is_dc(&function_dispatcher, "is_dc", &is_dc);
 static is is_op(s_OP);
 DISPATCHER<FUNCTION>::INSTALL f_is_op(&function_dispatcher, "is_op", &is_op);
 
+static is is_tr(s_TRAN);
+DISPATCHER<FUNCTION>::INSTALL f_is_tr(&function_dispatcher, "is_tr|is_tran", &is_tr);
+
 }
