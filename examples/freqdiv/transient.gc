@@ -1,0 +1,58 @@
+load lang_geda.so
+
+options numdgt=2
+options trtol=4
+
+include analog.v
+
+spice
+
+.model cmosn  nmos ( level=1  vto= 0.8  kp= 41.5964u  gamma= 0.863074
++ phi= 0.6  cbd= 0.  cbs= 0.  pb= 0.7
++ cgso= 218.971p  cgdo= 218.971p  cgbo= 0.  rsh= 0.  cj= 384.4u  mj= 0.4884
++ cjsw= 527.2p  mjsw= 0.3002  js= 0.  tox= 41.8n  nsub= 15.3142E+15
++ nss= 1.E+12  tpg=1  xj= 400.n  ld= 265.073n  uo= 503.521
++ kf= 0.  af= 1.  fc= 0.5  lambda=.01)
+
+.model cmosp  pmos ( level=1  vto=-0.844345  kp= 41.5964u  gamma= 0.863074
++ phi= 0.6  rd= 0.  rs= 0.  cbd= 0.  cbs= 0.  is= 0  pb= 0.7
++ cgso= 218.971p  cgdo= 218.971p  cgbo= 0.  rsh= 0.  cj= 384.4u  mj= 0.4884
++ cjsw= 527.2p  mjsw= 0.3002  js= 0.  tox= 41.8n  nsub= 15.3142E+15
++ nss= 1.E+12  tpg=1  xj= 400.n  ld= 265.073n  uo= 503.521
++ kf= 0.  af= 1.  fc= 0.5 lambda=.01)
+
+.subckt vpulse ( 1 2 )
+.parameter delay=0
+.parameter iv=0
+.parameter pv=1
+.parameter rise=10n
+.parameter fall=10n
+.parameter width=5u
+.parameter period=10u
+v 1 2 pulse iv=iv pv=pv width=width fall=fall rise=rise delay=delay period=period
+.ends
+
+.verilog
+
+geda "divider.sch" module device="div" default_connect=auto
+
+div #(.vdd(5))  mydiv(.zero(0), .q(q));
+
+spice
+I1 0 q 1e-12
+
+.print op
++ vb(mydiv.D1.M3.m)
++ vg(mydiv.inv1.P1.m)
++ vb(mydiv.inv1.P1.m)
++ vg(mydiv.inv2.P1.m)
++ v(mydiv.VDD.v)
++ v(mydiv.toprail)
++ v(mydiv.Vdd:1)
+.op trace=n
+
+.print tran
++ v(mydiv.VCLK.v)
++ v(mydiv.q)
+.tran 0 1u > tr.out
+.end

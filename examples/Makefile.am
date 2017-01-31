@@ -1,6 +1,8 @@
 EXTRA_DIST = \
 	README \
-	comparator
+	comparator \
+	opamp \
+	freqdiv
 
 install-data-local:
 	   $(INSTALL) -d $(DESTDIR)$(docdir)/examples
