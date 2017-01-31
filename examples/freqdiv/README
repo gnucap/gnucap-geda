@@ -1,0 +1,8 @@
+a frequency-by-two-divider
+
+makes use of
+- hierarchical schematics
+- autoconnect (c.f. toplevel readme)
+- level1 transistors from analog.v
+
+thanks to Cheng Fei Phung
