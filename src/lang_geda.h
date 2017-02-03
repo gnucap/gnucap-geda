@@ -20,7 +20,7 @@
  */
 
 // nodes with names prefixed by this are considered internal.
-#define INT_PREFIX string("x_")
+#define INT_PREFIX std::string("x_")
 /*--------------------------------------------------------------------------*/
 #ifndef USE
 # define USE(x) (void) x // for now.
