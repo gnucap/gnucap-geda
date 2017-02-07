@@ -88,6 +88,7 @@ GC_TESTS = \
 	dlatch_tr.gc \
 	inv_tr.gc \
 	divide_by_two.gc \
+	hide.1.gc \
 	invtb.gc \
 	d_gedasckt.1.gc \
 	error.1.gc \

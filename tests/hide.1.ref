@@ -1,0 +1,23 @@
+>>>>>verilog 
+>>>>>module test(1,2); 
+>>>>>list 
+module test (1,2);
+resistor #(.r(5)) r (.p(1),.n(2));
+endmodule // test
+
+test #() t1 (.1(1),.2(2));
+>>>>>hidemodule test 
+>>>>>list 
+test #() t1 (.1(1),.2(2));
+>>>>>list 
+test #() t1 (.1(1),.2(2));
+test #() t2 (.1(0),.2(1));
+>>>>>print dc v(nodes) 
+t1: map_subckt_nodes net: 2 sckt: 2
+t1: map_subckt_nodes connected components 2
+t2: map_subckt_nodes net: 2 sckt: 2
+t2: map_subckt_nodes connected components 2
+>>>>>dc 
+#           v(1)       v(2)      
+ 0.         0.5        1.        
+>>>>>end 
