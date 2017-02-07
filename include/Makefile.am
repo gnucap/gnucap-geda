@@ -5,6 +5,7 @@ pkginclude_HEADERS = \
 	diode.v \
 	connector.v \
 	linear.v \
+	spice.v \
 	switcap.v \
 	switch.v \
 	transistor.v

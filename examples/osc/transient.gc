@@ -1,0 +1,16 @@
+options trace
+load lang_geda.so
+
+include analog.v
+include spice.v
+
+verilog
+
+geda "osc.sch" module device="myosc"
+
+myosc #(.vdd(5)) osc(.ngnd(0), .nout(1));
+list
+
+print tran v(nodes) vin(osc.S1.s)
+tran 0 10m uic > tr.out
+end
