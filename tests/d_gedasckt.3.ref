@@ -11,6 +11,122 @@
 >>>>>parameter value=1; 
 >>>>>geda "d_gedasckt.3.sch" module device="amp" 
 reading file d_gedasckt.3.sch
+>pi>
+>pi2>v 20130925 2 
+>ftis>v 20130925 2 
+>pi>v 20130925 2 
+>pi2>C 40000 40000 0 0 0 title-B.sym 
+>ftis>C 40000 40000 0 0 0 title-B.sym 
+>pi>N 45400 46200 45400 46000 4 
+>pi2>N 45400 46200 45400 46000 4 
+>ftis>N 45400 46200 45400 46000 4 
+>ftis>N 45400 46200 45400 46000 4 
+>inst>N 45400 46200 45400 46000 4 
+>pi>C 42900 46800 1 270 0 voltage-3.sym 
+>pi2>C 42900 46800 1 270 0 voltage-3.sym 
+>ftis>C 42900 46800 1 270 0 voltage-3.sym 
+>ftis>C 42900 46800 1 270 0 voltage-3.sym 
+>inst>C 42900 46800 1 270 0 voltage-3.sym 
+>ftis>C 42900 46800 1 270 0 voltage-3.sym 
+>pi>C 42900 46800 1 270 0 voltage-3.sym 
+>pi2>C 42900 46800 1 270 0 voltage-3.sym 
+>ftis>C 42900 46800 1 270 0 voltage-3.sym 
+>ftis>C 42900 46800 1 270 0 voltage-3.sym 
+>inst>C 42900 46800 1 270 0 voltage-3.sym 
+>ftis>C 42900 46800 1 270 0 voltage-3.sym 
+>pi>C 42900 46800 1 270 0 voltage-3.sym 
+>pi2>C 42900 46800 1 270 0 voltage-3.sym 
+>ftis>C 42900 46800 1 270 0 voltage-3.sym 
+>dev>VOLTAGE_SOURCE
+>ftis>} 
+>dev>VOLTAGE_SOURCE
+>inst>} 
+>ftis>} 
+>dev>VOLTAGE_SOURCE
+>ftis>v 20031231 1 
+>ftis>P 900 200 700 200 1 0 0 
+>ftis>P 900 200 700 200 1 0 0 
+>ftis>P 0 200 200 200 1 0 0 
+>ftis>P 0 200 200 200 1 0 0 
+>ftis>V 450 200 200 3 0 0 0 -1 -1 0 -1 -1 -1 -1 -1 
+>ftis>T 200 700 9 8 0 0 0 0 1 
+>ftis>device=VOLTAGE_SOURCE 
+>ftis>L 700 200 650 200 3 0 0 0 -1 -1 
+>ftis>L 250 200 200 200 3 0 0 0 -1 -1 
+>ftis>T 300 500 8 10 1 1 0 0 1 
+>ftis>refdes=V? 
+>ftis>T 325 225 9 10 1 0 0 4 1  
+>ftis>T 575 225 9 10 1 0 0 4 1 
+>ftis>- 
+>pi>} 
+>pi2>} 
+>ftis>} 
+>ftis>} 
+>inst>} 
+>ftis>} 
+>pi>} 
+>pi2>} 
+>ftis>} 
+>ftis>} 
+>inst>} 
+>ftis>} 
+>pi>} 
+>pi2>C 43300 45900 1 180 0 5V-minus-1.sym 
+>ftis>C 43300 45900 1 180 0 5V-minus-1.sym 
+>ftis>} 
+>dev>rail
+>inst>} 
+>ftis>} 
+>dev>rail
+>ftis>v 20031231 1 
+>ftis>P 200 0 200 200 1 0 0 
+>ftis>P 200 0 200 200 1 0 0 
+>ftis>L 50 200 350 200 3 0 0 0 -1 -1 
+>ftis>T 75 250 9 8 1 0 0 0 1 
+>ftis>-5V 
+>ftis>T 300 0 8 8 0 0 0 0 1 
+>ftis>net=-5V:1 
+>pi>} 
+>pi2>C 43100 46700 1 0 0 passive-1.sym 
+>ftis>C 43100 46700 1 0 0 passive-1.sym 
+>dev>port
+>ftis>} 
+>dev>port
+>inst>} 
+>ftis>} 
+>dev>port
+>ftis>v 20031231 1 
+>ftis>P 0 100 200 100 1 0 0 
+>ftis>P 0 100 200 100 1 0 0 
+>ftis>L 200 200 200 0 3 0 0 0 -1 -1 
+>ftis>T 900 200 5 10 1 0 0 0 1 
+>ftis>net=PASSIVE:1 
+>ftis>T 200 700 5 10 0 0 0 0 1 
+>ftis>device=none 
+>ftis>T 200 800 5 10 0 0 0 0 1 
+>ftis>description=Passive module port 
+>ftis>L 200 200 800 200 3 0 0 0 -1 -1 
+>ftis>L 800 200 800 0 3 0 0 0 -1 -1 
+>ftis>L 800 0 200 0 3 0 0 0 -1 -1 
+>ftis>T 900 100 5 10 1 1 0 1 1 
+>ftis>value=PASSIVE 
+>pi>} 
+>pi2>C 45600 46000 1 180 0 5V-minus-1.sym 
+>ftis>C 45600 46000 1 180 0 5V-minus-1.sym 
+>ftis>} 
+>dev>rail
+>inst>} 
+>ftis>} 
+>dev>rail
+>ftis>v 20031231 1 
+>ftis>P 200 0 200 200 1 0 0 
+>ftis>P 200 0 200 200 1 0 0 
+>ftis>L 50 200 350 200 3 0 0 0 -1 -1 
+>ftis>T 75 250 9 8 1 0 0 0 1 
+>ftis>-5V 
+>ftis>T 300 0 8 8 0 0 0 0 1 
+>ftis>net=-5V:1 
+>pi>} 
 >>>>>list 
 vsource #( DC  1.) V1 (.p(nin),.n(0));
 module NMOS_TRANSISTOR (D,G,S,B);

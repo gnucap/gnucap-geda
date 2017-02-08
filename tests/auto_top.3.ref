@@ -5,8 +5,449 @@
 >>>>>module VOLTAGE_SOURCE ( 1 2 ) 
 >>>>>geda auto_top.3.sch default_connect=open 
 reading file auto_top.3.sch
+>pi>
+>pi2>v 20130925 2 
+>ftis>v 20130925 2 
+>pi>v 20130925 2 
+>pi2>C 40000 40000 0 0 0 title-B.sym 
+>ftis>C 40000 40000 0 0 0 title-B.sym 
+>pi>N 46100 45200 46100 46300 4 
+>pi2>N 46100 45200 46100 46300 4 
+>ftis>N 46100 45200 46100 46300 4 
+>ftis>N 46100 45200 46100 46300 4 
+>inst>N 46100 45200 46100 46300 4 
+>pi>C 43700 46900 1 270 0 voltage-3.sym 
+>pi2>C 43700 46900 1 270 0 voltage-3.sym 
+>ftis>C 43700 46900 1 270 0 voltage-3.sym 
+>ftis>C 43700 46900 1 270 0 voltage-3.sym 
+>inst>C 43700 46900 1 270 0 voltage-3.sym 
+>ftis>C 43700 46900 1 270 0 voltage-3.sym 
+>pi>C 43700 46900 1 270 0 voltage-3.sym 
+>pi2>C 43700 46900 1 270 0 voltage-3.sym 
+>ftis>C 43700 46900 1 270 0 voltage-3.sym 
+>ftis>C 43700 46900 1 270 0 voltage-3.sym 
+>inst>C 43700 46900 1 270 0 voltage-3.sym 
+>ftis>C 43700 46900 1 270 0 voltage-3.sym 
+>pi>C 43700 46900 1 270 0 voltage-3.sym 
+>pi2>C 43700 46900 1 270 0 voltage-3.sym 
+>ftis>C 43700 46900 1 270 0 voltage-3.sym 
+>dev>VOLTAGE_SOURCE
+>ftis>} 
+>dev>VOLTAGE_SOURCE
+>inst>} 
+>ftis>} 
+>dev>VOLTAGE_SOURCE
+>ftis>v 20031231 1 
+>ftis>P 900 200 700 200 1 0 0 
+>ftis>P 900 200 700 200 1 0 0 
+>ftis>P 0 200 200 200 1 0 0 
+>ftis>P 0 200 200 200 1 0 0 
+>ftis>V 450 200 200 3 0 0 0 -1 -1 0 -1 -1 -1 -1 -1 
+>ftis>T 200 700 9 8 0 0 0 0 1 
+>ftis>device=VOLTAGE_SOURCE 
+>ftis>L 700 200 650 200 3 0 0 0 -1 -1 
+>ftis>L 250 200 200 200 3 0 0 0 -1 -1 
+>ftis>T 300 500 8 10 1 1 0 0 1 
+>ftis>refdes=V? 
+>ftis>T 325 225 9 10 1 0 0 4 1  
+>ftis>T 575 225 9 10 1 0 0 4 1 
+>ftis>- 
+>pi>} 
+>pi2>} 
+>ftis>} 
+>ftis>} 
+>inst>} 
+>ftis>} 
+>pi>} 
+>pi2>} 
+>ftis>} 
+>ftis>} 
+>inst>} 
+>ftis>} 
+>pi>} 
+>pi2>N 43900 45200 43900 46000 4 
+>ftis>N 43900 45200 43900 46000 4 
+>ftis>N 43900 45200 43900 46000 4 
+>inst>N 43900 45200 43900 46000 4 
+>pi>N 43900 46900 43900 47900 4 
+>pi2>N 43900 46900 43900 47900 4 
+>ftis>N 43900 46900 43900 47900 4 
+>ftis>N 43900 46900 43900 47900 4 
+>inst>N 43900 46900 43900 47900 4 
+>ftis>N 43900 46900 43900 47900 4 
+>pi>N 43900 46900 43900 47900 4 
+>pi2>N 43900 46900 43900 47900 4 
+>ftis>N 43900 46900 43900 47900 4 
+>ftis>N 43900 46900 43900 47900 4 
+>inst>N 43900 46900 43900 47900 4 
+>pi>N 43900 47900 49300 47900 4 
+>pi2>N 43900 47900 49300 47900 4 
+>ftis>N 43900 47900 49300 47900 4 
+>ftis>N 43900 47900 49300 47900 4 
+>inst>N 43900 47900 49300 47900 4 
+>ftis>N 43900 47900 49300 47900 4 
+>pi>N 43900 47900 49300 47900 4 
+>pi2>N 43900 47900 49300 47900 4 
+>ftis>N 43900 47900 49300 47900 4 
+>ftis>N 43900 47900 49300 47900 4 
+>inst>N 43900 47900 49300 47900 4 
+>pi>} 
+>pi2>} 
+>ftis>} 
+>ftis>} 
+>inst>} 
+>ftis>} 
+>pi>} 
+>pi2>N 46100 47900 46100 47200 4 
+>ftis>N 46100 47900 46100 47200 4 
+>ftis>N 46100 47900 46100 47200 4 
+>inst>N 46100 47900 46100 47200 4 
+>pi>C 43800 44900 1 0 0 gnd-1.sym 
+>pi2>C 43800 44900 1 0 0 gnd-1.sym 
+>ftis>C 43800 44900 1 0 0 gnd-1.sym 
+>ftis>C 43800 44900 1 0 0 gnd-1.sym 
+>inst>C 43800 44900 1 0 0 gnd-1.sym 
+>ftis>C 43800 44900 1 0 0 gnd-1.sym 
+>pi>C 43800 44900 1 0 0 gnd-1.sym 
+>pi2>C 43800 44900 1 0 0 gnd-1.sym 
+>ftis>C 43800 44900 1 0 0 gnd-1.sym 
+>ftis>C 43800 44900 1 0 0 gnd-1.sym 
+>inst>C 43800 44900 1 0 0 gnd-1.sym 
+>ftis>C 43800 44900 1 0 0 gnd-1.sym 
+>pi>C 43800 44900 1 0 0 gnd-1.sym 
+>pi2>C 43800 44900 1 0 0 gnd-1.sym 
+>ftis>C 43800 44900 1 0 0 gnd-1.sym 
+>ftis>C 43800 44900 1 0 0 gnd-1.sym 
+>inst>C 43800 44900 1 0 0 gnd-1.sym 
+>pi>C 43800 44900 1 0 0 gnd-1.sym 
+>pi2>C 43800 44900 1 0 0 gnd-1.sym 
+>ftis>C 43800 44900 1 0 0 gnd-1.sym 
+>ftis>} 
+>dev>rail
+>inst>} 
+>ftis>} 
+>dev>rail
+>ftis>v 20031231 1 
+>ftis>P 100 100 100 300 1 0 1 
+>ftis>P 100 100 100 300 1 0 1 
+>ftis>L 0 100 200 100 3 0 0 0 -1 -1 
+>ftis>L 55 50 145 50 3 0 0 0 -1 -1 
+>ftis>L 80 10 120 10 3 0 0 0 -1 -1 
+>ftis>T 300 50 8 10 0 0 0 0 1 
+>ftis>net=GND:1 
+>pi>} 
+>pi2>C 46000 44900 1 0 0 gnd-1.sym 
+>ftis>C 46000 44900 1 0 0 gnd-1.sym 
+>ftis>} 
+>dev>rail
+>inst>} 
+>ftis>} 
+>dev>rail
+>ftis>v 20031231 1 
+>ftis>P 100 100 100 300 1 0 1 
+>ftis>P 100 100 100 300 1 0 1 
+>ftis>L 0 100 200 100 3 0 0 0 -1 -1 
+>ftis>L 55 50 145 50 3 0 0 0 -1 -1 
+>ftis>L 80 10 120 10 3 0 0 0 -1 -1 
+>ftis>T 300 50 8 10 0 0 0 0 1 
+>ftis>net=GND:1 
+>pi>} 
+>pi2>C 46200 46300 1 90 0 resistor-2.sym 
+>ftis>C 46200 46300 1 90 0 resistor-2.sym 
+>dev>DUT
+   >>} 
 >>>>>gC
 reading file auto_dut.3.sch
+>pi>
+>pi2>v 20130925 2 
+>ftis>v 20130925 2 
+>pi>v 20130925 2 
+>pi2>C 40000 40000 0 0 0 title-B.sym 
+>ftis>C 40000 40000 0 0 0 title-B.sym 
+>pi>T 50000 40700 9 10 1 0 0 0 1 
+>pi2>T 50000 40700 9 10 1 0 0 0 1 
+>ftis>T 50000 40700 9 10 1 0 0 0 1 
+>pi>T 50000 40700 9 10 1 0 0 0 1 
+>pi2>Device under test 
+>ftis>Device under test 
+>pi>Device under test 
+>pi2>T 53900 40100 9 10 1 0 0 0 1 
+>ftis>T 53900 40100 9 10 1 0 0 0 1 
+>pi>T 53900 40100 9 10 1 0 0 0 1 
+>pi2>felix 
+>ftis>felix 
+>pi>felix 
+>pi2>C 46100 47100 1 180 0 spice-subcircuit-IO-1.sym 
+>ftis>C 46100 47100 1 180 0 spice-subcircuit-IO-1.sym 
+>dev>spice-IO
+>ftis>} 
+>dev>spice-IO
+>inst>} 
+>ftis>} 
+>dev>spice-IO
+>ftis>v 20050820 1 
+>ftis>P 400 300 200 300 1 0 1 
+>ftis>P 400 300 200 300 1 0 1 
+>ftis>T 900 400 8 10 0 1 0 0 1 
+>ftis>device=spice-IO 
+>ftis>T 850 250 8 10 1 1 0 0 1 
+>ftis>refdes=P? 
+>ftis>L 500 400 400 300 3 0 0 0 -1 -1 
+>ftis>L 500 200 400 300 3 0 0 0 -1 -1 
+>ftis>L 500 400 700 400 3 0 0 0 -1 -1 
+>ftis>T 188 97 9 6 1 0 0 0 1 
+>ftis>.SUBCKT IO Pin 
+>ftis>L 500 200 700 200 3 0 0 0 -1 -1 
+>ftis>L 800 300 700 400 3 0 0 0 -1 -1 
+>ftis>L 800 300 700 200 3 0 0 0 -1 -1 
+>pi>} 
+>pi2>} 
+>ftis>} 
+>ftis>} 
+>inst>} 
+>ftis>} 
+>pi>} 
+>pi2>C 47700 46500 1 0 0 spice-subcircuit-IO-1.sym 
+>ftis>C 47700 46500 1 0 0 spice-subcircuit-IO-1.sym 
+>dev>spice-IO
+>ftis>} 
+>dev>spice-IO
+>inst>} 
+>ftis>} 
+>dev>spice-IO
+>ftis>v 20050820 1 
+>ftis>P 400 300 200 300 1 0 1 
+>ftis>P 400 300 200 300 1 0 1 
+>ftis>T 900 400 8 10 0 1 0 0 1 
+>ftis>device=spice-IO 
+>ftis>T 850 250 8 10 1 1 0 0 1 
+>ftis>refdes=P? 
+>ftis>L 500 400 400 300 3 0 0 0 -1 -1 
+>ftis>L 500 200 400 300 3 0 0 0 -1 -1 
+>ftis>L 500 400 700 400 3 0 0 0 -1 -1 
+>ftis>T 188 97 9 6 1 0 0 0 1 
+>ftis>.SUBCKT IO Pin 
+>ftis>L 500 200 700 200 3 0 0 0 -1 -1 
+>ftis>L 800 300 700 400 3 0 0 0 -1 -1 
+>ftis>L 800 300 700 200 3 0 0 0 -1 -1 
+>pi>} 
+>pi2>} 
+>ftis>} 
+>ftis>} 
+>inst>} 
+>ftis>} 
+>pi>} 
+>pi2>C 46400 46700 1 0 0 resistor-1.sym 
+>ftis>C 46400 46700 1 0 0 resistor-1.sym 
+>dev>RESISTOR
+>ftis>} 
+>dev>RESISTOR
+>inst>} 
+>ftis>} 
+>dev>RESISTOR
+>ftis>v 20031231 1 
+>ftis>L 600 200 500 0 3 0 0 0 -1 -1 
+>ftis>L 500 0 400 200 3 0 0 0 -1 -1 
+>ftis>L 400 200 300 0 3 0 0 0 -1 -1 
+>ftis>L 300 0 200 200 3 0 0 0 -1 -1 
+>ftis>T 300 400 5 10 0 0 0 0 1 
+>ftis>device=RESISTOR 
+>ftis>L 600 200 700 0 3 0 0 0 -1 -1 
+>ftis>L 700 0 750 100 3 0 0 0 -1 -1 
+>ftis>P 900 100 750 100 1 0 0 
+>ftis>P 900 100 750 100 1 0 0 
+>ftis>P 0 100 152 100 1 0 0 
+>ftis>P 0 100 152 100 1 0 0 
+>ftis>L 201 200 150 100 3 0 0 0 -1 -1 
+>ftis>T 200 300 8 10 1 1 0 0 1 
+>ftis>refdes=R? 
+>ftis>T 0 0 8 10 0 1 0 0 1 
+>ftis>pins=2 
+>ftis>T 0 0 8 10 0 1 0 0 1 
+>ftis>class=DISCRETE 
+>pi>} 
+>pi2>} 
+>ftis>} 
+>ftis>} 
+>inst>} 
+>ftis>} 
+>pi>} 
+>pi2>} 
+>ftis>} 
+>ftis>} 
+>inst>} 
+>ftis>} 
+>pi>} 
+>pi2>N 46400 46800 45900 46800 4 
+>ftis>N 46400 46800 45900 46800 4 
+>ftis>N 46400 46800 45900 46800 4 
+>inst>N 46400 46800 45900 46800 4 
+>pi>N 47300 46800 47900 46800 4 
+>pi2>N 47300 46800 47900 46800 4 
+>ftis>N 47300 46800 47900 46800 4 
+>ftis>N 47300 46800 47900 46800 4 
+>inst>N 47300 46800 47900 46800 4 
+>pi>C 47600 45300 1 0 0 spice-subcircuit-IO-1.sym 
+>pi2>C 47600 45300 1 0 0 spice-subcircuit-IO-1.sym 
+>ftis>C 47600 45300 1 0 0 spice-subcircuit-IO-1.sym 
+>dev>spice-IO
+>ftis>} 
+>dev>spice-IO
+>inst>} 
+>ftis>} 
+>dev>spice-IO
+>ftis>v 20050820 1 
+>ftis>P 400 300 200 300 1 0 1 
+>ftis>P 400 300 200 300 1 0 1 
+>ftis>T 900 400 8 10 0 1 0 0 1 
+>ftis>device=spice-IO 
+>ftis>T 850 250 8 10 1 1 0 0 1 
+>ftis>refdes=P? 
+>ftis>L 500 400 400 300 3 0 0 0 -1 -1 
+>ftis>L 500 200 400 300 3 0 0 0 -1 -1 
+>ftis>L 500 400 700 400 3 0 0 0 -1 -1 
+>ftis>T 188 97 9 6 1 0 0 0 1 
+>ftis>.SUBCKT IO Pin 
+>ftis>L 500 200 700 200 3 0 0 0 -1 -1 
+>ftis>L 800 300 700 400 3 0 0 0 -1 -1 
+>ftis>L 800 300 700 200 3 0 0 0 -1 -1 
+>pi>} 
+>pi2>} 
+>ftis>} 
+>ftis>} 
+>inst>} 
+>ftis>} 
+>pi>} 
+>pi2>C 46300 45500 1 0 0 resistor-1.sym 
+>ftis>C 46300 45500 1 0 0 resistor-1.sym 
+>dev>RESISTOR
+>ftis>} 
+>dev>RESISTOR
+>inst>} 
+>ftis>} 
+>dev>RESISTOR
+>ftis>v 20031231 1 
+>ftis>L 600 200 500 0 3 0 0 0 -1 -1 
+>ftis>L 500 0 400 200 3 0 0 0 -1 -1 
+>ftis>L 400 200 300 0 3 0 0 0 -1 -1 
+>ftis>L 300 0 200 200 3 0 0 0 -1 -1 
+>ftis>T 300 400 5 10 0 0 0 0 1 
+>ftis>device=RESISTOR 
+>ftis>L 600 200 700 0 3 0 0 0 -1 -1 
+>ftis>L 700 0 750 100 3 0 0 0 -1 -1 
+>ftis>P 900 100 750 100 1 0 0 
+>ftis>P 900 100 750 100 1 0 0 
+>ftis>P 0 100 152 100 1 0 0 
+>ftis>P 0 100 152 100 1 0 0 
+>ftis>L 201 200 150 100 3 0 0 0 -1 -1 
+>ftis>T 200 300 8 10 1 1 0 0 1 
+>ftis>refdes=R? 
+>ftis>T 0 0 8 10 0 1 0 0 1 
+>ftis>pins=2 
+>ftis>T 0 0 8 10 0 1 0 0 1 
+>ftis>class=DISCRETE 
+>pi>} 
+>pi2>} 
+>ftis>} 
+>ftis>} 
+>inst>} 
+>ftis>} 
+>pi>} 
+>pi2>} 
+>ftis>} 
+>ftis>} 
+>inst>} 
+>ftis>} 
+>pi>} 
+>pi2>N 46100 46800 46100 45600 4 
+>ftis>N 46100 46800 46100 45600 4 
+>ftis>N 46100 46800 46100 45600 4 
+>inst>N 46100 46800 46100 45600 4 
+>pi>N 47800 45600 47200 45600 4 
+>pi2>N 47800 45600 47200 45600 4 
+>ftis>N 47800 45600 47200 45600 4 
+>ftis>N 47800 45600 47200 45600 4 
+>inst>N 47800 45600 47200 45600 4 
+>ftis>N 47800 45600 47200 45600 4 
+>pi>N 47800 45600 47200 45600 4 
+>pi2>N 47800 45600 47200 45600 4 
+>ftis>N 47800 45600 47200 45600 4 
+>ftis>N 47800 45600 47200 45600 4 
+>inst>N 47800 45600 47200 45600 4 
+>ftis>N 47800 45600 47200 45600 4 
+>pi>N 47800 45600 47200 45600 4 
+>pi2>N 47800 45600 47200 45600 4 
+>ftis>N 47800 45600 47200 45600 4 
+>ftis>N 47800 45600 47200 45600 4 
+>inst>N 47800 45600 47200 45600 4 
+>pi>N 47800 45600 47200 45600 4 
+>pi2>N 47800 45600 47200 45600 4 
+>ftis>N 47800 45600 47200 45600 4 
+>ftis>N 47800 45600 47200 45600 4 
+>inst>N 47800 45600 47200 45600 4 
+>pi>N 46300 45600 46100 45600 4 
+>pi2>N 46300 45600 46100 45600 4 
+>ftis>N 46300 45600 46100 45600 4 
+>ftis>N 46300 45600 46100 45600 4 
+>inst>N 46300 45600 46100 45600 4 
+>pi>N 46300 45600 46100 45600 4 
+>pi>} 
+>pi2>} 
+>ftis>} 
+>dev>DUT
+>ftis>} 
+>dev>DUT
+>inst>} 
+>ftis>} 
+>dev>DUT
+>ftis>v 20081221 2 
+>ftis>P 900 100 750 100 1 0 0 
+>ftis>P 900 100 750 100 1 0 0 
+>ftis>P 0 100 150 100 1 0 0 
+>ftis>P 0 100 150 100 1 0 0 
+>ftis>B 150 0 600 200 3 0 0 0 -1 -1 0 -1 -1 -1 -1 -1 
+>ftis>T 400 350 5 10 0 0 0 0 1 
+>ftis>device=RESISTOR 
+>ftis>T 200 300 8 10 1 1 0 0 1 
+>ftis>refdes=R? 
+>pi>} 
+>pi2>} 
+>ftis>} 
+>ftis>T 50000 40700 9 10 1 0 0 0 1 
+>pi>T 50000 40700 9 10 1 0 0 0 1 
+>pi2>Testbench 
+>ftis>Testbench 
+>pi>Testbench 
+>pi2>T 53900 40100 9 10 1 0 0 0 1 
+>ftis>T 53900 40100 9 10 1 0 0 0 1 
+>pi>T 53900 40100 9 10 1 0 0 0 1 
+>pi2>felix 
+>ftis>felix 
+>pi>felix 
+>pi2>C 49100 47600 1 0 0 spice-subcircuit-IO-1.sym 
+>ftis>C 49100 47600 1 0 0 spice-subcircuit-IO-1.sym 
+>dev>spice-IO
+>ftis>} 
+>dev>spice-IO
+>inst>} 
+>ftis>} 
+>dev>spice-IO
+>ftis>v 20050820 1 
+>ftis>P 400 300 200 300 1 0 1 
+>ftis>P 400 300 200 300 1 0 1 
+>ftis>T 900 400 8 10 0 1 0 0 1 
+>ftis>device=spice-IO 
+>ftis>T 850 250 8 10 1 1 0 0 1 
+>ftis>refdes=P? 
+>ftis>L 500 400 400 300 3 0 0 0 -1 -1 
+>ftis>L 500 200 400 300 3 0 0 0 -1 -1 
+>ftis>L 500 400 700 400 3 0 0 0 -1 -1 
+>ftis>T 188 97 9 6 1 0 0 0 1 
+>ftis>.SUBCKT IO Pin 
+>ftis>L 500 200 700 200 3 0 0 0 -1 -1 
+>ftis>L 800 300 700 400 3 0 0 0 -1 -1 
+>ftis>L 800 300 700 200 3 0 0 0 -1 -1 
+>pi>} 
 >>>>>spice 
 >>>>>.options insensitive=0 
 >>>>>.print dc i(V1.v) 

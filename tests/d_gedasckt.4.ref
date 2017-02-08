@@ -18,6 +18,189 @@ mcvth= 0.
 >>>>>module PMOS_TRANSISTOR(D G S B); 
 >>>>>geda "d_gedasckt.4.sch" module device="amp" 
 reading file d_gedasckt.4.sch
+>pi>
+>pi2>v 20130925 2 
+>ftis>v 20130925 2 
+>pi>v 20130925 2 
+>pi2>C 40000 40000 0 0 0 title-B.sym 
+>ftis>C 40000 40000 0 0 0 title-B.sym 
+>pi>C 46900 44000 1 0 0 nmos-1.sym 
+>pi2>C 46900 44000 1 0 0 nmos-1.sym 
+>ftis>C 46900 44000 1 0 0 nmos-1.sym 
+>dev>NMOS_TRANSISTOR
+>ftis>} 
+>dev>NMOS_TRANSISTOR
+>inst>} 
+>ftis>} 
+>dev>NMOS_TRANSISTOR
+>ftis>v 20050820 1 
+>ftis>L 300 600 300 200 3 0 0 0 -1 -1 
+>ftis>T 700 800 5 10 0 0 0 0 1 
+>ftis>device=NMOS_TRANSISTOR 
+>ftis>L 200 600 200 200 3 0 0 0 -1 -1 
+>ftis>L 300 600 500 600 3 0 0 0 -1 -1 
+>ftis>L 300 200 500 200 3 0 0 0 -1 -1 
+>ftis>L 300 400 500 400 3 0 0 0 -1 -1 
+>ftis>L 300 400 400 500 3 0 0 0 -1 -1 
+>ftis>L 300 400 400 300 3 0 0 0 -1 -1 
+>ftis>P 0 400 200 400 1 0 0 
+>ftis>P 0 400 200 400 1 0 0 
+>ftis>P 500 600 500 800 1 0 1 
+>ftis>P 500 600 500 800 1 0 1 
+>ftis>P 500 400 700 400 1 0 1 
+>ftis>P 500 400 700 400 1 0 1 
+>ftis>P 500 200 500 0 1 0 1 
+>ftis>P 500 200 500 0 1 0 1 
+>ftis>T 700 600 8 10 1 1 0 0 1 
+>ftis>refdes=Q? 
+>ftis>T 700 1400 5 10 0 0 0 0 1 
+>ftis>description=NMOS transistor 
+>ftis>T 700 1200 5 10 0 0 0 0 1 
+>ftis>numslots=0 
+>ftis>T 700 1000 5 10 0 0 0 0 1 
+>ftis>symversion=0.1 
+>pi>} 
+>pi2>} 
+>ftis>} 
+>ftis>} 
+>inst>} 
+>ftis>} 
+>pi>} 
+>pi2>} 
+>ftis>} 
+>ftis>} 
+>inst>} 
+>ftis>} 
+>pi>} 
+>pi2>} 
+>ftis>} 
+>ftis>} 
+>inst>} 
+>ftis>} 
+>pi>} 
+>pi2>} 
+>ftis>} 
+>ftis>} 
+>inst>} 
+>ftis>} 
+>pi>} 
+>pi2>C 41100 44100 1 270 0 voltage-3.sym 
+>ftis>C 41100 44100 1 270 0 voltage-3.sym 
+>dev>VOLTAGE_SOURCE
+>ftis>} 
+>dev>VOLTAGE_SOURCE
+>inst>} 
+>ftis>} 
+>dev>VOLTAGE_SOURCE
+>ftis>v 20031231 1 
+>ftis>P 900 200 700 200 1 0 0 
+>ftis>P 900 200 700 200 1 0 0 
+>ftis>P 0 200 200 200 1 0 0 
+>ftis>P 0 200 200 200 1 0 0 
+>ftis>V 450 200 200 3 0 0 0 -1 -1 0 -1 -1 -1 -1 -1 
+>ftis>T 200 700 9 8 0 0 0 0 1 
+>ftis>device=VOLTAGE_SOURCE 
+>ftis>L 700 200 650 200 3 0 0 0 -1 -1 
+>ftis>L 250 200 200 200 3 0 0 0 -1 -1 
+>ftis>T 300 500 8 10 1 1 0 0 1 
+>ftis>refdes=V? 
+>ftis>T 325 225 9 10 1 0 0 4 1  
+>ftis>T 575 225 9 10 1 0 0 4 1 
+>ftis>- 
+>pi>} 
+>pi2>} 
+>ftis>} 
+>ftis>} 
+>inst>} 
+>ftis>} 
+>pi>} 
+>pi2>} 
+>ftis>} 
+>ftis>} 
+>inst>} 
+>ftis>} 
+>pi>} 
+>pi2>C 41500 43200 1 180 0 5V-minus-1.sym 
+>ftis>C 41500 43200 1 180 0 5V-minus-1.sym 
+>ftis>} 
+>dev>rail
+>inst>} 
+>ftis>} 
+>dev>rail
+>ftis>v 20031231 1 
+>ftis>P 200 0 200 200 1 0 0 
+>ftis>P 200 0 200 200 1 0 0 
+>ftis>L 50 200 350 200 3 0 0 0 -1 -1 
+>ftis>T 75 250 9 8 1 0 0 0 1 
+>ftis>-5V 
+>ftis>T 300 0 8 8 0 0 0 0 1 
+>ftis>net=-5V:1 
+>pi>} 
+>pi2>C 41300 44000 1 0 0 passive-1.sym 
+>ftis>C 41300 44000 1 0 0 passive-1.sym 
+>dev>port
+>ftis>} 
+>dev>port
+>inst>} 
+>ftis>} 
+>dev>port
+>ftis>v 20031231 1 
+>ftis>P 0 100 200 100 1 0 0 
+>ftis>P 0 100 200 100 1 0 0 
+>ftis>L 200 200 200 0 3 0 0 0 -1 -1 
+>ftis>T 900 200 5 10 1 0 0 0 1 
+>ftis>net=PASSIVE:1 
+>ftis>T 200 700 5 10 0 0 0 0 1 
+>ftis>device=none 
+>ftis>T 200 800 5 10 0 0 0 0 1 
+>ftis>description=Passive module port 
+>ftis>L 200 200 800 200 3 0 0 0 -1 -1 
+>ftis>L 800 200 800 0 3 0 0 0 -1 -1 
+>ftis>L 800 0 200 0 3 0 0 0 -1 -1 
+>ftis>T 900 100 5 10 1 1 0 1 1 
+>ftis>value=PASSIVE 
+>pi>} 
+>pi2>C 47800 44400 1 180 0 5V-minus-1.sym 
+>ftis>C 47800 44400 1 180 0 5V-minus-1.sym 
+>ftis>C 44300 45600 1 0 0 input-1.sym 
+>dev>rail
+>inst>C 44300 45600 1 0 0 input-1.sym 
+>ftis>C 44300 45600 1 0 0 input-1.sym 
+>dev>rail
+>ftis>v 20031231 1 
+>ftis>P 200 0 200 200 1 0 0 
+>ftis>P 200 0 200 200 1 0 0 
+>ftis>L 50 200 350 200 3 0 0 0 -1 -1 
+>ftis>T 75 250 9 8 1 0 0 0 1 
+>ftis>-5V 
+>ftis>T 300 0 8 8 0 0 0 0 1 
+>ftis>net=-5V:1 
+>pi>C 44300 45600 1 0 0 input-1.sym 
+>pi2>C 44300 45600 1 0 0 input-1.sym 
+>ftis>C 44300 45600 1 0 0 input-1.sym 
+>dev>port
+>ftis>} 
+>dev>port
+>inst>} 
+>ftis>} 
+>dev>port
+>ftis>v 20031231 1 
+>ftis>P 600 100 800 100 1 0 1 
+>ftis>P 600 100 800 100 1 0 1 
+>ftis>L 0 200 0 0 3 0 0 0 -1 -1 
+>ftis>L 0 200 500 200 3 0 0 0 -1 -1 
+>ftis>L 500 200 600 100 3 0 0 0 -1 -1 
+>ftis>L 600 100 500 0 3 0 0 0 -1 -1 
+>ftis>L 500 0 0 0 3 0 0 0 -1 -1 
+>ftis>T 0 300 5 10 0 0 0 0 1 
+>ftis>device=INPUT 
+>pi>} 
+>pi2>} 
+>ftis>} 
+>ftis>} 
+>inst>} 
+>ftis>} 
+>pi>} 
 amp #(.bias(.01 ... ) myamp(.nin(nin), .nout(nout), .pasv(0)); 
                                         ^ ? mismatch, ignored
 nodelist 
