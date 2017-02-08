@@ -4,44 +4,9 @@ dut0: port #3 (3) autoconnect but no name
 *// GPLv3 or later 
 *// mapping geda-symbols to actual devices 
 *// "analog" section 
-.subckt CAPACITOR ( 1 2 )
-c ( 1 2 )  capacitor value
-.ends CAPACITOR
-.subckt POLARIZED_CAPACITOR ( p n )
-*// nothing yet 
-.ends POLARIZED_CAPACITOR
-.subckt RESISTOR ( 1 2 )
-r ( 1 2 )  resistor value
-.ends RESISTOR
-.subckt BATTERY ( n p )
-v ( n p )  vsource value
-.ends BATTERY
-.subckt VOLTAGE_SOURCE ( 1 2 )
-v ( 1 2 )  vsource value
-.ends VOLTAGE_SOURCE
-.subckt CURRENT_SOURCE ( 1 2 )
-i ( 1 2 )  isource value
-.ends CURRENT_SOURCE
 .subckt BC547 ( 1 2 3 4 )
 *// nothing yet 
 .ends BC547
-.subckt TRANSFORMER ( 1 2 3 4 5 6 7 )
-*// not yet 
-.ends TRANSFORMER
-.subckt NMOS_TRANSISTOR ( D G S B )
-.model cmosn_local nmos1 ( level=1 kp=41.5964u vto=0.8 gamma=0.863074 phi=0.6 lambda=.01 tox=41.8n nsub=15.3142E+15 nss=1.E+12 xj=400.n uo=503.521 tpg=1 tnom=NA( 27.) fc=0.5 pb=0.7 cj=384.4u mj=0.4884 cjsw=527.2p pbsw=NA( NA) mjsw=0.3002 is=NA( 10.f) js=0. rsh=0. cbd=0. cbs=0. cgso=218.971p cgdo=218.971p cgbo=0. ld=265.073n)
-m ( D G S B )  cmosn_local  l=l w=w
-.ends NMOS_TRANSISTOR
-.subckt PMOS_TRANSISTOR ( D G S B )
-.model local_cmosp pmos1 ( level=1 kp=41.5964u vto=-0.8 gamma=0.863074 phi=0.6 lambda=.01 tox=41.8n nsub=15.3142E+15 nss=1.E+12 xj=400.n uo=503.521 tpg=1 tnom=NA( 27.) fc=0.5 pb=0.7 cj=384.4u mj=0.4884 cjsw=527.2p pbsw=NA( NA) mjsw=0.3002 is=0 js=0. rsh=0. rd=0. rs=0. cbd=0. cbs=0. cgso=218.971p cgdo=218.971p cgbo=0. ld=265.073n)
-m ( D G S B )  local_cmosp  l=l w=w
-.ends PMOS_TRANSISTOR
-.subckt NPN_TRANSISTOR ( C B E )
-*// later.. 
-.ends NPN_TRANSISTOR
-.subckt LED ( CATHODE ANODE )
-*// nothing 
-.ends LED
 *v 20130925 2 
 *comment (incomplete) title-B.sym
 net0 ( x_nn_0 x_nn_1 )  net 

@@ -10,15 +10,19 @@ simulator language=verilog
 module BC547(1 2 3 4);
 // nothing yet, just pins.
 endmodule
+hidemodule BC547
 
 module 2N2905(1 2 3);
 // nothing yet, just pins.
 endmodule
+hidemodule 2N2905
 
 module 2N2222(3 1 2);
 endmodule
+hidemodule 2N2222
 
 module 2N3053(1 2 3);
 endmodule
+hidemodule 2N3053
 
 simulator lang=acs

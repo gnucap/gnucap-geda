@@ -1,9 +1,6 @@
 //v 20081231 1
 //comment (incomplete) title-B.sym
-module !_DB25-2.sym (SLCT,GND,PE,GND,BUSY,GND,/ACK,GND,DATA7,GND,DATA6,GND,DATA5,GND,DATA4,GND,DATA3,/SLCTIN,DATA2,/INIT,DATA1,/ERROR,DATA0,/AUTOF,/STROBE);
-endmodule // !_DB25-2.sym
-
-DB25 #(.basename(DB25-2.sym)) CONN1 (.SLCT(x_cn_24),.GND(x_cn_22),.PE(x_cn_23),.GND(?????),.BUSY(x_cn_6),.GND(?????),./ACK(x_cn_0),.GND(?????),.DATA7(x_cn_14),.GND(?????),.DATA6(x_cn_13),.GND(?????),.DATA5(x_cn_12),.GND(?????),.DATA4(x_cn_11),.GND(?????),.DATA3(x_cn_10),./SLCTIN(x_cn_4),.DATA2(x_cn_9),./INIT(x_cn_3),.DATA1(x_cn_8),./ERROR(x_cn_2),.DATA0(x_cn_7),./AUTOF(x_cn_1),./STROBE(x_cn_5));
+DB25 #(.basename(DB25-2.sym)) CONN1 (.SLCT(x_cn_24),.2(x_cn_22),.3(x_cn_23),.4(x_cn_21),.5(x_cn_6),.6(x_cn_20),.7(x_cn_0),.8(x_cn_19),.9(x_cn_14),.10(x_cn_18),.11(x_cn_13),.12(x_cn_17),.13(x_cn_12),.14(x_cn_16),.15(x_cn_11),.16(x_cn_15),.17(x_cn_10),.18(x_cn_4),.19(x_cn_9),.20(x_cn_3),.21(x_cn_8),.22(x_cn_2),.23(x_cn_7),.24(x_cn_1),.25(x_cn_5));
 place #(.x(46800),.y(45600)) 46800:45600 (.port(x_cn_0));
 place #(.x(45300),.y(49000)) 45300:49000 (.port(x_cn_1));
 place #(.x(45300),.y(48600)) 45300:48600 (.port(x_cn_2));

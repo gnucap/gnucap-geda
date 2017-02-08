@@ -7,10 +7,6 @@
 //  parameter value=1.; 
 //  admittance #(.g((1.-value)*1e6)) a(1,2); 
 // endmodule 
-module SPST (1,2);
-admittance #( TRAN y  DC y  OP y  AC y) Y1 (.p(1),.n(2));
-endmodule // SPST
-
 module myswitchtest (nref,nac,ndc);
 //comment (incomplete) title-B.sym
 port #(.basename(input-2.sym),.net(nref)) nref (.int(x_cn_0),.ext(nref));

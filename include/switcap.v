@@ -7,6 +7,8 @@ simulator language=verilog
 // "switcap" section
 
 module SWITCAP-capacitor(1 2);
+// not yet.
 endmodule
+hidemodule SWITCAP-capacitor
 
 simulator lang=acs

@@ -9,9 +9,11 @@ simulator language=verilog
 module PMOS_TRANSISTOR(D G S B);
 // not yet
 endmodule
+hidemodule PMOS_TRANSISTOR
 
 module NMOS_TRANSISTOR(D G S B);
 // not yet
 endmodule
+hidemodule NMOS_TRANSISTOR
 
 simulator lang=acs

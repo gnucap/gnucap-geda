@@ -3,61 +3,9 @@
 // GPLv3 or later 
 // mapping geda-symbols to actual devices 
 // "analog" section 
-module CAPACITOR (1,2);
-capacitor #(.c(value)) c (.p(1),.n(2));
-endmodule // CAPACITOR
-
-module POLARIZED_CAPACITOR (p,n);
-// nothing yet 
-endmodule // POLARIZED_CAPACITOR
-
-module RESISTOR (1,2);
-resistor #(.r(value)) r (.p(1),.n(2));
-endmodule // RESISTOR
-
-module BATTERY (n,p);
-vsource #(.dc(value)) v (.p(n),.n(p));
-endmodule // BATTERY
-
-module VOLTAGE_SOURCE (1,2);
-vsource #(.dc(value)) v (.p(1),.n(2));
-endmodule // VOLTAGE_SOURCE
-
-module CURRENT_SOURCE (1,2);
-isource #(.dc(value)) i (.p(1),.n(2));
-endmodule // CURRENT_SOURCE
-
 module BC547 (1,2,3,4);
 // nothing yet 
 endmodule // BC547
-
-module TRANSFORMER (1,2,3,4,5,6,7);
-// not yet 
-endmodule // TRANSFORMER
-
-module NMOS_TRANSISTOR (D,G,S,B);
-paramset cmosn_local nmos1;\
- .level=1; .kp=41.5964u; .vto=0.8; .gamma=0.863074; .phi=0.6; .lambda=.01; .tox=41.8n; .nsub=15.3142E+15; .nss=1.E+12; .xj=400.n; .uo=503.521; .tpg=1; .tnom=NA( 27.); .fc=0.5; .pb=0.7; .cj=384.4u; .mj=0.4884; .cjsw=527.2p; .pbsw=NA( NA); .mjsw=0.3002; .is=NA( 10.f); .js=0.; .rsh=0.; .cbd=0.; .cbs=0.; .cgso=218.971p; .cgdo=218.971p; .cgbo=0.; .ld=265.073n;\
-endparmset
-
-cmosn_local #(.l(l),.w(w)) m (.d(D),.g(G),.s(S),.b(B));
-endmodule // NMOS_TRANSISTOR
-
-module PMOS_TRANSISTOR (D,G,S,B);
-paramset local_cmosp pmos1;\
- .level=1; .kp=41.5964u; .vto=-0.8; .gamma=0.863074; .phi=0.6; .lambda=.01; .tox=41.8n; .nsub=15.3142E+15; .nss=1.E+12; .xj=400.n; .uo=503.521; .tpg=1; .tnom=NA( 27.); .fc=0.5; .pb=0.7; .cj=384.4u; .mj=0.4884; .cjsw=527.2p; .pbsw=NA( NA); .mjsw=0.3002; .is=0; .js=0.; .rsh=0.; .rd=0.; .rs=0.; .cbd=0.; .cbs=0.; .cgso=218.971p; .cgdo=218.971p; .cgbo=0.; .ld=265.073n;\
-endparmset
-
-local_cmosp #(.l(l),.w(w)) m (.d(D),.g(G),.s(S),.b(B));
-endmodule // PMOS_TRANSISTOR
-
-module NPN_TRANSISTOR (C,B,E);
-// later.. 
-endmodule // NPN_TRANSISTOR
-
-module LED (CATHODE,ANODE);
-// nothing 
-endmodule // LED
 
 vsource #(pulse.iv( 0.), .pv( 1.), .delay( 0.), .rise( 0.001), .fall(NA( 0.)), .width( 0.01), .period(NA( Inf))) V1 (.p(n1),.n(n0));
 resistor #(.r( 1.)) R1 (.p(n0),.n(0));

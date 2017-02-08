@@ -11,8 +11,12 @@ module LM741(1 2 3 4 5 6 7);
 // not yet
 endmodule
 
+hidemodule LM741
+
 module 555timer(1 2 3 4 5 6 7 8);
 // not yet
 endmodule
+
+hidemodule 555timer
 
 simulator lang=acs

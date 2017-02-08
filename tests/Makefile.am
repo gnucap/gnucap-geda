@@ -177,7 +177,6 @@ $(EG_TESTS:%=%.out): %.sch.out: %.sch
 	verilog\\n \
 	list\\n \
 	end | $(GNUCAP) -a ../src/.libs/lang_geda.so \
-	                -i $(top_srcdir)/include/analog.v \
 	                $(VLIB_FILES:%=-i $(abs_top_srcdir)/include/%) | \
 	   sed -e '/^default plugins/d' -e '/^lang_geda/d'  $(EXTRA_SED_ARG) | \
 	   sed -e '/^parameter /d' $(EXTRA_SED_ARG) | \
@@ -257,23 +256,27 @@ rc.2.out: EXTRA_SED_ARG += -e 's/675.*$$/675/'
 rc.out: EXTRA_SED_ARG += -e '/vn2/s\#0\.11.*$$\#0.11\#'
 rc.out: EXTRA_SED_ARG += -e '/vn2/s\#0\.67.*$$\#0.67\#'
 
-$(ER_TESTS:%.sh=%.out): GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
-$(EG_TESTS:%.sch=%.out): GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
+# $(ER_TESTS:%.sh=%.out): GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
+# $(EG_TESTS:%.sch=%.out): GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
 
 rc.out rc.2.out: GC_INCLUDES+=-i $(abs_top_srcdir)/include/analog.v
 switch.1.out: GC_INCLUDES+=-i $(abs_top_srcdir)/include/switch.v
 switch.1.out: GC_ATTACH+=-a $(abs_top_builddir)/src/.libs/f_is.so
 
-eg2b.sch.out eg2b_recon.out: VLIB_FILES+= transistor.v diode.v
+D_Latch.sch.out D_latch_recon.out: VLIB_FILES+= analog.v
+eg15.sch.out eg15_recon.out: VLIB_FILES+= analog.v
+eg1a.sch.out eg1a_recon.out: VLIB_FILES+= analog.v
+eg1.sch.out eg1_recon.out: VLIB_FILES+= analog.v
+eg25.sch.out eg25_recon.out: VLIB_FILES = 74.v linear.v analog.v
+eg26.sch.out eg26_recon.out: VLIB_FILES = connector.v analog.v
+eg2b.sch.out eg2b_recon.out: VLIB_FILES+= analog.v diode.v
+eg2.sch.out eg2_recon.out: VLIB_FILES+= analog.v
+eg34.sch.out eg34_recon.out: VLIB_FILES = analog.v
 eg3.sch.out eg3_recon.out: VLIB_FILES += transistor.v 74.v
-eg4_recon.out: VLIB_FILES += transistor.v connector.v
-eg5_recon.out: VLIB_FILES = transistor.v connector.v analog.v
-eg25_recon.out: VLIB_FILES = 74.v linear.v
-eg25.sch.out: VLIB_FILES = 74.v linear.v
-eg26_recon.out: VLIB_FILES = connector.v
-eg42.sch.out: VLIB_FILES = transistor.v linear.v switcap.v diode.v analog.v
-eg42_recon.out: VLIB_FILES = transistor.v linear.v switcap.v diode.v analog.v
-eg43_recon.out: VLIB_FILES += asic.v analog.v
+eg42.sch.out eg42_recon.out: VLIB_FILES = transistor.v linear.v switcap.v diode.v analog.v
+eg43.sch.out eg43_recon.out: VLIB_FILES += asic.v
+eg4.sch.out eg4_recon.out: VLIB_FILES += analog.v
+eg5.sch.out eg5_recon.out: VLIB_FILES += analog.v transistor.v connector.v
 
 # vile hack. maybe should not wrap comments...?
 $(ER_TESTS:%.sh=%.out): EXTRA_SED_ARGS=-e '1,/^stashing /d' -e 's%^//v %v %' -e '/^\/\/.*/d'

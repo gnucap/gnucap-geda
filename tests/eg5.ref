@@ -23,9 +23,6 @@ port #(.basename(in-1.sym)) Pin_3 (.int(x_cn_9));
 place #(.x(55500),.y(43700)) 55500:43700 (.port(x_cn_9));
 port #(.basename(in-1.sym)) Pin_2 (.int(x_cn_10));
 place #(.x(55500),.y(42200)) 55500:42200 (.port(x_cn_10));
-module !_2N2222-1.sym (3,1,2);
-endmodule // !_2N2222-1.sym
-
 2N2222 #(.basename(2N2222-1.sym)) Q1 (.3(x_cn_13),.1(x_cn_11),.2(x_cn_12));
 place #(.x(50000),.y(45200)) 50000:45200 (.port(x_cn_11));
 place #(.x(49400),.y(44700)) 49400:44700 (.port(x_cn_12));
@@ -147,9 +144,6 @@ net #() net43 (.p(x_cn_21),.n(x_nn_67));
 place #(.x(52700),.y(50000)) 52700:50000 (.port(x_nn_67));
 net #() extranet44 (.p(x_cn_21),.n(x_nn_39));
 net #() extranet45 (.p(x_cn_21),.n(x_nn_46));
-module !_header3-1.sym (1,2,3);
-endmodule // !_header3-1.sym
-
 HEADER3 #(.basename(header3-1.sym),.class(IO),.pins(3)) J? (.1(x_cn_68),.2(x_cn_69),.3(x_nn_66));
 place #(.x(54200),.y(49200)) 54200:49200 (.port(x_cn_68));
 place #(.x(53800),.y(49200)) 53800:49200 (.port(x_cn_69));

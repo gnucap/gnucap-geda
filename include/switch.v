@@ -21,4 +21,6 @@ simulator language=spice
 Y1 1 2 ac {y} dc {y} tran {y} op {y}
 .ends
 
+.hidemodule SPST
+
 .simulator language=verilog

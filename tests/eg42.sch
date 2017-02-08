@@ -27,7 +27,7 @@ value=4K7
 T 67200 55100 5 10 0 1 0 0 1
 footprint=R025
 T 67200 55100 5 10 0 1 0 0 1
-device=resistor
+device=RESISTOR
 }
 C 68400 55200 1 0 0 vcc-1.sym
 C 70000 51500 1 180 0 led-2.sym
@@ -73,7 +73,7 @@ value=100K
 T 67200 54300 5 10 0 1 0 0 1
 footprint=R025
 T 67200 54300 5 10 0 1 0 0 1
-device=resistor
+device=RESISTOR
 }
 C 68000 52800 1 0 0 resistor-1.sym
 {
@@ -84,7 +84,7 @@ value=220
 T 68000 52800 5 10 0 1 0 0 1
 footprint=R025
 T 68000 52800 5 10 0 1 0 0 1
-device=resistor
+device=RESISTOR
 }
 C 67900 51300 1 0 0 resistor-1.sym
 {
@@ -95,7 +95,7 @@ value=100
 T 67900 51300 5 10 0 1 0 0 1
 footprint=R025
 T 67900 51300 5 10 0 1 0 0 1
-device=resistor
+device=RESISTOR
 }
 N 64700 52900 64200 52900 4
 {
