@@ -20,8 +20,25 @@ module SPICE-VC-switch(1 2 3 4);
  	endparamset
  	sss #() s(1,2,3,4);
 endmodule
-
 // .. so it does not show up in netlist
 hidemodule SPICE-VC-switch
 
-simulator lang=acs
+simulator lang=spice
+.options noinsensitive
+.subckt SPICE-vcvs(1 2 3 4);
+.parameter value=1
+.parameter ac=1
+E1 1 2 3 4 dc={value} ac={ac}
+.ends
+
+* are the defaults correct?
+.subckt vsin 1 2
+.parameter amplitude=1
+.parameter frequency=5e6
+.parameter ac=1
+V1 1 2 sin amplitude=amplitude frequency=frequency ac=ac
+.ends
+
+.simulator lang=acs
+hidemodule SPICE-vcvs
+hidemodule vsin

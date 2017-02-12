@@ -1,0 +1,5 @@
+a schmitt trigger built with spice primitives.
+
+in particular the SPICE-vcvs works "out of the box"
+makes use of `gedalib command, locates installed components
+

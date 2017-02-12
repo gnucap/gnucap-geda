@@ -1,0 +1,19 @@
+options debug
+load lang_geda.so
+
+// load from installation, usually $prefix/include/gnucap-geda/
+`gedalib analog.v
+// vcvs, "E device"...
+`gedalib spice.v
+`gedalib diode.v
+
+verilog
+
+geda "trigger.sch" module device="mytrig"
+
+mytrig #(.vdd(5)) trig(.ngnd(0), .nout(1));
+list
+
+print tran v(1) v(trig.V1.v1) vout(trig.vcvs1.E1)
+tran 0 2u basic > tr.out
+end

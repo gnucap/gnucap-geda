@@ -1,8 +1,10 @@
 EXTRA_DIST = \
 	README \
 	comparator \
+	freqdiv \
 	opamp \
-	freqdiv
+	osc \
+	trigger
 
 install-data-local:
 	   $(INSTALL) -d $(DESTDIR)$(docdir)/examples

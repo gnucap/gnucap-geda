@@ -1,8 +1,9 @@
 options trace
 load lang_geda.so
 
-include analog.v
-include spice.v
+// load from installation, usually $prefix/include/gnucap-geda/
+`gedalib analog.v
+`gedalib spice.v
 
 verilog
 

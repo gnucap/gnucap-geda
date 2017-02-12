@@ -1,23 +1,19 @@
 For lang_geda (gEDA plugin)
 
 **TODO (In the order of preference)
-- possible segfault in auto node probes
 - better/more error messages and exceptions
 - read submodules during expand, not parse.
 - factor in gafrc, particularly to find files (ask libgeda where they are?)
 - rearrange !_-prefixed declarations
-- gEDA style commands
+- gEDA style commands?
 - Create augmented verilog netlist from a verilog netlist
 - replace extranet by multiport net (requires better node-contraction?)
-- global nets (via default values?)
-
-**don't know how
-- handle hierarchical schematic in a useful way
+- handle parameters from symbol files better
 
 **gnucap issues (0.36), (*)=fixed/hacked/worked\ around for gnucap-uf
 - precalc_first is 'printing parameter <basename> has no value' (*)
 
 **optional/later/unimportant
-- supplement more gEDA symbols (include/*.va)
+- supplement more gEDA symbols (include/*.v)
 - more nets/ports (node numbering && behaviour)
 - Hack a button/option into gschem to get a netlist in verilog from gnucap
